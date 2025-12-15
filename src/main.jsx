@@ -4,6 +4,7 @@ import './index.css'
 import {createBrowserRouter, Outlet, RouterProvider} from 'react-router-dom';
 import Menu from "./pages/Menu.jsx";
 import GameBoard from "./pages/GameBoard.jsx";
+import Shop from "./pages/Shop.jsx";
 
 const router = createBrowserRouter([
         {
@@ -13,7 +14,11 @@ const router = createBrowserRouter([
         {
             path: '/game',
             element: <GameBoard/>,
-        }
+        },
+    {
+        path: '/shop',
+        element: <Shop/>,
+    }
 ]);
 
 createRoot(document.getElementById('root')).render(
