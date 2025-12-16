@@ -1,0 +1,92 @@
+[
+  {
+    "id": "figure1",
+    "name": "Bob",
+    "price": 0,
+    "owned": true,
+    "equipped": true,
+    "image": "/figure1.png",
+    "imageFromTop": "figure1_from_top.png"
+  },
+  {
+    "id": "figure2",
+    "name": "Alice",
+    "price": 0,
+    "owned": true,
+    "equipped": false,
+    "image": "/figure2.png",
+    "imageFromTop": "figure2_from_top.png"
+  },
+  {
+    "id": "figure3",
+    "name": "K-235",
+    "price": 30,
+    "owned": false,
+    "equipped": false,
+    "image": "/figure3.png",
+    "imageFromTop": "figure3_from_top.png"
+  },
+  {
+    "id": "figure4",
+    "name": "Sparry",
+    "price": 40,
+    "owned": false,
+    "equipped": false,
+    "image": "/figure4.png",
+    "imageFromTop": "figure4_from_top.png"
+  },
+  {
+    "id": "figure5",
+    "name": "Army",
+    "price": 50,
+    "owned": false,
+    "equipped": false,
+    "image": "/figure5.png",
+    "imageFromTop": "figure5_from_top.png"
+  },
+  {
+    "id": "figure6",
+    "name": "Giga Nigga",
+    "price": 60,
+    "owned": false,
+    "equipped": false,
+    "image": "/figure6.png",
+    "imageFromTop": "figure6_from_top.png"
+  },
+  {
+    "id": "figure7",
+    "name": "Bannos",
+    "price": 70,
+    "owned": false,
+    "equipped": false,
+    "image": "/figure7.png",
+    "imageFromTop": "figure7_from_top.png"
+  },
+  {
+    "id": "figure8",
+    "name": "Mico",
+    "price": 80,
+    "owned": false,
+    "equipped": false,
+    "image": "/figure8.png",
+    "imageFromTop": "figure8_from_top.png"
+  },
+  {
+    "id": "figure9",
+    "name": "Sticky",
+    "price": 90,
+    "owned": false,
+    "equipped": false,
+    "image": "/figure9.png",
+    "imageFromTop": "figure9_from_top.png"
+  },
+  {
+    "id": "figure10",
+    "name": "Fat Joe",
+    "price": 100,
+    "owned": false,
+    "equipped": false,
+    "image": "/figure10.png",
+    "imageFromTop": "figure10_from_top.png"
+  }
+]
