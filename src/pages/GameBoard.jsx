@@ -19,7 +19,11 @@ function exitHandler(setExitPopupVisible){
     // TODO dorobit stopnutie timera
 }
 
-
+function getEquippedFigure(figures){
+    for(let figure of figures){
+        if(figure.equipped) return figure
+    }
+}
 
 // WORLD_CONTAINER je v podstate tvoja obrazovka, nema overflow, je to teda len to co sa mesti na obrazovku
 // WORLD_SCROLLER je "kamera" nad svetom, je to div so scrollbarom
@@ -34,7 +38,8 @@ export default function GameBoard() {
     const [rotate, setRotate] = useState(0);
     const [isExitPopupVisible, setIsExitPopupVisible] = useState(false);
     console.log(posX, ROW_HEIGHT, COLUMN_WIDTH);
-
+    let figures = JSON.parse(localStorage.getItem("figures"))
+    let equippedFigure = getEquippedFigure(figures)
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani
         scrollerRef.current.scrollTo({
@@ -86,6 +91,7 @@ export default function GameBoard() {
                 <div id = "FIGURE_CONTAINER" className="inset-0 absolute pointer-events-none">
                     <motion.div id = "FIGURE" ref = {figureRef} className="absolute w-[120px] h-[100px] bg-[url('/figure1_from_top.png')] bg-center bg-cover"
                                 style={{
+                                    backgroundImage: `url(${equippedFigure.imageFromTop})`,
                                     transform: `rotate(${rotate}deg)`,
                                     left: posX * COLUMN_WIDTH - FIGURE_WIDTH / 2,
                                     top: (NUM_OF_ROWS - 15) * ROW_HEIGHT,
