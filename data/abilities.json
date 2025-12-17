@@ -1,0 +1,30 @@
+[
+  {
+    "id": "2x coins",
+    "description": "Each coin you get on map is multiplied by 2",
+    "price": "5",
+    "owned": 1,
+    "image": "/ability_2xcoins.png"
+  },
+  {
+    "id": "3x coins",
+    "description": "Each coin you get on map is multiplied by 3",
+    "price": "8",
+    "owned": 0,
+    "image": "/ability_3xcoins.png"
+  },
+  {
+    "id": "car durability",
+    "description": "You are allowed to be hit by one car without losing the game",
+    "price": "3",
+    "owned": 1,
+    "image": "/ability_carDurability.png"
+  },
+  {
+    "id": "5s shield",
+    "description": "You are invincible for 5 seconds",
+    "price": 10,
+    "owned": 2,
+    "image": "/ability_5sShield.png"
+  }
+]
