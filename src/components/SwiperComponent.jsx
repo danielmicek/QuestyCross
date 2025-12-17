@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform } from 'motion/react';
 import CustomButton from "./CustomButton.jsx";
-import {toasterFunction} from "./sharedMethods.jsx";
+
 
 
 // tato funkcia meni fajku pri equipped
@@ -17,18 +17,7 @@ function equipButtonHandler(items, currentItem, setItems){
 }
 
 
-function buyButtonHandler(coins, setCoins, item, items, setItems){
-    if(coins < item.price) toasterFunction('Not enough coins!', "error")
-    else {
-        toasterFunction('New character bought!', "success")
-        let updatedItems = items.map(figure => figure.id === item.id ? {...figure, owned: true} : figure)
-        let newCoins = coins - item.price
-        setCoins(newCoins)
-        setItems(updatedItems)
-        localStorage.setItem("figures", JSON.stringify(updatedItems));
-        localStorage.setItem("coins", newCoins.toString());
-    }
-}
+
 
 const DRAG_BUFFER = 0;
 const VELOCITY_THRESHOLD = 500;
@@ -46,7 +35,8 @@ function CarouselItem({
                           round,
                           trackItemOffset,
                           x,
-                          transition
+                          transition,
+                          buyHandler
                       }) {
     const range = [
         -(index + 1) * trackItemOffset,
@@ -64,7 +54,7 @@ function CarouselItem({
             className={`relative shrink-0 flex flex-col ${
                 round
                     ? "items-center justify-center text-center bg-[#060010] border-0"
-                    : "items-start justify-between border border-white bg-contain bg-no-repeat bg-center rounded-xl w-full h-[95%]"
+                    : "items-start justify-between border border-white bg-contain bg-no-repeat bg-center rounded-xl w-full h-[95%] shadow-2xl"
             } overflow-hidden cursor-grab active:cursor-grabbing`}
             style={{
                 width: itemWidth,
@@ -75,7 +65,7 @@ function CarouselItem({
             }}
             transition={transition}
         >
-            <div id="VIEW_FROM_TOP" className="w-[2.5cm] h-[2.5cm] border-1 border-black absolute top-2 right-2 rounded-3xl bg-[url('/grass.jpg')] bg-no-repeat bg-cover flex justify-center items-center">
+            <div id="VIEW_FROM_TOP" className="w-[2.5cm] h-[2.5cm] border border-black absolute top-2 right-2 rounded-3xl bg-[url('/grass.jpg')] bg-no-repeat bg-cover flex justify-center items-center">
                 <div className="w-[2cm] h-[2cm] absolute bg-no-repeat bg-cover" style={{backgroundImage: `url(${item.imageFromTop})`}}></div>
             </div>
             <div id = "FIGURE_INFO_CONTAINER" className="p-5 absolute bottom-0 bg-linear-to-t from-[#EDDD53] to-transparent w-full select-none">
@@ -87,13 +77,13 @@ function CarouselItem({
                         <p className="text-lg font-bold text-black">price: {item.price} coins</p>
                         <CustomButton
                             text="Buy"
-                            buyHandler={() => buyButtonHandler(coins, setCoins, item, items, setItems)}
+                            buyHandler={() => buyHandler(coins, setCoins, item, items, setItems)}
                         />
                     </div>
                 ) : (
                     <div id = "FIGURE_INFO_CONTAINER_INNER" className="flex flex-row justify-between gap-8 items-center">
                         <p id = "OWNED_TEXT" className="text-lg font-bold text-[#2A7B9B]">Owned</p>
-                        <div id="EQUIP_BUTTON" className="rounded-full font-bold text-white cursor-pointer flex justify-center items-center p-2"
+                        <div id="EQUIP_BUTTON" className="rounded-full font-bold text-white cursor-pointer flex justify-center items-center p-2 hover:shadow-xl/30"
                         style={{
                             background: item.equipped ? "#2A7B9B" : "gray",
                         }}
@@ -117,6 +107,7 @@ export default function SwiperComponent({
                                             pauseOnHover = false,
                                             loop = false,
                                             round = false,
+                                            buyHandler
                                         }) {
     const containerRef = useRef(null);
     const [measuredWidth, setMeasuredWidth] = useState(0);
@@ -303,6 +294,7 @@ export default function SwiperComponent({
                         trackItemOffset={trackItemOffset}
                         x={x}
                         transition={effectiveTransition}
+                        buyHandler = {buyHandler}
                     />
                 ))}
             </motion.div>

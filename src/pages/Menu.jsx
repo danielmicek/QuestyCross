@@ -1,7 +1,9 @@
 import {useEffect, useState} from 'react'
 import {Link, useLocation} from "react-router-dom";
 import { motion } from "motion/react"
+
 import figuresFromJsonFile from "../../data/figures.json"
+import abilitiesFromJsonFile from "../../data/abilities.json"
 
 function popupVisibilityHandler(setIsStartPopupVisible, setIsMenuVisible){
     setIsStartPopupVisible(prev => !prev);
@@ -11,10 +13,13 @@ function popupVisibilityHandler(setIsStartPopupVisible, setIsMenuVisible){
 export default function Menu() {
     const [isStartPopupVisible, setIsStartPopupVisible] = useState(false)
     const [isMenuVisible, setIsMenuVisible] = useState(true)
-    const [coins, setCoins] = useState(parseInt(localStorage.getItem("coins")) || 0)
+    const [coins, setCoins] = useState(parseInt(localStorage.getItem("coins")) || 1000)
 
     useEffect(() => { // ulozenie figures.json do localStorage
         if(localStorage.getItem("figures") === null) localStorage.setItem("figures", JSON.stringify(figuresFromJsonFile));
+    }, []);
+    useEffect(() => { // ulozenie abilities.json do localStorage
+        if(localStorage.getItem("abilities") === null) localStorage.setItem("abilities", JSON.stringify(abilitiesFromJsonFile));
     }, []);
     useEffect(() => { // ulozenie coins do localStorage
         localStorage.setItem("coins", coins.toString());

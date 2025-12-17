@@ -4,42 +4,51 @@ import Arrows from "../components/Arrows.jsx";
 import { motion } from "framer-motion"
 import CustomButton from "../components/CustomButton.jsx";
 import {Link} from "react-router-dom";
+import {DndContext} from '@dnd-kit/core';
+import {CSS} from '@dnd-kit/utilities';
+import DraggableAbility from "../components/dnd/DraggableAbility.jsx";
+import DroppableFigure from "../components/dnd/DroppableFigure.jsx";
+import {toast, Toaster} from "react-hot-toast";
+
 
 // TODO pocet riadkov levelu zavisi od dlzhy (vysky) levelu, preto to bude uvedene v JSONE daneho levelu a nastavi sa to podal toho
 
 const NUM_OF_ROWS = 50 // TODO zmenit podla JSONu
-const FIGURE_WIDTH = 90
-const COLUMN_WIDTH = window.innerWidth / 21
+
 const ROW_HEIGHT = window.innerHeight / NUM_OF_ROWS
 
+function handleDragEnd(event, abilities, setAbilities) {
+    const { active, over } = event;
 
+    if (!over) return;
+
+    if (over.id === "droppable_skibidi_id") {
+        toast.success('Applied ability: ' + active.id);
+        let newAbilities = abilities.map(ability => ability.id === active.id ? {...ability, owned: --ability.owned} : ability)
+        setAbilities(newAbilities)
+        localStorage.setItem("abilities", JSON.stringify(newAbilities));
+    }
+}
 
 function exitHandler(setExitPopupVisible){
     setExitPopupVisible(prev => !prev)
     // TODO dorobit stopnutie timera
 }
 
-function getEquippedFigure(figures){
-    for(let figure of figures){
-        if(figure.equipped) return figure
-    }
-}
 
 // WORLD_CONTAINER je v podstate tvoja obrazovka, nema overflow, je to teda len to co sa mesti na obrazovku
 // WORLD_SCROLLER je "kamera" nad svetom, je to div so scrollbarom
 // WORLD je samotny gameboard - zelena trava s cestami a prekazkami -> je vacsia ako WORLD_SCROLLER, prave preto ma WORLD_SCROLLER scrollbar
 // posuvanie dopredu a dozadu funguje tak, ze sa posuva iba pohlad na WORLD (teda WORLD_SCROLLER)
 // posuvanie dolava a doprava posuva samotneho panacika
+// DraggableAbility a DroppableFigure su schvalne ako externe komponenty, pretoze Dnd kniznica to vyzaduje - hooky musia byt vo vnutri DndContext
 export default function GameBoard() {
 
-    const figureRef = useRef();
     const scrollerRef = useRef();
     const [posX, setPosX] = useState(11);
     const [rotate, setRotate] = useState(0);
     const [isExitPopupVisible, setIsExitPopupVisible] = useState(false);
-    console.log(posX, ROW_HEIGHT, COLUMN_WIDTH);
-    let figures = JSON.parse(localStorage.getItem("figures"))
-    let equippedFigure = getEquippedFigure(figures)
+    const [abilities, setAbilities] = useState(JSON.parse(localStorage.getItem("abilities")))
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani
         scrollerRef.current.scrollTo({
@@ -50,6 +59,7 @@ export default function GameBoard() {
 
     return (
         <>
+            <Toaster position="top-center" reverseOrder={false}/>
             <Arrows setPosX={setPosX}
                     setRotate={setRotate}
                     scrollerRef = {scrollerRef}
@@ -88,19 +98,15 @@ export default function GameBoard() {
                     </div>
                 </div>
 
-                <div id = "FIGURE_CONTAINER" className="inset-0 absolute pointer-events-none">
-                    <motion.div id = "FIGURE" ref = {figureRef} className="absolute w-[120px] h-[100px] bg-[url('/figure1_from_top.png')] bg-center bg-cover"
-                                style={{
-                                    backgroundImage: `url(${equippedFigure.imageFromTop})`,
-                                    transform: `rotate(${rotate}deg)`,
-                                    left: posX * COLUMN_WIDTH - FIGURE_WIDTH / 2,
-                                    top: (NUM_OF_ROWS - 15) * ROW_HEIGHT,
-                                    transition: "all 200ms ease",
-                                    width: `${FIGURE_WIDTH}px`}}
-                                animate={{rotate}}
-                                transition={{ duration: 0.02, ease: "easeOut" }}>
+                <DndContext onDragEnd={e => handleDragEnd(e, abilities, setAbilities)}>
+                    <motion.div id = "ABILITIES_CONTAINER" className= "w-[100px] h-[6cm] z-999 absolute flex flex-col top-0 right-4"> {/*TODO zmen right-4 na right-0 ked odstranis scrollbar !!!*/}
+                        {abilities.map(ability =>
+                            <DraggableAbility ability={ability} key={ability.id}/>
+                        )}
                     </motion.div>
-                </div>
+
+                    <DroppableFigure NUM_OF_ROWS={NUM_OF_ROWS} ROW_HEIGHT={ROW_HEIGHT} posX={posX} rotate={rotate}/>
+                </DndContext>
             </div>
         </>
     )
