@@ -4,14 +4,14 @@
     "description": "Each coin you get on map is multiplied by 2",
     "price": "5",
     "owned": 1,
-    "image": "/ability_2xcoins.png"
+    "image": "/ability_2xCoins.png"
   },
   {
     "id": "3x coins",
     "description": "Each coin you get on map is multiplied by 3",
     "price": "8",
     "owned": 0,
-    "image": "/ability_3xcoins.png"
+    "image": "/ability_3xCoins.png"
   },
   {
     "id": "car durability",
@@ -22,7 +22,7 @@
   },
   {
     "id": "5s shield",
-    "description": "You are invincible for 5 seconds",
+    "description": "Invincibility for 5 seconds, making you immune to car damage",
     "price": 10,
     "owned": 2,
     "image": "/ability_5sShield.png"

@@ -17,9 +17,9 @@ export default function DroppableFigure({NUM_OF_ROWS, ROW_HEIGHT, posX, rotate})
     const {setNodeRef: setFirstDroppableRef} = useDroppable({id: 'droppable_skibidi_id'});
 
     return (
-        <div id = "FIGURE_CONTAINER" className="inset-0 absolute ">
+        <div id = "FIGURE_CONTAINER" className="inset-0 absolute" ref={setFirstDroppableRef}>
             <motion.div id = "FIGURE" className="absolute w-[120px] h-[100px] bg-[url('/figure1_from_top.png')] bg-center bg-cover"
-                        ref={setFirstDroppableRef}
+
                         style={{
                             backgroundImage: `url(${equippedFigure.imageFromTop})`,
                             transform: `rotate(${rotate}deg)`,

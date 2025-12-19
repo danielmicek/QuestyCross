@@ -1,6 +1,6 @@
 import Road from "../components/Road.jsx";
 import {useEffect, useRef, useState} from "react";
-import Arrows from "../components/Arrows.jsx";
+import Movement from "../components/Movement.jsx";
 import { motion } from "framer-motion"
 import CustomButton from "../components/CustomButton.jsx";
 import {Link} from "react-router-dom";
@@ -35,6 +35,10 @@ function exitHandler(setExitPopupVisible){
     // TODO dorobit stopnutie timera
 }
 
+function getAllOwnedAbilities(abilities){
+    return abilities.filter(ability => ability.owned > 0).length
+}
+
 
 // WORLD_CONTAINER je v podstate tvoja obrazovka, nema overflow, je to teda len to co sa mesti na obrazovku
 // WORLD_SCROLLER je "kamera" nad svetom, je to div so scrollbarom
@@ -60,10 +64,10 @@ export default function GameBoard() {
     return (
         <>
             <Toaster position="top-center" reverseOrder={false}/>
-            <Arrows setPosX={setPosX}
-                    setRotate={setRotate}
-                    scrollerRef = {scrollerRef}
-                    ROW_HEIGHT = {ROW_HEIGHT}
+            <Movement setPosX={setPosX}
+                      setRotate={setRotate}
+                      scrollerRef = {scrollerRef}
+                      ROW_HEIGHT = {ROW_HEIGHT}
             />
             <div id = "WORLD_CONTAINER" className="gameBoardContainer relative w-screen h-screen overflow-hidden">
 
@@ -86,7 +90,7 @@ export default function GameBoard() {
 
                 </motion.div>}
 
-                <div className= "absolute rounded-full top-2 left-2 z-999" onClick={() => exitHandler(setIsExitPopupVisible)}>
+                <div id = "EXIT_BUTTON" className= "absolute rounded-full top-2 left-2 z-999" onClick={() => exitHandler(setIsExitPopupVisible)}>
                     <CustomButton text="Exit"/>
                 </div>
 
@@ -99,9 +103,9 @@ export default function GameBoard() {
                 </div>
 
                 <DndContext onDragEnd={e => handleDragEnd(e, abilities, setAbilities)}>
-                    <motion.div id = "ABILITIES_CONTAINER" className= "w-[100px] h-[6cm] z-999 absolute flex flex-col top-0 right-4"> {/*TODO zmen right-4 na right-0 ked odstranis scrollbar !!!*/}
+                    <motion.div id = "ABILITIES_CONTAINER" className= "w-[100px] z-999 absolute flex flex-col top-0 right-4" style={{ height: `${getAllOwnedAbilities(abilities) * 62}px` }}> {/*TODO zmenit right-4 na right-0 ked odstranis scrollbar !!!*/}
                         {abilities.map(ability =>
-                            <DraggableAbility ability={ability} key={ability.id}/>
+                                ability.owned > 0 && (<DraggableAbility ability={ability} key={ability.id}/>)
                         )}
                     </motion.div>
 
