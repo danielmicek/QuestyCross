@@ -94,9 +94,7 @@ export default function Movement({setPosX, setRotate, scrollerRef, ROW_HEIGHT}){
                             className="col-start-3 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-90"
                             onClick={() => rightClickHandler(setPosX, setRotate)}>
                 </motion.div>
-                <motion.div whileHover={{scale: 1.1}}
-                            whileTap={{scale: 0.95}}
-                            className="absolute bottom-0 font-bold w-full text-center">or use WASD
+                <motion.div className="absolute bottom-0 font-bold w-full text-center">or use WASD
                 </motion.div>
             </div>
 
