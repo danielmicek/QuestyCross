@@ -18,7 +18,7 @@ function buyHandler(coins, setCoins, item, items, setItems, type){
     if(coins < item.price) toast.error('Not enough coins!')
     else {
         type === "figure" ? toast.success('New character bought!') : toast.success('New ability bought!')
-        let updatedItems = type === "figure" ? items.map(item => item.id === item.id ? {...item, owned: true} : item) : items.map(item => item.id === item.id ? {...item, owned: ++item.owned} : item)
+        let updatedItems = type === "figure" ? items.map(figure => figure.id === item.id ? {...figure, owned: true} : figure) : items.map(ability => ability.id === item.id ? {...ability, owned: ++ability.owned} : ability)
         let newCoins = coins - item.price
         setCoins(newCoins)
         setItems(updatedItems)
@@ -39,11 +39,11 @@ export default function Shop(){
         <div className="w-full min-h-screen flex flex-col overflow-hidden bg-linear-to-tr from-[#2A7B9B] via-[#57C785] to-[#EDDD53]">
             <Toaster position="bottom-center" reverseOrder={false}/>
 
-            <motion.div id = "FIGURES_OR_ABILITIES_SHOP_BUTTON" className= "absolute rounded-full top-2 right-2 z-999 flex gap-2 flex-col md:flex-row" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}>
-                <div className = "border-2 border-black rounded-[20px] p-2 font-bold hover:shadow-xl/30 cursor-pointer"
+            <motion.div id = "FIGURES_OR_ABILITIES_SHOP_BUTTON" className= "absolute top-2 right-2 z-999 flex gap-1 flex-col md:flex-row text-center" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}>
+                <div className = "border-2 border-black rounded-[20px] p-1.5 font-bold hover:shadow-xl/30 cursor-pointer text-[14px] md:text-[17px]"
                      style={{ background: showFigures ? "#99a1af" : "none" }}
                      onClick={() => showOtherShop(setShowFigures, setShowAbilities)}>Figures</div>
-                <div className = "border-2 border-black rounded-[20px] p-2 font-bold  hover:shadow-xl/30 cursor-pointer"
+                <div className = "border-2 border-black rounded-[20px] p-1.5 font-bold  hover:shadow-xl/30 cursor-pointer text-[14px] md:text-[17px]"
                      style={{ background: showAbilities ? "#99a1af" : "none" }}
                      onClick={() => showOtherShop(setShowFigures, setShowAbilities)}>Abilities</div>
             </motion.div>
@@ -53,8 +53,8 @@ export default function Shop(){
                     <CustomButton text="Exit Shop"/>
                 </Link>
             </motion.div>
-            <motion.h1 id = "SHOPT_TITLE" className="w-screen text-4xl font-bold pt-3 text-center" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}>Shop</motion.h1>
-            <motion.h1 id = "COINS" className="w-screen text-2xl font-bold text-yellow-300 text-center" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}>{coins} coins</motion.h1>
+            <motion.h1 id = "SHOPT_TITLE" className="w-screen text-4xl font-bold pt-3 text-center text-shadow-lg" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}>Shop</motion.h1>
+            <motion.h1 id = "COINS" className="w-screen text-2xl font-bold text-yellow-300 text-center text-shadow-lg" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}>{coins} coins</motion.h1>
 
             {showFigures &&     // ZOBRAZENIE FIGURES SHOPU
                 <motion.div className= "w-full flex-1 flex justify-center items-center" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}>
@@ -76,10 +76,10 @@ export default function Shop(){
             {showAbilities &&     // ZOBRAZENIE ABILITIES SHOPU
                 <motion.div className= "w-full flex-1 flex flex-wrap items-center md:justify-between justify-center px-3 py-4 gap-5" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}>
                     {abilities.map(ability =>
-                        <div className="border-white rounded-xl border flex flex-col w-[300px] h-[360px] relative overflow-hidden shadow-2xl hover:scale-105 transition-all">
+                        <div className="border-white rounded-xl border flex flex-col w-[300px] h-[360px] relative overflow-hidden shadow-2xl hover:scale-105 transition-all justify-center items-center">
                             <img
                                 src={ability.image}
-                                className="w-[400px] h-[400px] object-cover absolute bottom-7"
+                                className="w-[240px] h-[240px] object-cover mb-28"
                                 alt={ability.name}
                             />
                             <div className="bg-linear-to-t from-[#EDDD53] to-transparent absolute w-full flex flex-col bottom-0 pb-2 gap-2 h-fit">
