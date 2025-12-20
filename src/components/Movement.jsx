@@ -1,13 +1,15 @@
 import { motion } from "framer-motion"
 import {useEffect} from "react";
 
-function rightClickHandler(setPosX, setRotate){
-    setPosX(posX => posX === 21 ? posX : posX + 1)
+
+
+function rightClickHandler(setPosX, setRotate, NUM_OF_COLUMNS){
+    setPosX(posX => posX === NUM_OF_COLUMNS ? posX : posX + 1)
     setRotate(90)
 }
 
 function leftClickHandler(setPosX, setRotate){
-    setPosX(posX => posX === 1 ? posX : posX - 1)
+    setPosX(posX => posX === 0 ? posX : posX - 1)
     setRotate(270)
 }
 
@@ -32,7 +34,7 @@ function whatKeyWasPressed(key, scrollerRef, setRotate, SQUARE_SIZE, setPosX){
     }
 }
 
-export default function Movement({setPosX, setRotate, scrollerRef, SQUARE_SIZE}){
+export default function Movement({setPosX, setRotate, scrollerRef, SQUARE_SIZE, NUM_OF_COLUMNS}){
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; // zistime, ci sme na dotykovom zariadeni alebo pc
 
     useEffect(() => {   // eventlistener na WASD clicky, odstrani sa po unmounte komponentu
@@ -68,7 +70,7 @@ export default function Movement({setPosX, setRotate, scrollerRef, SQUARE_SIZE})
                     <motion.div whileHover={{scale: 1.1}} // ARROW RIGHT →
                                 whileTap={{scale: 0.95}}
                                 className="col-start-2 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-90 w-22 h-22"
-                                onClick={() => rightClickHandler(setPosX, setRotate)}>
+                                onClick={() => rightClickHandler(setPosX, setRotate, NUM_OF_COLUMNS)}>
                     </motion.div>
                 </div>
             </>

@@ -8,25 +8,32 @@ function getEquippedFigure(figures){
     }
 }
 
-const FIGURE_WIDTH = 90
 
-
-export default function DroppableFigure({NUM_OF_ROWS, posX, rotate, SQUARE_SIZE}) {
+export default function DroppableFigure({posX, rotate, SQUARE_SIZE, NUM_OF_COLUMNS}) {
     let figures = JSON.parse(localStorage.getItem("figures"))
     let equippedFigure = getEquippedFigure(figures)
     const {setNodeRef: setFirstDroppableRef} = useDroppable({id: 'droppable_skibidi_id'});
+    const WINDOW_HEIGHT = window.innerHeight
+    const NUM_OF_ROWS = Math.floor(WINDOW_HEIGHT / SQUARE_SIZE)
+    console.log(NUM_OF_ROWS);
 
     return (
-        <div id = "FIGURE_CONTAINER" className="absolute" ref={setFirstDroppableRef}>
-            <motion.div id = "FIGURE" className="absolute w-[120px] h-[100px] bg-[url('/figure1_from_top.png')] bg-center bg-cover"
+        <div id = "FIGURE_CONTAINER" className="w-full bottom-0 grid absolute"
+             style={{
+                 height: `${NUM_OF_ROWS * SQUARE_SIZE}px`,
+                 gridTemplateRows: `repeat(${NUM_OF_ROWS}, ${SQUARE_SIZE}px)`,
+                 gridTemplateColumns: `repeat(${NUM_OF_COLUMNS}, ${SQUARE_SIZE}px)`
+             }}>
+            <motion.div id = "FIGURE" className="bg-[url('/figure1_from_top.png')] relative bg-center bg-cover border-2 border-black" ref={setFirstDroppableRef}
 
                         style={{
                             backgroundImage: `url(${equippedFigure.imageFromTop})`,
                             transform: `rotate(${rotate}deg)`,
-                            left: posX * SQUARE_SIZE - FIGURE_WIDTH / 2,
-                            bottom: 150,
+                            gridColumnStart: posX,
+                            gridRowStart: 5,
                             transition: "all 200ms ease",
-                            width: `${FIGURE_WIDTH}px`}}
+                            width: SQUARE_SIZE,
+                            height: SQUARE_SIZE}}
                         animate={{rotate}}
                         transition={{ duration: 0.02, ease: "easeOut" }}>
             </motion.div>
