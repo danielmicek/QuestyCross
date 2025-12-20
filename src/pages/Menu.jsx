@@ -12,10 +12,18 @@ function popupVisibilityHandler(setIsStartPopupVisible, setIsMenuVisible){
 }
 
 function shuffleLevels(levelsData) {
-    const easy = levelsData.filter(level => level.difficulty === "easy");
-    const medium = levelsData.filter(level => level.difficulty === "medium");
-    const hard = levelsData.filter(level => level.difficulty === "hard");
+    const easy = shuffle(levelsData.filter(level => level.difficulty === "easy"));
+    const medium = shuffle(levelsData.filter(level => level.difficulty === "medium"));
+    const hard = shuffle(levelsData.filter(level => level.difficulty === "hard"));
+    return [...easy, ...medium, ...hard];
+}
 
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
 export default function Menu() {
@@ -25,8 +33,7 @@ export default function Menu() {
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; // zistime, ci sme na dotykovom zariadeni alebo pc
 
     const levelsData = levelsFromJsonFile;
-    console.log(levelsData);
-
+    const shuffled = shuffleLevels(levelsData);
 
     useEffect(() => { // ulozenie figures.json do localStorage
         if(localStorage.getItem("figures") === null) localStorage.setItem("figures", JSON.stringify(figuresFromJsonFile));
@@ -38,8 +45,8 @@ export default function Menu() {
         localStorage.setItem("coins", coins.toString());
     }, [coins]);
     useEffect(() => { // ulozenie levelov do localStorage
-        localStorage.setItem("levels", JSON.stringify(levelsFromJsonFile));
-    }, []);
+        localStorage.setItem("levels", JSON.stringify(shuffled));
+    }, [shuffled]);
     const [levels, setLevels] = useState(JSON.parse(localStorage.getItem("levels")))
 
     return (
