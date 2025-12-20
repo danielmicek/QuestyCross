@@ -16,7 +16,7 @@ import Coin from "../components/Coin.jsx";
 
 const NUM_OF_ROWS = JSON.parse(localStorage.getItem("levels"))[0].rowsCount
 const NUM_OF_COLUMNS = 15
-const SQUARE_SIZE = window.innerWidth / NUM_OF_COLUMNS
+const SQUARE_SIZE = Math.floor(window.innerWidth / NUM_OF_COLUMNS)
 
 
 function handleDragEnd(event, abilities, setAbilities) {
@@ -57,13 +57,13 @@ function getCurrentLevel(levels){
 export default function GameBoard() {
 
     const scrollerRef = useRef();
-    const [posX, setPosX] = useState(8);
+    const [posX, setPosX] = useState((NUM_OF_COLUMNS + 1) / 2);
     const [rotate, setRotate] = useState(0);
     const [isExitPopupVisible, setIsExitPopupVisible] = useState(false);
     const [abilities, setAbilities] = useState(JSON.parse(localStorage.getItem("abilities")))
     const [levels, setLevels] = useState(JSON.parse(localStorage.getItem("levels")))
     const currentLevel = getCurrentLevel(levels)
-    console.log(currentLevel);
+    console.log("SQUARE_SIZE: " + SQUARE_SIZE);
 
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani
@@ -107,24 +107,28 @@ export default function GameBoard() {
                 </div>
 
                 <div id="WORLD_SCROLLER" ref={scrollerRef}
-                     className="scroller h-full overflow-y-auto overflow-x-hidden scroll-smooth">
-                    <div id="WORLD" className="h-[50cm] relative w-screen bg-[url('/grass.jpg')]"
-                         style={{gridTemplateRows: `repeat(${NUM_OF_ROWS},${SQUARE_SIZE}px)`, gridTemplateColumns: `repeat(${NUM_OF_COLUMNS},${SQUARE_SIZE}px)`}}>
+                     className="scroller h-full overflow-y-auto overflow-x-hidden">
+                    <div id="WORLD" className="relative w-screen bg-[url('/grass.jpg')] grid"
+                         style={{
+                             height: `${NUM_OF_ROWS * SQUARE_SIZE}px`,
+                             gridTemplateRows: `repeat(${NUM_OF_ROWS},${SQUARE_SIZE}px)`,
+                             gridTemplateColumns: `repeat(${NUM_OF_COLUMNS},${SQUARE_SIZE}px)`
+                         }}>
 
                         <Road rowsFromTop={35} SQUARE_SIZE={SQUARE_SIZE}/>
 
-
+                        {currentLevel.coinsPositions.map(coin => (<Coin positionFromLeft = {coin.x} positionFromTop={coin.y} key={coin.x + coin.y} SQUARE_SIZE={SQUARE_SIZE}/>))}
                     </div>
                 </div>
 
                 <DndContext onDragEnd={e => handleDragEnd(e, abilities, setAbilities)}>
                     <motion.div id = "ABILITIES_CONTAINER" className= "w-[100px] z-999 absolute flex flex-col top-0 right-4" style={{ height: `${getAllOwnedAbilities(abilities) * 62}px` }}> {/*TODO zmenit right-4 na right-0 ked odstranis scrollbar !!!*/}
                         {abilities.map(ability =>
-                                ability.owned > 0 && (<DraggableAbility ability={ability} key={ability.id}/>)
+                            ability.owned > 0 && (<DraggableAbility ability={ability} key={ability.id}/>)
                         )}
                     </motion.div>
 
-                    <DroppableFigure NUM_OF_ROWS={NUM_OF_ROWS} posX={posX} rotate={rotate} SQUARE_SIZE = {SQUARE_SIZE}/>
+                    <DroppableFigure posX={posX} rotate={rotate} SQUARE_SIZE = {SQUARE_SIZE} NUM_OF_COLUMNS = {NUM_OF_COLUMNS}/>
                 </DndContext>
             </div>
         </>

@@ -1,10 +1,15 @@
 
 
 export default function Coin({positionFromLeft, positionFromTop, SQUARE_SIZE}){
-
+    console.log(positionFromLeft, positionFromTop);
     return (
-        <div className="absolute" style={{top: "10px", right: "10px"}}>
-
+        <div className="outline-2 border-black z-1000"
+             style={{
+                 gridColumnStart: 0,
+                 gridRowStart: positionFromTop,
+                 width: `${SQUARE_SIZE}px`,
+                 height: `${SQUARE_SIZE}px`
+             }}>
         </div>
     )
 }
