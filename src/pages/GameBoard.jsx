@@ -9,13 +9,15 @@ import {CSS} from '@dnd-kit/utilities';
 import DraggableAbility from "../components/dnd/DraggableAbility.jsx";
 import DroppableFigure from "../components/dnd/DroppableFigure.jsx";
 import {toast, Toaster} from "react-hot-toast";
+import Coin from "../components/Coin.jsx";
 
 
 // TODO pocet riadkov levelu zavisi od dlzhy (vysky) levelu, preto to bude uvedene v JSONE daneho levelu a nastavi sa to podal toho
 
-const NUM_OF_ROWS = 50 // TODO zmenit podla JSONu
+const NUM_OF_ROWS = JSON.parse(localStorage.getItem("levels"))[0].rowsCount
+const NUM_OF_COLUMNS = 15
+const SQUARE_SIZE = window.innerWidth / NUM_OF_COLUMNS
 
-const ROW_HEIGHT = window.innerHeight / NUM_OF_ROWS
 
 function handleDragEnd(event, abilities, setAbilities) {
     const { active, over } = event;
@@ -39,6 +41,12 @@ function getAllOwnedAbilities(abilities){
     return abilities.filter(ability => ability.owned > 0).length
 }
 
+function getCurrentLevel(levels){
+    for(let level of levels){
+        if(!level.passed) return level
+    }
+}
+
 
 // WORLD_CONTAINER je v podstate tvoja obrazovka, nema overflow, je to teda len to co sa mesti na obrazovku
 // WORLD_SCROLLER je "kamera" nad svetom, je to div so scrollbarom
@@ -49,10 +57,14 @@ function getAllOwnedAbilities(abilities){
 export default function GameBoard() {
 
     const scrollerRef = useRef();
-    const [posX, setPosX] = useState(11);
+    const [posX, setPosX] = useState(8);
     const [rotate, setRotate] = useState(0);
     const [isExitPopupVisible, setIsExitPopupVisible] = useState(false);
     const [abilities, setAbilities] = useState(JSON.parse(localStorage.getItem("abilities")))
+    const [levels, setLevels] = useState(JSON.parse(localStorage.getItem("levels")))
+    const currentLevel = getCurrentLevel(levels)
+    console.log(currentLevel);
+
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani
         scrollerRef.current.scrollTo({
@@ -67,7 +79,7 @@ export default function GameBoard() {
             <Movement setPosX={setPosX}
                       setRotate={setRotate}
                       scrollerRef = {scrollerRef}
-                      ROW_HEIGHT = {ROW_HEIGHT}
+                      SQUARE_SIZE = {SQUARE_SIZE}
             />
             <div id = "WORLD_CONTAINER" className="gameBoardContainer relative w-screen h-screen overflow-hidden">
 
@@ -96,9 +108,12 @@ export default function GameBoard() {
 
                 <div id="WORLD_SCROLLER" ref={scrollerRef}
                      className="scroller h-full overflow-y-auto overflow-x-hidden scroll-smooth">
-                    <div id="WORLD"
-                         className="h-[50cm] relative w-screen bg-[url('/grass.jpg')] grid grid-cols-[1fr_repeat(20,1fr)] grid-rows-[repeat(50,1fr)]">
-                        <Road rowsFromTop={35}/>
+                    <div id="WORLD" className="h-[50cm] relative w-screen bg-[url('/grass.jpg')]"
+                         style={{gridTemplateRows: `repeat(${NUM_OF_ROWS},${SQUARE_SIZE}px)`, gridTemplateColumns: `repeat(${NUM_OF_COLUMNS},${SQUARE_SIZE}px)`}}>
+
+                        <Road rowsFromTop={35} SQUARE_SIZE={SQUARE_SIZE}/>
+
+
                     </div>
                 </div>
 
@@ -109,7 +124,7 @@ export default function GameBoard() {
                         )}
                     </motion.div>
 
-                    <DroppableFigure NUM_OF_ROWS={NUM_OF_ROWS} ROW_HEIGHT={ROW_HEIGHT} posX={posX} rotate={rotate}/>
+                    <DroppableFigure NUM_OF_ROWS={NUM_OF_ROWS} posX={posX} rotate={rotate} SQUARE_SIZE = {SQUARE_SIZE}/>
                 </DndContext>
             </div>
         </>

@@ -4,10 +4,18 @@ import { motion } from "motion/react"
 
 import figuresFromJsonFile from "../../data/figures.json"
 import abilitiesFromJsonFile from "../../data/abilities.json"
+import levelsFromJsonFile from "../../data/levels.json"
 
 function popupVisibilityHandler(setIsStartPopupVisible, setIsMenuVisible){
     setIsStartPopupVisible(prev => !prev);
     setIsMenuVisible(prev => !prev)
+}
+
+function shuffleLevels(levelsData) {
+    const easy = levelsData.filter(level => level.difficulty === "easy");
+    const medium = levelsData.filter(level => level.difficulty === "medium");
+    const hard = levelsData.filter(level => level.difficulty === "hard");
+
 }
 
 export default function Menu() {
@@ -15,6 +23,10 @@ export default function Menu() {
     const [isMenuVisible, setIsMenuVisible] = useState(true)
     const [coins, setCoins] = useState(parseInt(localStorage.getItem("coins")) || 1000)
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; // zistime, ci sme na dotykovom zariadeni alebo pc
+
+    const levelsData = levelsFromJsonFile;
+    console.log(levelsData);
+
 
     useEffect(() => { // ulozenie figures.json do localStorage
         if(localStorage.getItem("figures") === null) localStorage.setItem("figures", JSON.stringify(figuresFromJsonFile));
@@ -25,7 +37,10 @@ export default function Menu() {
     useEffect(() => { // ulozenie coins do localStorage
         localStorage.setItem("coins", coins.toString());
     }, [coins]);
-
+    useEffect(() => { // ulozenie levelov do localStorage
+        localStorage.setItem("levels", JSON.stringify(levelsFromJsonFile));
+    }, []);
+    const [levels, setLevels] = useState(JSON.parse(localStorage.getItem("levels")))
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-[url('/grass.jpg')]">

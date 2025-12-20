@@ -14,14 +14,13 @@ export default function Road({rowsFromTop, ROW_HEIGHT}) {
     const carId2= useRef(0)
 
 
-
     useEffect(() => {
         let alive = true; // kvoli tomu, aby pri unmounte komponentu nevzniklo viacero timeoutov
         let timeoutId;
 
         function spawnCar() {
             if(!alive) return
-            const spawnRate1 = Math.floor(rand(500, 2200));
+            const spawnRate1 = Math.floor(rand(500, 2200)); // hustota premavky
             setCars1(cars1 => [...cars1, ++carId1.current]);
             setCars2(cars2 => [...cars2, ++carId2.current]);
 
@@ -34,13 +33,15 @@ export default function Road({rowsFromTop, ROW_HEIGHT}) {
 
     return (
         <>
-            <div className="road absolute w-full h-30 border-amber-700 border-2 bg-[url('/road.png')] bg-center bg-cover overflow-hidden" style={{gridRowStart: rowsFromTop}}>
+            <div className="road absolute w-full border-amber-700 border-2 bg-[url('/road.png')] bg-center bg-cover overflow-hidden"
+                 style={{gridRowStart: rowsFromTop, height: 150}}> {/*`${ROW_HEIGHT*2}px`*/}
                 {cars1.map(car => (
                     <motion.div key ={car} className="bg-[url('/red_car.png')] bg-contain bg-no-repeat w-25 h-25 absolute bottom-[42px] left-0 z-10"
                                 initial={{x: "-10vw"}}
                                 animate={{x: "100vw"}}
                                 transition={{ duration: 5, ease: "linear" }}
-                                onAnimationComplete={() => setCars1((prev) => prev.filter((c) => c !== car))}>
+                                onAnimationComplete={() => setCars1((prev) => prev.filter((c) => c !== car))}
+                                >
                     </motion.div>
                 ))}
 

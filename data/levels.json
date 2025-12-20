@@ -1,9 +1,194 @@
 [
   {
+    "passed": false,
     "id": 1,
     "difficulty": "easy",
-    "time": 50,
-    "roadCount": 10
+    "time": 120,
+    "rowsCount": 100,
+    "reward": 20,
 
+    "roadsCount": 5,
+    "roadsPositions": [15, 25, 35, 45, 55],
+    "roadsDirections": ["left", "right", "left", "right", "left"],
+    "spawnRate": [
+      [500, 2200], [500, 2200], [500, 2200], [500, 2200], [500, 2200]
+    ],
+
+    "coinsCount": 5,
+    "coinsPositions": [
+      { "x": 2, "y": 80 },
+      { "x": 4, "y": 80 },
+      { "x": 6, "y": 80 },
+      { "x": 8, "y": 80 },
+      { "x": 10, "y": 80 }
+    ]
+  },
+  {
+    "passed": false,
+    "id": 2,
+    "difficulty": "easy",
+    "time": 120,
+    "rowsCount": 100,
+    "reward": 20,
+
+    "roadsCount": 5,
+    "roadsPositions": [15, 25, 35, 45, 55],
+    "roadsDirections": ["left", "right", "left", "right", "left"],
+    "spawnRate": [
+      [500, 2200], [500, 2200], [500, 2200], [500, 2200], [500, 2200]
+    ],
+
+    "coinsCount": 5,
+    "coinsPositions": [
+      { "x": 2, "y": 80 },
+      { "x": 4, "y": 80 },
+      { "x": 6, "y": 80 },
+      { "x": 8, "y": 80 },
+      { "x": 10, "y": 80 }
+    ]
+  },
+  {
+    "passed": false,
+    "id": 3,
+    "difficulty": "medium",
+    "time": 120,
+    "rowsCount": 100,
+    "reward": 20,
+
+    "roadsCount": 5,
+    "roadsPositions": [15, 25, 35, 45, 55],
+    "roadsDirections": ["left", "right", "left", "right", "left"],
+    "spawnRate": [
+      [500, 2200], [500, 2200], [500, 2200], [500, 2200], [500, 2200]
+    ],
+
+    "coinsCount": 5,
+    "coinsPositions": [
+      { "x": 2, "y": 80 },
+      { "x": 4, "y": 80 },
+      { "x": 6, "y": 80 },
+      { "x": 8, "y": 80 },
+      { "x": 10, "y": 80 }
+    ]
+  },
+  {
+    "passed": false,
+    "id": 4,
+    "difficulty": "medium",
+    "time": 120,
+    "rowsCount": 100,
+    "reward": 20,
+
+    "roadsCount": 5,
+    "roadsPositions": [15, 25, 35, 45, 55],
+    "roadsDirections": ["left", "right", "left", "right", "left"],
+    "spawnRate": [
+      [500, 2200], [500, 2200], [500, 2200], [500, 2200], [500, 2200]
+    ],
+
+    "coinsCount": 5,
+    "coinsPositions": [
+      { "x": 2, "y": 80 },
+      { "x": 4, "y": 80 },
+      { "x": 6, "y": 80 },
+      { "x": 8, "y": 80 },
+      { "x": 10, "y": 80 }
+    ]
+  },
+  {
+    "passed": false,
+    "id": 5,
+    "difficulty": "medium",
+    "time": 120,
+    "rowsCount": 100,
+    "reward": 20,
+
+    "roadsCount": 5,
+    "roadsPositions": [15, 25, 35, 45, 55],
+    "roadsDirections": ["left", "right", "left", "right", "left"],
+    "spawnRate": [
+      [500, 2200], [500, 2200], [500, 2200], [500, 2200], [500, 2200]
+    ],
+
+    "coinsCount": 5,
+    "coinsPositions": [
+      { "x": 2, "y": 80 },
+      { "x": 4, "y": 80 },
+      { "x": 6, "y": 80 },
+      { "x": 8, "y": 80 },
+      { "x": 10, "y": 80 }
+    ]
+  },
+  {
+    "passed": false,
+    "id": 6,
+    "difficulty": "hard",
+    "time": 120,
+    "rowsCount": 100,
+    "reward": 20,
+
+    "roadsCount": 5,
+    "roadsPositions": [15, 25, 35, 45, 55],
+    "roadsDirections": ["left", "right", "left", "right", "left"],
+    "spawnRate": [
+      [500, 2200], [500, 2200], [500, 2200], [500, 2200], [500, 2200]
+    ],
+
+    "coinsCount": 5,
+    "coinsPositions": [
+      { "x": 2, "y": 80 },
+      { "x": 4, "y": 80 },
+      { "x": 6, "y": 80 },
+      { "x": 8, "y": 80 },
+      { "x": 10, "y": 80 }
+    ]
+  },
+  {
+    "passed": false,
+    "id": 7,
+    "difficulty": "hard",
+    "time": 120,
+    "rowsCount": 100,
+    "reward": 20,
+
+    "roadsCount": 5,
+    "roadsPositions": [15, 25, 35, 45, 55],
+    "roadsDirections": ["left", "right", "left", "right", "left"],
+    "spawnRate": [
+      [500, 2200], [500, 2200], [500, 2200], [500, 2200], [500, 2200]
+    ],
+
+    "coinsCount": 5,
+    "coinsPositions": [
+      { "x": 2, "y": 80 },
+      { "x": 4, "y": 80 },
+      { "x": 6, "y": 80 },
+      { "x": 8, "y": 80 },
+      { "x": 10, "y": 80 }
+    ]
+  },
+  {
+    "passed": false,
+    "id": 8,
+    "difficulty": "hard",
+    "time": 120,
+    "rowsCount": 100,
+    "reward": 20,
+
+    "roadsCount": 5,
+    "roadsPositions": [15, 25, 35, 45, 55],
+    "roadsDirections": ["left", "right", "left", "right", "left"],
+    "spawnRate": [
+      [500, 2200], [500, 2200], [500, 2200], [500, 2200], [500, 2200]
+    ],
+
+    "coinsCount": 5,
+    "coinsPositions": [
+      { "x": 2, "y": 80 },
+      { "x": 4, "y": 80 },
+      { "x": 6, "y": 80 },
+      { "x": 8, "y": 80 },
+      { "x": 10, "y": 80 }
+    ]
   }
 ]

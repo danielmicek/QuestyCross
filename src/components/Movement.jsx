@@ -11,37 +11,37 @@ function leftClickHandler(setPosX, setRotate){
     setRotate(270)
 }
 
-function upClickHandler(scrollerRef, setRotate, ROW_HEIGHT){
-    scrollerRef.current.scrollTop -= 4*ROW_HEIGHT
+function upClickHandler(scrollerRef, setRotate, SQUARE_SIZE){
+    scrollerRef.current.scrollTop -= SQUARE_SIZE
     setRotate(prev => prev === 270 || prev === 360 ? 360 : 0)
 }
 
-function downClickHandler(scrollerRef, setRotate, ROW_HEIGHT){
-    scrollerRef.current.scrollTop += 4*ROW_HEIGHT
+function downClickHandler(scrollerRef, setRotate, SQUARE_SIZE){
+    scrollerRef.current.scrollTop += SQUARE_SIZE
     setRotate(180)
 }
 
 // funkcia na zistenie, ake tlacidlo bolo stlacene
 // nasledne vykona rovnaku akciu (funkciu) ako po stlaceni arrow na obrazovke
-function whatKeyWasPressed(key, scrollerRef, setRotate, ROW_HEIGHT, setPosX){
+function whatKeyWasPressed(key, scrollerRef, setRotate, SQUARE_SIZE, setPosX){
     switch(key){
-        case "w": upClickHandler(scrollerRef, setRotate, ROW_HEIGHT); break
+        case "w": upClickHandler(scrollerRef, setRotate, SQUARE_SIZE); break
         case "a": leftClickHandler(setPosX, setRotate); break
-        case "s": downClickHandler(scrollerRef, setRotate, ROW_HEIGHT); break
+        case "s": downClickHandler(scrollerRef, setRotate, SQUARE_SIZE); break
         case "d": rightClickHandler(setPosX, setRotate); break
     }
 }
 
-export default function Movement({setPosX, setRotate, scrollerRef, ROW_HEIGHT}){
+export default function Movement({setPosX, setRotate, scrollerRef, SQUARE_SIZE}){
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; // zistime, ci sme na dotykovom zariadeni alebo pc
 
     useEffect(() => {   // eventlistener na WASD clicky, odstrani sa po unmounte komponentu
         const handler = (e) => {
-            whatKeyWasPressed(e.key, scrollerRef, setRotate, ROW_HEIGHT, setPosX);
+            whatKeyWasPressed(e.key, scrollerRef, setRotate, SQUARE_SIZE, setPosX);
         }
         window.addEventListener("keydown", handler);
         return () => window.removeEventListener("keydown", handler);
-    }, [scrollerRef, setRotate, ROW_HEIGHT, setPosX]);
+    }, [scrollerRef, setRotate, SQUARE_SIZE, setPosX]);
 
     return(
         isTouchDevice ?
@@ -50,12 +50,12 @@ export default function Movement({setPosX, setRotate, scrollerRef, ROW_HEIGHT}){
                     <motion.div whileHover={{scale: 1.1}} // ARROW UP ↑
                                 whileTap={{scale: 0.95}}
                                 className="col-start-1 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat w-22 h-22"
-                                onClick={() => upClickHandler(scrollerRef, setRotate, ROW_HEIGHT)}>
+                                onClick={() => upClickHandler(scrollerRef, setRotate, SQUARE_SIZE)}>
                     </motion.div>
                     <motion.div whileHover={{scale: 1.1}} // ARROW DOWN ↓
                                 whileTap={{scale: 0.95}}
                                 className="col-start-1 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-180 w-22 h-22"
-                                onClick={() => downClickHandler(scrollerRef, setRotate, ROW_HEIGHT)}>
+                                onClick={() => downClickHandler(scrollerRef, setRotate, SQUARE_SIZE)}>
                     </motion.div>
                 </div>
 
@@ -77,7 +77,7 @@ export default function Movement({setPosX, setRotate, scrollerRef, ROW_HEIGHT}){
                 <motion.div whileHover={{scale: 1.1}} // ARROW UP ↑
                             whileTap={{scale: 0.95}}
                             className="col-start-2 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat"
-                            onClick={() => upClickHandler(scrollerRef, setRotate, ROW_HEIGHT)}>
+                            onClick={() => upClickHandler(scrollerRef, setRotate, SQUARE_SIZE)}>
                 </motion.div>
                 <motion.div whileHover={{scale: 1.1}} // ARROW LEFT ←
                             whileTap={{scale: 0.95}}
@@ -87,7 +87,7 @@ export default function Movement({setPosX, setRotate, scrollerRef, ROW_HEIGHT}){
                 <motion.div whileHover={{scale: 1.1}} // ARROW DOWN ↓
                             whileTap={{scale: 0.95}}
                             className="col-start-2 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-180 mb-1"
-                            onClick={() => downClickHandler(scrollerRef, setRotate, ROW_HEIGHT)}>
+                            onClick={() => downClickHandler(scrollerRef, setRotate, SQUARE_SIZE)}>
                 </motion.div>
                 <motion.div whileHover={{scale: 1.1}} // ARROW RIGHT →
                             whileTap={{scale: 0.95}}
