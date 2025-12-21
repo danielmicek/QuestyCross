@@ -47,6 +47,16 @@ function getCurrentLevel(levels){
     }
 }
 
+function detectCollision(figureRef, carRef) {
+    if (figureRef.x > carRef.x + carRef.width ||
+        figureRef.x + SQUARE_SIZE < carRef.x ||
+        figureRef.y > carRef.y + carRef.height ||
+        figureRef.y + SQUARE_SIZE < carRef.y) {
+        return false;
+    }
+    console.log("collision detected!");
+    return true;
+}
 
 // WORLD_CONTAINER je v podstate tvoja obrazovka, nema overflow, je to teda len to co sa mesti na obrazovku
 // WORLD_SCROLLER je "kamera" nad svetom, je to div so scrollbarom
@@ -55,8 +65,10 @@ function getCurrentLevel(levels){
 // posuvanie dolava a doprava posuva samotneho panacika
 // DraggableAbility a DroppableFigure su schvalne ako externe komponenty, pretoze Dnd kniznica to vyzaduje - hooky musia byt vo vnutri DndContext
 export default function GameBoard() {
-
     const scrollerRef = useRef();
+    const carPostition1Ref = useRef({});
+    const carPostition2Ref = useRef({});
+    const figurePositionRef = useRef({});
     const [posX, setPosX] = useState((NUM_OF_COLUMNS + 1) / 2);
     const [rotate, setRotate] = useState(0);
     const [isExitPopupVisible, setIsExitPopupVisible] = useState(false);
@@ -71,6 +83,11 @@ export default function GameBoard() {
             top: 100000,
             behavior: "smooth"
         })
+    }, []);
+
+    useEffect(() => {
+        detectCollision(carPostition1Ref, figurePositionRef)
+        detectCollision(carPostition2Ref, figurePositionRef)
     }, []);
 
     return (
@@ -115,7 +132,7 @@ export default function GameBoard() {
                              gridTemplateColumns: `repeat(${NUM_OF_COLUMNS},${SQUARE_SIZE}px)`
                          }}>
 
-                        <Road rowsFromTop={35} SQUARE_SIZE={SQUARE_SIZE}/>
+                        <Road rowsFromTop={35} SQUARE_SIZE={SQUARE_SIZE} carPosition1Ref={carPostition1Ref} carPosition2Ref={carPostition2Ref}/>
 
                         {currentLevel.coinsPositions.map(coin => (<Coin positionFromLeft = {coin.x} positionFromTop={coin.y} key={coin.x + coin.y} SQUARE_SIZE={SQUARE_SIZE}/>))}
                     </div>
@@ -128,7 +145,7 @@ export default function GameBoard() {
                         )}
                     </motion.div>
 
-                    <DroppableFigure posX={posX} rotate={rotate} SQUARE_SIZE = {SQUARE_SIZE} NUM_OF_COLUMNS = {NUM_OF_COLUMNS}/>
+                    <DroppableFigure posX={posX} rotate={rotate} SQUARE_SIZE = {SQUARE_SIZE} NUM_OF_COLUMNS = {NUM_OF_COLUMNS} figurePositionRef={figurePositionRef}/>
                 </DndContext>
             </div>
         </>
