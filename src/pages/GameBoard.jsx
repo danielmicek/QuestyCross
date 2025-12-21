@@ -12,12 +12,6 @@ import {toast, Toaster} from "react-hot-toast";
 import Coin from "../components/Coin.jsx";
 
 
-// TODO pocet riadkov levelu zavisi od dlzhy (vysky) levelu, preto to bude uvedene v JSONE daneho levelu a nastavi sa to podal toho
-
-const NUM_OF_ROWS = JSON.parse(localStorage.getItem("levels"))[0].rowsCount
-const NUM_OF_COLUMNS = 15
-const SQUARE_SIZE = Math.floor(window.innerWidth / NUM_OF_COLUMNS)
-
 
 function handleDragEnd(event, abilities, setAbilities) {
     const { active, over } = event;
@@ -47,14 +41,14 @@ function getCurrentLevel(levels){
     }
 }
 
-function detectCollision(figureRef, carRef) {
+function detectCollision(figureRef, carRef, SQUARE_SIZE) {
     if (figureRef.x > carRef.x + carRef.width ||
         figureRef.x + SQUARE_SIZE < carRef.x ||
         figureRef.y > carRef.y + carRef.height ||
         figureRef.y + SQUARE_SIZE < carRef.y) {
         return false;
     }
-    console.log("collision detected!");
+    //console.log("collision detected!");
     return true;
 }
 
@@ -65,7 +59,10 @@ function detectCollision(figureRef, carRef) {
 // posuvanie dolava a doprava posuva samotneho panacika
 // DraggableAbility a DroppableFigure su schvalne ako externe komponenty, pretoze Dnd kniznica to vyzaduje - hooky musia byt vo vnutri DndContext
 export default function GameBoard() {
-    const scrollerRef = useRef();
+    const NUM_OF_ROWS = JSON.parse(localStorage.getItem("levels"))[0].rowsCount
+    const NUM_OF_COLUMNS = 15
+    const SQUARE_SIZE = Math.floor(window.innerWidth / NUM_OF_COLUMNS)
+    const scrollerRef = useRef(null);
     const carPostition1Ref = useRef({});
     const carPostition2Ref = useRef({});
     const figurePositionRef = useRef({});
@@ -74,8 +71,10 @@ export default function GameBoard() {
     const [isExitPopupVisible, setIsExitPopupVisible] = useState(false);
     const [abilities, setAbilities] = useState(JSON.parse(localStorage.getItem("abilities")))
     const [levels, setLevels] = useState(JSON.parse(localStorage.getItem("levels")))
-    const currentLevel = getCurrentLevel(levels)
-    console.log("SQUARE_SIZE: " + SQUARE_SIZE);
+    const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
+    const coinsRefs = useRef([])                                             // referencia na vsetky mince na mape -> sluzi na odstranenie mince z mapy po collectnuti
+    const currentLevel = getCurrentLevel(levels)                                                    // aktualny level, ktory je vykresleny
+
 
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani
@@ -86,8 +85,8 @@ export default function GameBoard() {
     }, []);
 
     useEffect(() => {
-        detectCollision(carPostition1Ref, figurePositionRef)
-        detectCollision(carPostition2Ref, figurePositionRef)
+        detectCollision(carPostition1Ref, figurePositionRef, SQUARE_SIZE)
+        detectCollision(carPostition2Ref, figurePositionRef, SQUARE_SIZE)
     }, []);
 
     return (
@@ -97,6 +96,12 @@ export default function GameBoard() {
                       setRotate={setRotate}
                       scrollerRef = {scrollerRef}
                       SQUARE_SIZE = {SQUARE_SIZE}
+                      NUM_OF_COLUMNS = {NUM_OF_COLUMNS}
+                      NUM_OF_ROWS = {NUM_OF_ROWS}
+                      setCollectedCoins = {setCollectedCoins}
+                      figureRef = {figurePositionRef}
+                      coinsPositions = {currentLevel.coinsPositions}
+                      coinsRefs = {coinsRefs}
             />
             <div id = "WORLD_CONTAINER" className="gameBoardContainer relative w-screen h-screen overflow-hidden">
 
@@ -123,6 +128,10 @@ export default function GameBoard() {
                     <CustomButton text="Exit"/>
                 </div>
 
+                <div id = "COLLECTED_COINS" className= "absolute rounded-full top-5 left-70 font-bold text-lg text-shadow-lg z-1005">
+                    collected coins: {collectedCoins}
+                </div>
+
                 <div id="WORLD_SCROLLER" ref={scrollerRef}
                      className="scroller h-full overflow-y-auto overflow-x-hidden">
                     <div id="WORLD" className="relative w-screen bg-[url('/grass.jpg')] grid"
@@ -131,10 +140,18 @@ export default function GameBoard() {
                              gridTemplateRows: `repeat(${NUM_OF_ROWS},${SQUARE_SIZE}px)`,
                              gridTemplateColumns: `repeat(${NUM_OF_COLUMNS},${SQUARE_SIZE}px)`
                          }}>
+                        <DndContext onDragEnd={e => handleDragEnd(e, abilities, setAbilities)}>
+                            <motion.div id = "ABILITIES_CONTAINER" className= "w-[100px] z-999 absolute flex flex-col top-0 right-4" style={{ height: `${getAllOwnedAbilities(abilities) * 62}px` }}> {/*TODO zmenit right-4 na right-0 ked odstranis scrollbar !!!*/}
+                                {abilities.map(ability =>
+                                    ability.owned > 0 && (<DraggableAbility ability={ability} key={ability.id}/>)
+                                )}
+                            </motion.div>
 
+                            <DroppableFigure posX={posX} rotate={rotate} SQUARE_SIZE = {SQUARE_SIZE} NUM_OF_COLUMNS = {NUM_OF_COLUMNS} ref = {figurePositionRef}/>
+                        </DndContext>
                         <Road rowsFromTop={35} SQUARE_SIZE={SQUARE_SIZE} carPosition1Ref={carPostition1Ref} carPosition2Ref={carPostition2Ref}/>
 
-                        {currentLevel.coinsPositions.map(coin => (<Coin positionFromLeft = {coin.x} positionFromTop={coin.y} key={coin.x + coin.y} SQUARE_SIZE={SQUARE_SIZE}/>))}
+                        {currentLevel.coinsPositions.map((coin, i) => (<Coin positionFromLeft = {coin.x} positionFromTop={coin.y} key={coin.x + coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>))}
                     </div>
                 </div>
 
@@ -145,7 +162,7 @@ export default function GameBoard() {
                         )}
                     </motion.div>
 
-                    <DroppableFigure posX={posX} rotate={rotate} SQUARE_SIZE = {SQUARE_SIZE} NUM_OF_COLUMNS = {NUM_OF_COLUMNS} figurePositionRef={figurePositionRef}/>
+                    <DroppableFigure posX={posX} rotate={rotate} SQUARE_SIZE = {SQUARE_SIZE} NUM_OF_COLUMNS = {NUM_OF_COLUMNS} ref = {figurePositionRef}/>
                 </DndContext>
             </div>
         </>
