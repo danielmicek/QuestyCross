@@ -14,7 +14,6 @@ function showOtherShop(setShowFigures, setShowAbilities){
 
 // type je but "figures" alebo "abilities"
 function buyHandler(coins, setCoins, item, items, setItems, type){
-    console.log("aaa");
     if(coins < item.price) toast.error('Not enough coins!')
     else {
         type === "figure" ? toast.success('New character bought!') : toast.success('New ability bought!')

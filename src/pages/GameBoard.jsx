@@ -10,6 +10,7 @@ import DraggableAbility from "../components/dnd/DraggableAbility.jsx";
 import DroppableFigure from "../components/dnd/DroppableFigure.jsx";
 import {toast, Toaster} from "react-hot-toast";
 import Coin from "../components/Coin.jsx";
+import calculateGridLocationFromPixels from "../components/shared/calculateGridLocationFromPixels.jsx";
 
 
 
@@ -42,13 +43,13 @@ function getCurrentLevel(levels){
 }
 
 function detectCollision(figureRef, carRef, SQUARE_SIZE) {
-    if (figureRef.x > carRef.x + carRef.width ||
-        figureRef.x + SQUARE_SIZE < carRef.x ||
-        figureRef.y > carRef.y + carRef.height ||
-        figureRef.y + SQUARE_SIZE < carRef.y) {
+    if (figureRef.current.getBoundingClientRect().x > carRef.current.getBoundingClientRect().x + carRef.width ||
+        figureRef.current.getBoundingClientRect().x + SQUARE_SIZE < carRef.current.getBoundingClientRect().x ||
+        figureRef.current.getBoundingClientRect().y > carRef.current.getBoundingClientRect().y + carRef.height ||
+        figureRef.current.getBoundingClientRect().y + SQUARE_SIZE < carRef.current.getBoundingClientRect().y) {
         return false;
     }
-    //console.log("collision detected!");
+    console.log("collision detected!");
     return true;
 }
 
@@ -74,8 +75,7 @@ export default function GameBoard() {
     const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
     const coinsRefs = useRef([])                                             // referencia na vsetky mince na mape -> sluzi na odstranenie mince z mapy po collectnuti
     const currentLevel = getCurrentLevel(levels)                                                    // aktualny level, ktory je vykresleny
-
-
+    const figureX_px = posX * SQUARE_SIZE;
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani
         scrollerRef.current.scrollTo({
@@ -85,14 +85,26 @@ export default function GameBoard() {
     }, []);
 
     useEffect(() => {
-        detectCollision(carPostition1Ref, figurePositionRef, SQUARE_SIZE)
-        detectCollision(carPostition2Ref, figurePositionRef, SQUARE_SIZE)
-    }, []);
+        let animationId;
+
+        const checkCollisions = () => {
+            //console.log(carPostition1Ref.current)
+            //detectCollision(figurePositionRef, carPostition1Ref, SQUARE_SIZE);
+            //detectCollision(figurePositionRef, carPostition2Ref, SQUARE_SIZE);
+
+            animationId = requestAnimationFrame(checkCollisions);
+        };
+
+        checkCollisions();
+
+        return () => cancelAnimationFrame(animationId);
+    }, [SQUARE_SIZE]);
 
     return (
         <>
             <Toaster position="top-center" reverseOrder={false}/>
-            <Movement setPosX={setPosX}
+            <Movement posX={posX}
+                      setPosX={setPosX}
                       setRotate={setRotate}
                       scrollerRef = {scrollerRef}
                       SQUARE_SIZE = {SQUARE_SIZE}
@@ -140,15 +152,7 @@ export default function GameBoard() {
                              gridTemplateRows: `repeat(${NUM_OF_ROWS},${SQUARE_SIZE}px)`,
                              gridTemplateColumns: `repeat(${NUM_OF_COLUMNS},${SQUARE_SIZE}px)`
                          }}>
-                        <DndContext onDragEnd={e => handleDragEnd(e, abilities, setAbilities)}>
-                            <motion.div id = "ABILITIES_CONTAINER" className= "w-[100px] z-999 absolute flex flex-col top-0 right-4" style={{ height: `${getAllOwnedAbilities(abilities) * 62}px` }}> {/*TODO zmenit right-4 na right-0 ked odstranis scrollbar !!!*/}
-                                {abilities.map(ability =>
-                                    ability.owned > 0 && (<DraggableAbility ability={ability} key={ability.id}/>)
-                                )}
-                            </motion.div>
 
-                            <DroppableFigure posX={posX} rotate={rotate} SQUARE_SIZE = {SQUARE_SIZE} NUM_OF_COLUMNS = {NUM_OF_COLUMNS} ref = {figurePositionRef}/>
-                        </DndContext>
                         <Road rowsFromTop={35} SQUARE_SIZE={SQUARE_SIZE} carPosition1Ref={carPostition1Ref} carPosition2Ref={carPostition2Ref}/>
 
                         {currentLevel.coinsPositions.map((coin, i) => (<Coin positionFromLeft = {coin.x} positionFromTop={coin.y} key={coin.x + coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>))}
