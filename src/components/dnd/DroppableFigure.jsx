@@ -9,7 +9,7 @@ function getEquippedFigure(figures){
 }
 
 
-export default function DroppableFigure({posX, rotate, SQUARE_SIZE, NUM_OF_COLUMNS}) {
+export default function DroppableFigure({posX, rotate, SQUARE_SIZE, NUM_OF_COLUMNS, figurePositionRef}) {
     let figures = JSON.parse(localStorage.getItem("figures"))
     let equippedFigure = getEquippedFigure(figures)
     const {setNodeRef: setFirstDroppableRef} = useDroppable({id: 'droppable_skibidi_id'});
@@ -35,7 +35,17 @@ export default function DroppableFigure({posX, rotate, SQUARE_SIZE, NUM_OF_COLUM
                             width: SQUARE_SIZE,
                             height: SQUARE_SIZE}}
                         animate={{rotate}}
-                        transition={{ duration: 0.02, ease: "easeOut" }}>
+                        transition={{ duration: 0.02, ease: "easeOut" }}
+                        onUpdate={(latest) =>{
+                            if (figurePositionRef.current) {
+                                figurePositionRef.current = {
+                                    x: latest.x,
+                                    y: latest.y,
+                                }
+                                console.log(figurePositionRef.current)
+                            }
+                        }}
+                        >
             </motion.div>
         </div>
     );

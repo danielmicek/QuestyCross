@@ -7,7 +7,7 @@ function rand(min, max) {
 }
 
 
-export default function Road({rowsFromTop, ROW_HEIGHT}) {
+export default function Road({rowsFromTop, SQUARE_SIZE, carPosition1Ref, carPosition2Ref}) {
     const [cars1, setCars1] = useState([]);
     const [cars2, setCars2] = useState([]);
     const carId1 = useRef(0)
@@ -34,13 +34,21 @@ export default function Road({rowsFromTop, ROW_HEIGHT}) {
     return (
         <>
             <div className="road absolute w-full border-amber-700 border-2 bg-[url('/road.png')] bg-center bg-cover overflow-hidden"
-                 style={{gridRowStart: rowsFromTop, height: 150}}> {/*`${ROW_HEIGHT*2}px`*/}
+                 style={{gridRowStart: rowsFromTop, height: 2*SQUARE_SIZE}}> {/*`${ROW_HEIGHT*2}px`*/}
                 {cars1.map(car => (
-                    <motion.div key ={car} className="bg-[url('/red_car.png')] bg-contain bg-no-repeat w-25 h-25 absolute bottom-[42px] left-0 z-10"
+                    <motion.div key ={car} className="bg-[url('/red_car.png')] bg-contain bg-no-repeat w-15 h-15 md:w-25 md:h-25 absolute bottom-[calc(50%-20px)] left-0 z-10"
                                 initial={{x: "-10vw"}}
                                 animate={{x: "100vw"}}
                                 transition={{ duration: 5, ease: "linear" }}
                                 onAnimationComplete={() => setCars1((prev) => prev.filter((c) => c !== car))}
+                                onUpdate={(latest) =>{
+                                    if (carPosition1Ref.current) {
+                                        carPosition1Ref.current[car] = {
+                                            x: latest.x,
+                                            y: latest.y,
+                                        }
+                                    }
+                                }}
                                 >
                     </motion.div>
                 ))}
@@ -50,7 +58,16 @@ export default function Road({rowsFromTop, ROW_HEIGHT}) {
                                 initial={{x: "-10vw"}}
                                 animate={{x: "100vw"}}
                                 transition={{ duration: 7, ease: "linear" }}
-                                onAnimationComplete={() => setCars2((prev) => prev.filter((c) => c !== car))}>
+                                onAnimationComplete={() => setCars2((prev) => prev.filter((c) => c !== car))}
+                                onUpdate={(latest) =>{
+                                    if (carPosition2Ref.current) {
+                                        carPosition2Ref.current[car] = {
+                                            x: latest.x,
+                                            y: latest.y,
+                                        }
+                                    }
+                                }}
+                                >
                     </motion.div>
                 ))}
 
