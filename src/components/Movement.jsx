@@ -1,7 +1,9 @@
 import { motion } from "framer-motion"
 import {useEffect} from "react";
 
+function obstacleFinder(figureRef){
 
+}
 
 function rightClickHandler(setPosX, setRotate, NUM_OF_COLUMNS){
     setPosX(posX => posX === NUM_OF_COLUMNS ? posX : posX + 1)
@@ -9,41 +11,55 @@ function rightClickHandler(setPosX, setRotate, NUM_OF_COLUMNS){
 }
 
 function leftClickHandler(setPosX, setRotate){
-    setPosX(posX => posX === 0 ? posX : posX - 1)
+    setPosX(posX => posX === 1 ? posX : posX - 1)
     setRotate(270)
 }
 
 function upClickHandler(scrollerRef, setRotate, SQUARE_SIZE){
-    scrollerRef.current.scrollTop -= SQUARE_SIZE
+    const currentScroll = scrollerRef.current.scrollTop
+    const currentRow = Math.round(currentScroll / SQUARE_SIZE)
+    const newRow = currentRow - 1
+    scrollerRef.current.scrollTop = newRow * SQUARE_SIZE
     setRotate(prev => prev === 270 || prev === 360 ? 360 : 0)
 }
 
 function downClickHandler(scrollerRef, setRotate, SQUARE_SIZE){
-    scrollerRef.current.scrollTop += SQUARE_SIZE
+    const currentScroll = scrollerRef.current.scrollTop
+    const currentRow = Math.round(currentScroll / SQUARE_SIZE)
+    const newRow = currentRow + 1
+    scrollerRef.current.scrollTop = newRow * SQUARE_SIZE
     setRotate(180)
 }
 
 // funkcia na zistenie, ake tlacidlo bolo stlacene
 // nasledne vykona rovnaku akciu (funkciu) ako po stlaceni arrow na obrazovke
-function whatKeyWasPressed(key, scrollerRef, setRotate, SQUARE_SIZE, setPosX){
+function whatKeyWasPressed(key, scrollerRef, setRotate, SQUARE_SIZE, setPosX, NUM_OF_COLUMNS){
     switch(key){
         case "w": upClickHandler(scrollerRef, setRotate, SQUARE_SIZE); break
         case "a": leftClickHandler(setPosX, setRotate); break
         case "s": downClickHandler(scrollerRef, setRotate, SQUARE_SIZE); break
-        case "d": rightClickHandler(setPosX, setRotate); break
+        case "d": rightClickHandler(setPosX, setRotate, NUM_OF_COLUMNS); break
     }
 }
 
-export default function Movement({setPosX, setRotate, scrollerRef, SQUARE_SIZE, NUM_OF_COLUMNS}){
+export default function Movement({
+                                     setPosX,
+                                     setRotate,
+                                     scrollerRef,
+                                     SQUARE_SIZE,
+                                     NUM_OF_COLUMNS,
+                                     setGatheredCoins,
+                                     figureRef}){
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; // zistime, ci sme na dotykovom zariadeni alebo pc
-
     useEffect(() => {   // eventlistener na WASD clicky, odstrani sa po unmounte komponentu
         const handler = (e) => {
-            whatKeyWasPressed(e.key, scrollerRef, setRotate, SQUARE_SIZE, setPosX);
+            whatKeyWasPressed(e.key, scrollerRef, setRotate, SQUARE_SIZE, setPosX, NUM_OF_COLUMNS);
         }
         window.addEventListener("keydown", handler);
         return () => window.removeEventListener("keydown", handler);
     }, [scrollerRef, setRotate, SQUARE_SIZE, setPosX]);
+
+    console.log(figureRef);
 
     return(
         isTouchDevice ?
@@ -94,7 +110,7 @@ export default function Movement({setPosX, setRotate, scrollerRef, SQUARE_SIZE, 
                 <motion.div whileHover={{scale: 1.1}} // ARROW RIGHT →
                             whileTap={{scale: 0.95}}
                             className="col-start-3 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-90"
-                            onClick={() => rightClickHandler(setPosX, setRotate)}>
+                            onClick={() => rightClickHandler(setPosX, setRotate, NUM_OF_COLUMNS)}>
                 </motion.div>
                 <motion.div className="absolute bottom-0 font-bold w-full text-center">or use WASD
                 </motion.div>
