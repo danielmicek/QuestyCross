@@ -1,5 +1,6 @@
 import { motion } from "framer-motion"
 import {useEffect, useRef, useState} from "react";
+import {SQUARE_SIZE} from "./shared/constants.jsx";
 
 
 function rand(min, max) {
@@ -7,7 +8,7 @@ function rand(min, max) {
 }
 
 
-export default function Road({rowsFromTop, SQUARE_SIZE, carPosition1Ref, carPosition2Ref}) {
+export default function Road({rowsFromTop, carPosition1Ref, carPosition2Ref}) {
     const [cars1, setCars1] = useState([]);
     const [cars2, setCars2] = useState([]);
     const carId1 = useRef(0)
@@ -20,7 +21,7 @@ export default function Road({rowsFromTop, SQUARE_SIZE, carPosition1Ref, carPosi
 
         function spawnCar() {
             if(!alive) return
-            const spawnRate1 = Math.floor(rand(500, 2200)); // hustota premavky
+            const spawnRate1 = Math.floor(rand(1000, 9200)); // hustota premavky
             setCars1(cars1 => [...cars1, ++carId1.current]);
             setCars2(cars2 => [...cars2, ++carId2.current]);
 
@@ -33,7 +34,7 @@ export default function Road({rowsFromTop, SQUARE_SIZE, carPosition1Ref, carPosi
 
     return (
         <>
-            <div className="road grid grid-rows-2 absolute w-full border-amber-700 border-2 bg-[url('/road.png')] bg-center bg-cover overflow-hidden"
+            <div className="road grid grid-rows-2 absolute w-full border-amber-700 border-2 bg-[url('/road.png')] bg-center bg-size[100%] overflow-hidden"
                  style={{gridRowStart: rowsFromTop, height: 2*SQUARE_SIZE}}> {/*`${ROW_HEIGHT*2}px`*/}
                 <div className="relative h-full flex items-center">
                     {cars1.map(car => (
@@ -52,7 +53,7 @@ export default function Road({rowsFromTop, SQUARE_SIZE, carPosition1Ref, carPosi
                                     onUpdate={(latest) =>{
                                         if (carPosition1Ref.current) {
                                             carPosition1Ref.current[car] = {
-                                                x: Math.floor(latest.x / SQUARE_SIZE),
+                                                x:latest.x / SQUARE_SIZE,
                                                 y: rowsFromTop,
                                             }
                                         }
@@ -78,7 +79,7 @@ export default function Road({rowsFromTop, SQUARE_SIZE, carPosition1Ref, carPosi
                                     onUpdate={(latest) =>{
                                         if (carPosition2Ref.current) {
                                             carPosition2Ref.current[car] = {
-                                                x: Math.floor(latest.x / SQUARE_SIZE),
+                                                x: latest.x / SQUARE_SIZE,
                                                 y: rowsFromTop + 1,
                                             }
                                         }

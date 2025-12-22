@@ -8,7 +8,6 @@ function getEquippedFigure(figures){
     }
 }
 
-
 export default function DroppableFigure({posX, rotate, SQUARE_SIZE, NUM_OF_COLUMNS, ref}) {
     let figures = JSON.parse(localStorage.getItem("figures"))
     let equippedFigure = getEquippedFigure(figures)
@@ -24,11 +23,11 @@ export default function DroppableFigure({posX, rotate, SQUARE_SIZE, NUM_OF_COLUM
                  gridTemplateRows: `repeat(${NUM_OF_ROWS}, ${SQUARE_SIZE}px)`,
                  gridTemplateColumns: `repeat(${NUM_OF_COLUMNS}, ${SQUARE_SIZE}px)`
              }}>
-            <motion.div id = "FIGURE" className="bg-[url('/figure1_from_top.png')] relative bg-center bg-cover border-2 border-black" ref = {ref}
+            <motion.div id = "FIGURE" className="bg-[url('/figure1_from_top.png')] absolute bg-center bg-cover border-2 border-black" ref = {ref}
                         style={{
                             backgroundImage: `url(${equippedFigure.imageFromTop})`,
                             gridColumnStart: posX,
-                            gridRowStart: 6,
+                            bottom: SQUARE_SIZE,
                             transition: "all 200ms ease",
                             width: SQUARE_SIZE,
                             height: SQUARE_SIZE}}

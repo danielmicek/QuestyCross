@@ -3,16 +3,14 @@
 export default function Coin({positionFromLeft, positionFromTop, SQUARE_SIZE, ref}){
 
     return (
-        <div className="outline-2 border-black z-1000 bg-contain bg-no-repeat" ref = {ref}
+        <div className="outline-2 relative border-black z-1000 justify-center items-center flex" ref = {ref}
              style={{
-                 backgroundImage: `url('/coin.png')`,
                  gridColumnStart: positionFromLeft,
-                 /*marginLeft: `${SQUARE_SIZE/2}px`,
-                 marginTop: `${SQUARE_SIZE/2}px`,*/
                  gridRowStart: positionFromTop,
                  width: `${SQUARE_SIZE}px`,
                  height: `${SQUARE_SIZE}px`
              }}>
+            <img src={'/coin.png'}  alt="coin_icon" className="md:w-10 md:h-10 w-7 h-7"/>
         </div>
     )
 }

@@ -10,7 +10,10 @@ import DraggableAbility from "../components/dnd/DraggableAbility.jsx";
 import DroppableFigure from "../components/dnd/DroppableFigure.jsx";
 import {toast, Toaster} from "react-hot-toast";
 import Coin from "../components/Coin.jsx";
-import calculateGridLocationFromPixels from "../components/shared/calculateGridLocationFromPixels.jsx";
+import {calculateGridLocationFromPixels, getCurrentLevel} from "../components/shared/functions.jsx";
+import NoAccessAreaComponent from "../components/NoAccessAreaComponent.jsx";
+import FinishLine from "../components/FinishLine.jsx";
+import {NUM_OF_COLUMNS, SQUARE_SIZE, ACTIVE_AREA, NO_ACCESS_AREA} from "../components/shared/constants.jsx";
 
 
 
@@ -36,28 +39,52 @@ function getAllOwnedAbilities(abilities){
     return abilities.filter(ability => ability.owned > 0).length
 }
 
-function getCurrentLevel(levels){
-    for(let level of levels){
-        if(!level.passed) return level
-    }
-}
 
 function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef) {
     const figureX_px = posX
     const figureY_px = figureRef.current.getBoundingClientRect().y
-    const figure_grid_position = calculateGridLocationFromPixels(figureX_px, figureY_px, SQUARE_SIZE, scrollerRef);
+    const figure_grid_position = calculateGridLocationFromPixels(figureX_px, scrollerRef);
     for (const car of Object.values(carRef.current)) {
         if (
-            car.x < figure_grid_position.x_grid + 1 &&
-            car.x + 1 > figure_grid_position.x_grid &&
-            car.y < figure_grid_position.y_grid + 1 &&
-            car.y + 1 > figure_grid_position.y_grid
+            //Pevne hodnoty co priratavame su vyska a sirka figurky a aut,
+            //menime ich kvoli lepsim hitboxom (obidva objekte su default 1x1 stvorecek)
+            car.x < figure_grid_position.x_grid + 0.3 &&
+            car.x + 1.5 > figure_grid_position.x_grid &&
+            car.y < figure_grid_position.y_grid + 0.5 &&
+            car.y + 0.5 > figure_grid_position.y_grid
         ) {
             console.log("collision detected!");
             return true;
         }
     }
     return false;
+}
+
+
+
+// pri vyplnani NO_ACCESS_AREA vynechame tie riadky, na ktorych je Road
+function isRoadOnPosition(roadsPositions, y){
+    for(let road of roadsPositions){
+        if(road === y || road === y - 1) return true
+    }
+    return false
+}
+
+function createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roadsPositions){
+    const array = []
+    for(let y = 11; y <= NUM_OF_ROWS; y++){  // zaciname na 11, pretoze FinishLine ma vysku 10 * SQUARE_SIZE
+        if(!isRoadOnPosition(roadsPositions, y)){
+            // vyplnanie stlpcov zlava
+            for(let x = 0; x < NO_ACCESS_AREA; x++){
+                array.push(<NoAccessAreaComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={x}/>)
+            }
+            // vyplnanie stlpcov zprava
+            for(let x = 0; x < NO_ACCESS_AREA; x++){
+                array.push(<NoAccessAreaComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={NUM_OF_COLUMNS - x}/>)
+            }
+        }
+    }
+    return array
 }
 
 // WORLD_CONTAINER je v podstate tvoja obrazovka, nema overflow, je to teda len to co sa mesti na obrazovku
@@ -67,9 +94,8 @@ function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef) {
 // posuvanie dolava a doprava posuva samotneho panacika
 // DraggableAbility a DroppableFigure su schvalne ako externe komponenty, pretoze Dnd kniznica to vyzaduje - hooky musia byt vo vnutri DndContext
 export default function GameBoard() {
-    const NUM_OF_ROWS = JSON.parse(localStorage.getItem("levels"))[0].rowsCount
-    const NUM_OF_COLUMNS = 15
-    const SQUARE_SIZE = Math.floor(window.innerWidth / NUM_OF_COLUMNS)
+
+
     const scrollerRef = useRef(null);
     const carPostition1Ref = useRef({});
     const carPostition2Ref = useRef({});
@@ -81,8 +107,11 @@ export default function GameBoard() {
     const [levels, setLevels] = useState(JSON.parse(localStorage.getItem("levels")))
     const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
     const coinsRefs = useRef([])                                             // referencia na vsetky mince na mape -> sluzi na odstranenie mince z mapy po collectnuti
-    const currentLevel = getCurrentLevel(levels)                                                    // aktualny level, ktory je vykresleny
-    const figureX_px = posX * SQUARE_SIZE;
+
+
+    const CURRENT_LEVEL = getCurrentLevel(levels)                                                   // aktualny level, ktory je vykresleny
+    const NUM_OF_ROWS = CURRENT_LEVEL.rowsCount
+    const roadsPositions = CURRENT_LEVEL.roadsPositions                                              // pole pozicii vsetkych ciest v aktualnom leveli
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani
         scrollerRef.current.scrollTo({
@@ -95,8 +124,8 @@ export default function GameBoard() {
         let animationId;
 
         const checkCollisions = () => {
-            detectCollision(carPostition1Ref,figurePositionRef,posX, SQUARE_SIZE,scrollerRef);
-            detectCollision(carPostition2Ref,figurePositionRef,posX, SQUARE_SIZE,scrollerRef);
+            detectCollision(carPostition1Ref,figurePositionRef,posX, SQUARE_SIZE, scrollerRef);
+            detectCollision(carPostition2Ref,figurePositionRef,posX, SQUARE_SIZE, scrollerRef);
 
             animationId = requestAnimationFrame(checkCollisions);
         };
@@ -113,12 +142,10 @@ export default function GameBoard() {
                       setPosX={setPosX}
                       setRotate={setRotate}
                       scrollerRef = {scrollerRef}
-                      SQUARE_SIZE = {SQUARE_SIZE}
-                      NUM_OF_COLUMNS = {NUM_OF_COLUMNS}
                       NUM_OF_ROWS = {NUM_OF_ROWS}
                       setCollectedCoins = {setCollectedCoins}
                       figureRef = {figurePositionRef}
-                      coinsPositions = {currentLevel.coinsPositions}
+                      coinsPositions = {CURRENT_LEVEL.coinsPositions}
                       coinsRefs = {coinsRefs}
             />
             <div id = "WORLD_CONTAINER" className="gameBoardContainer relative w-screen h-screen overflow-hidden">
@@ -158,10 +185,12 @@ export default function GameBoard() {
                              gridTemplateRows: `repeat(${NUM_OF_ROWS},${SQUARE_SIZE}px)`,
                              gridTemplateColumns: `repeat(${NUM_OF_COLUMNS},${SQUARE_SIZE}px)`
                          }}>
+                        <FinishLine SQUARE_SIZE={SQUARE_SIZE}/>
+                        {createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roadsPositions).map(singleComponent => singleComponent)}
 
-                        <Road rowsFromTop={35} SQUARE_SIZE={SQUARE_SIZE} carPosition1Ref={carPostition1Ref} carPosition2Ref={carPostition2Ref}/>
+                        <Road rowsFromTop={35} carPosition1Ref={carPostition1Ref} carPosition2Ref={carPostition2Ref}/>
 
-                        {currentLevel.coinsPositions.map((coin, i) => (<Coin positionFromLeft = {coin.x} positionFromTop={coin.y} key={coin.x + coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>))}
+                        {CURRENT_LEVEL.coinsPositions.map((coin, i) => (<Coin positionFromLeft = {coin.x + NO_ACCESS_AREA} positionFromTop={coin.y} key={coin.x + coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>))}
                     </div>
                 </div>
 
@@ -170,7 +199,7 @@ export default function GameBoard() {
                         {abilities.map(ability =>
                             ability.owned > 0 && (<DraggableAbility ability={ability} key={ability.id}/>)
                         )}
-                    </motion.div>
+                    </motion.div>d
 
                     <DroppableFigure posX={posX} rotate={rotate} SQUARE_SIZE = {SQUARE_SIZE} NUM_OF_COLUMNS = {NUM_OF_COLUMNS} ref = {figurePositionRef}/>
                 </DndContext>

@@ -1,21 +1,20 @@
-import { motion } from "framer-motion"
+import {motion} from "framer-motion"
 import {useEffect} from "react";
-import calculateGridLocationFromPixels from "../components/shared/calculateGridLocationFromPixels.jsx";
+import {calculateGridLocationFromPixels} from "./shared/functions.jsx";
+import {NO_ACCESS_AREA, NUM_OF_COLUMNS, SQUARE_SIZE} from "./shared/constants.jsx";
 
 function obstacleFinder(figureRef){
 
 }
 
-function coinCollector(figureRef, posX, coinsPositions, SQUARE_SIZE, scrollerRef, coinsRefs, setCollectedCoins){
+function coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins){
     // suradnice figurky v px
-    const figureX_px = posX
-    const figureY_px = figureRef.current.getBoundingClientRect().y
-    const figure_grid_position = calculateGridLocationFromPixels(figureX_px, figureY_px, SQUARE_SIZE, scrollerRef)
-
+    const figure_grid_position = calculateGridLocationFromPixels(posX, scrollerRef)
+    console.log("fig: " + figure_grid_position.x_grid + " " + figure_grid_position.y_grid);
     for(let i = 0; i < coinsPositions.length; i++) {
         // suradnice figurky v gride
         const coin_grid_position = {
-            "x_grid": coinsPositions[i].x,
+            "x_grid": coinsPositions[i].x + NO_ACCESS_AREA,
             "y_grid": coinsPositions[i].y
         }
         // zistime, ci sa nachadza v rovnakom mieste v gride ako figure a zaroven ci nema display none (ci uz minca nebola vzatá)
@@ -28,36 +27,41 @@ function coinCollector(figureRef, posX, coinsPositions, SQUARE_SIZE, scrollerRef
     return false
 }
 
-function rightClickHandler({posX, setPosX, setRotate, SQUARE_SIZE, NUM_OF_COLUMNS, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs}){
-    const newPosX = posX === NUM_OF_COLUMNS ? posX : posX + 1
+function rightClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs}){
+    const newPosX = posX === NUM_OF_COLUMNS - NO_ACCESS_AREA ? posX : posX + 1
     setPosX(newPosX)
     setRotate(90)
-    coinCollector(figureRef, newPosX, coinsPositions, SQUARE_SIZE, scrollerRef, coinsRefs, setCollectedCoins)
+    coinCollector(figureRef, newPosX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins)
 }
 
-function leftClickHandler({posX, setPosX, setRotate, SQUARE_SIZE, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs}){
-    const newPosX = posX === 1 ? posX : posX - 1
+function leftClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs}){
+    const newPosX = posX === NO_ACCESS_AREA + 1 ? posX : posX - 1
     setPosX(newPosX)
     setRotate(270)
-    coinCollector(figureRef, newPosX, coinsPositions, SQUARE_SIZE, scrollerRef, coinsRefs, setCollectedCoins)
+    coinCollector(figureRef, newPosX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins)
 }
 
-function upClickHandler({scrollerRef, setRotate, SQUARE_SIZE, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX}){
-    const currentScroll = scrollerRef.current.scrollTop
-    const currentRow = Math.round(currentScroll / SQUARE_SIZE)
-    const newRow = currentRow - 1
-    scrollerRef.current.scrollTop = newRow * SQUARE_SIZE
-    setRotate(prev => prev === 270 || prev === 360 ? 360 : 0)
-    coinCollector(figureRef, posX, coinsPositions, SQUARE_SIZE, scrollerRef, coinsRefs, setCollectedCoins)
+function upClickHandler({ scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX }) {
+    const topRow = Math.floor(scrollerRef.current.scrollTop / SQUARE_SIZE);
+    const newTopRow = topRow - 1
+
+    scrollerRef.current.scrollTop = newTopRow * SQUARE_SIZE;
+    setRotate(prev => (prev === 270 || prev === 360 ? 360 : 0));
+
+    const figurePosition = calculateGridLocationFromPixels(posX, scrollerRef);
+    if (figurePosition.y_grid === 10) alert("WIN!"); // TODO add winning logic
+
+    coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins);
 }
 
-function downClickHandler({scrollerRef, setRotate, SQUARE_SIZE, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX}){
-    const currentScroll = scrollerRef.current.scrollTop
-    const currentRow = Math.round(currentScroll / SQUARE_SIZE)
-    const newRow = currentRow + 1
-    scrollerRef.current.scrollTop = newRow * SQUARE_SIZE
-    setRotate(180)
-    coinCollector(figureRef, posX, coinsPositions, SQUARE_SIZE, scrollerRef, coinsRefs, setCollectedCoins)
+function downClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX}){
+    const topRow = Math.floor(scrollerRef.current.scrollTop / SQUARE_SIZE);
+    const newTopRow = topRow + 1
+
+    scrollerRef.current.scrollTop = newTopRow * SQUARE_SIZE;
+    setRotate(180);
+
+    coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins);
 }
 
 // funkcia na zistenie, ake tlacidlo bolo stlacene
@@ -66,10 +70,8 @@ function whatKeyWasPressed({
                                key,
                                scrollerRef,
                                setRotate,
-                               SQUARE_SIZE,
                                posX,
                                setPosX,
-                               NUM_OF_COLUMNS,
                                NUM_OF_ROWS,
                                setCollectedCoins,
                                figureRef,
@@ -80,7 +82,6 @@ function whatKeyWasPressed({
         case "w": upClickHandler({
             scrollerRef,
             setRotate,
-            SQUARE_SIZE,
             NUM_OF_ROWS,
             setCollectedCoins,
             figureRef,
@@ -93,7 +94,6 @@ function whatKeyWasPressed({
             posX,
             setPosX,
             setRotate,
-            SQUARE_SIZE,
             NUM_OF_ROWS,
             setCollectedCoins,
             figureRef,
@@ -105,7 +105,6 @@ function whatKeyWasPressed({
         case "s": downClickHandler({
             scrollerRef,
             setRotate,
-            SQUARE_SIZE,
             NUM_OF_ROWS,
             setCollectedCoins,
             figureRef,
@@ -118,8 +117,6 @@ function whatKeyWasPressed({
             posX,
             setPosX,
             setRotate,
-            SQUARE_SIZE,
-            NUM_OF_COLUMNS,
             NUM_OF_ROWS,
             setCollectedCoins,
             figureRef,
@@ -136,13 +133,12 @@ export default function Movement({
                                      setPosX,
                                      setRotate,
                                      scrollerRef,
-                                     SQUARE_SIZE,
-                                     NUM_OF_COLUMNS,
                                      NUM_OF_ROWS,
                                      setCollectedCoins,
                                      figureRef,
                                      coinsPositions,
-                                     coinsRefs}){
+                                     coinsRefs,
+                                 }){
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; // zistime, ci sme na dotykovom zariadeni alebo pc
     useEffect(() => {   // eventlistener na WASD clicky, odstrani sa po unmounte komponentu
         const handler = (e) => {
@@ -150,10 +146,8 @@ export default function Movement({
                 key: e.key,
                 scrollerRef,
                 setRotate,
-                SQUARE_SIZE,
                 posX,
                 setPosX,
-                NUM_OF_COLUMNS,
                 NUM_OF_ROWS,
                 setCollectedCoins,
                 figureRef,
@@ -163,7 +157,7 @@ export default function Movement({
         }
         window.addEventListener("keydown", handler);
         return () => window.removeEventListener("keydown", handler);
-    }, [scrollerRef, setRotate, SQUARE_SIZE, setPosX, NUM_OF_COLUMNS, NUM_OF_ROWS, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX]);
+    }, [scrollerRef, setRotate, setPosX, NUM_OF_ROWS, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX]);
 
 
     return(
@@ -174,13 +168,13 @@ export default function Movement({
                                 whileTap={{scale: 0.95}}
                                 className="col-start-1 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat w-22 h-22"
                                 onClick={() =>
-                                    upClickHandler({scrollerRef, setRotate, SQUARE_SIZE, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX})}>
+                                    upClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX, NUM_OF_ROWS})}>
                     </motion.div>
                     <motion.div whileHover={{scale: 1.1}} // ARROW DOWN ↓
                                 whileTap={{scale: 0.95}}
                                 className="col-start-1 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-180 w-22 h-22"
                                 onClick={() =>
-                                    downClickHandler({scrollerRef, setRotate, SQUARE_SIZE, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX})}>
+                                    downClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX, NUM_OF_ROWS})}>
                     </motion.div>
                 </div>
 
@@ -189,13 +183,13 @@ export default function Movement({
                                 whileTap={{scale: 0.95}}
                                 className="col-start-1 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-270 w-22 h-22"
                                 onClick={() =>
-                                    leftClickHandler({posX, setPosX, setRotate, SQUARE_SIZE, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs})}>
+                                    leftClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs, NUM_OF_ROWS})}>
                     </motion.div>
                     <motion.div whileHover={{scale: 1.1}} // ARROW RIGHT →
                                 whileTap={{scale: 0.95}}
                                 className="col-start-2 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-90 w-22 h-22"
                                 onClick={() =>
-                                    rightClickHandler({posX, setPosX, setRotate, SQUARE_SIZE, NUM_OF_COLUMNS, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs})}>
+                                    rightClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs, NUM_OF_ROWS})}>
                     </motion.div>
                 </div>
             </>
@@ -205,25 +199,25 @@ export default function Movement({
                             whileTap={{scale: 0.95}}
                             className="col-start-2 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat"
                             onClick={() =>
-                                upClickHandler({scrollerRef, setRotate, SQUARE_SIZE, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX})}>
+                                upClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX, NUM_OF_ROWS})}>
                 </motion.div>
                 <motion.div whileHover={{scale: 1.1}} // ARROW LEFT ←
                             whileTap={{scale: 0.95}}
                             className="col-start-1 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-270"
                             onClick={() =>
-                                leftClickHandler({posX, setPosX, setRotate, SQUARE_SIZE, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs})}>
+                                leftClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs, NUM_OF_ROWS})}>
                 </motion.div>
                 <motion.div whileHover={{scale: 1.1}} // ARROW DOWN ↓
                             whileTap={{scale: 0.95}}
                             className="col-start-2 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-180 mb-1"
                             onClick={() =>
-                                downClickHandler({scrollerRef, setRotate, SQUARE_SIZE, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX})}>
+                                downClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, coinsRefs, posX, NUM_OF_ROWS})}>
                 </motion.div>
                 <motion.div whileHover={{scale: 1.1}} // ARROW RIGHT →
                             whileTap={{scale: 0.95}}
                             className="col-start-3 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-90"
                             onClick={() =>
-                                rightClickHandler({posX, setPosX, setRotate, SQUARE_SIZE, NUM_OF_COLUMNS, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs})}>
+                                rightClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, scrollerRef, coinsRefs, NUM_OF_ROWS})}>
                 </motion.div>
                 <motion.div className="absolute bottom-0 font-bold w-full text-center">or use WASD
                 </motion.div>
