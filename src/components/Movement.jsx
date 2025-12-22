@@ -10,7 +10,6 @@ function obstacleFinder(figureRef){
 function coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins){
     // suradnice figurky v px
     const figure_grid_position = calculateGridLocationFromPixels(posX, scrollerRef)
-    console.log("fig: " + figure_grid_position.x_grid + " " + figure_grid_position.y_grid);
     for(let i = 0; i < coinsPositions.length; i++) {
         // suradnice figurky v gride
         const coin_grid_position = {

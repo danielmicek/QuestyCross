@@ -18,7 +18,7 @@ export default function DraggableAbility({ability}) {
             <img
                 ref = {setNodeRef}
                 src={ability.image}
-                className="w-[60px] h-[60px] object-cover absolute left-8 cursor-grab active:cursor-grabbing hover:scale-105 transition-all"
+                className="w-[60px] h-[60px] object-cover absolute left-8 cursor-grab active:cursor-grabbing hover:scale-105"
                 alt={ability.name}
                 {...listeners}
                 {...attributes}
