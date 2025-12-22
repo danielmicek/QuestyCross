@@ -42,15 +42,22 @@ function getCurrentLevel(levels){
     }
 }
 
-function detectCollision(figureRef, carRef, SQUARE_SIZE) {
-    if (figureRef.current.getBoundingClientRect().x > carRef.current.getBoundingClientRect().x + carRef.width ||
-        figureRef.current.getBoundingClientRect().x + SQUARE_SIZE < carRef.current.getBoundingClientRect().x ||
-        figureRef.current.getBoundingClientRect().y > carRef.current.getBoundingClientRect().y + carRef.height ||
-        figureRef.current.getBoundingClientRect().y + SQUARE_SIZE < carRef.current.getBoundingClientRect().y) {
-        return false;
+function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef) {
+    const figureX_px = posX
+    const figureY_px = figureRef.current.getBoundingClientRect().y
+    const figure_grid_position = calculateGridLocationFromPixels(figureX_px, figureY_px, SQUARE_SIZE, scrollerRef);
+    for (const car of Object.values(carRef.current)) {
+        if (
+            car.x < figure_grid_position.x_grid + 1 &&
+            car.x + 1 > figure_grid_position.x_grid &&
+            car.y < figure_grid_position.y_grid + 1 &&
+            car.y + 1 > figure_grid_position.y_grid
+        ) {
+            console.log("collision detected!");
+            return true;
+        }
     }
-    console.log("collision detected!");
-    return true;
+    return false;
 }
 
 // WORLD_CONTAINER je v podstate tvoja obrazovka, nema overflow, je to teda len to co sa mesti na obrazovku
@@ -88,9 +95,8 @@ export default function GameBoard() {
         let animationId;
 
         const checkCollisions = () => {
-            //console.log(carPostition1Ref.current)
-            //detectCollision(figurePositionRef, carPostition1Ref, SQUARE_SIZE);
-            //detectCollision(figurePositionRef, carPostition2Ref, SQUARE_SIZE);
+            detectCollision(carPostition1Ref,figurePositionRef,posX, SQUARE_SIZE,scrollerRef);
+            detectCollision(carPostition2Ref,figurePositionRef,posX, SQUARE_SIZE,scrollerRef);
 
             animationId = requestAnimationFrame(checkCollisions);
         };
@@ -98,7 +104,7 @@ export default function GameBoard() {
         checkCollisions();
 
         return () => cancelAnimationFrame(animationId);
-    }, [SQUARE_SIZE]);
+    }, [SQUARE_SIZE, posX]);
 
     return (
         <>

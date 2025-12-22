@@ -33,44 +33,60 @@ export default function Road({rowsFromTop, SQUARE_SIZE, carPosition1Ref, carPosi
 
     return (
         <>
-            <div className="road absolute w-full border-amber-700 border-2 bg-[url('/road.png')] bg-center bg-cover overflow-hidden"
+            <div className="road grid grid-rows-2 absolute w-full border-amber-700 border-2 bg-[url('/road.png')] bg-center bg-cover overflow-hidden"
                  style={{gridRowStart: rowsFromTop, height: 2*SQUARE_SIZE}}> {/*`${ROW_HEIGHT*2}px`*/}
-                {cars1.map(car => (
-                    <motion.div key ={car} className="bg-[url('/red_car.png')] bg-contain bg-no-repeat w-15 h-15 md:w-25 md:h-25 absolute bottom-[calc(50%-20px)] left-0 z-10"
-                                initial={{x: "-10vw"}}
-                                animate={{x: "100vw"}}
-                                transition={{ duration: 5, ease: "linear" }}
-                                onAnimationComplete={() => setCars1((prev) => prev.filter((c) => c !== car))}
-                                onUpdate={(latest) =>{
-                                    if (carPosition1Ref.current) {
-                                        carPosition1Ref.current[car] = {
-                                            x: latest.x,
-                                            y: latest.y,
+                <div className="relative h-full flex items-center">
+                    {cars1.map(car => (
+                        <motion.div key ={car} className="bg-[url('/red_car.png')] bg-contain bg-no-repeat absolute left-0 z-10 border-amber-500 border-2"
+                                    style={{
+                                        width: SQUARE_SIZE,
+                                        height: SQUARE_SIZE
+                                    }}
+                                    initial={{x: -0.1 * window.innerWidth}}
+                                    animate={{x: window.innerWidth}}
+                                    transition={{ duration: 5, ease: "linear" }}
+                                    onAnimationComplete={() => {
+                                        setCars1((prev) => prev.filter((c) => c !== car));
+                                        delete carPosition1Ref.current[car];
+                                    }}
+                                    onUpdate={(latest) =>{
+                                        if (carPosition1Ref.current) {
+                                            carPosition1Ref.current[car] = {
+                                                x: Math.floor(latest.x / SQUARE_SIZE),
+                                                y: rowsFromTop,
+                                            }
                                         }
-                                    }
-                                }}
-                                >
-                    </motion.div>
-                ))}
-
-                {cars2.map(car => (
-                    <motion.div key ={car} className="bg-[url('/red_car.png')] bg-contain bg-no-repeat w-15 h-15 md:w-25 md:h-25 absolute top-[calc(50%-20px)] left-0 z-10"
-                                initial={{x: "-10vw"}}
-                                animate={{x: "100vw"}}
-                                transition={{ duration: 7, ease: "linear" }}
-                                onAnimationComplete={() => setCars2((prev) => prev.filter((c) => c !== car))}
-                                onUpdate={(latest) =>{
-                                    if (carPosition2Ref.current) {
-                                        carPosition2Ref.current[car] = {
-                                            x: latest.x,
-                                            y: latest.y,
+                                    }}
+                        >
+                        </motion.div>
+                    ))}
+                </div>
+                <div className="relative h-full flex items-center">
+                    {cars2.map(car => (
+                        <motion.div key ={car} className="bg-[url('/red_car.png')] bg-contain bg-no-repeat absolute left-0 z-10 border-amber-500 border-2"
+                                    style={{
+                                        width: SQUARE_SIZE,
+                                        height: SQUARE_SIZE
+                                    }}
+                                    initial={{x: -0.1 * window.innerWidth, y:0}}
+                                    animate={{x: window.innerWidth, y:0}}
+                                    transition={{ duration: 7, ease: "linear" }}
+                                    onAnimationComplete={() => {
+                                        setCars2((prev) => prev.filter((c) => c !== car));
+                                        delete carPosition2Ref.current[car];
+                                    }}
+                                    onUpdate={(latest) =>{
+                                        if (carPosition2Ref.current) {
+                                            carPosition2Ref.current[car] = {
+                                                x: Math.floor(latest.x / SQUARE_SIZE),
+                                                y: rowsFromTop + 1,
+                                            }
                                         }
-                                    }
-                                }}
-                                >
-                    </motion.div>
-                ))}
-
+                                    }}
+                        >
+                        </motion.div>
+                    ))}
+                </div>
             </div>
         </>
 
