@@ -11,9 +11,9 @@ import DroppableFigure from "../components/dnd/DroppableFigure.jsx";
 import {toast, Toaster} from "react-hot-toast";
 import Coin from "../components/Coin.jsx";
 import {calculateGridLocationFromPixels, getCurrentLevel} from "../components/shared/functions.jsx";
-import NoAccessAreaComponent from "../components/NoAccessAreaComponent.jsx";
 import FinishLine from "../components/FinishLine.jsx";
 import {NUM_OF_COLUMNS, SQUARE_SIZE, ACTIVE_AREA, NO_ACCESS_AREA} from "../components/shared/constants.jsx";
+import NoAccessComponent from "../components/NoAccessComponent.jsx";
 
 
 function handleDragEnd(event, abilities, setAbilities) {
@@ -82,11 +82,11 @@ function createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COL
         if(!isRoadOnPosition(roadsPositions, y)){
             // vyplnanie stlpcov zlava
             for(let x = 0; x < NO_ACCESS_AREA; x++){
-                array.push(<NoAccessAreaComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={x}/>)
+                array.push(<NoAccessComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={x}/>)
             }
             // vyplnanie stlpcov zprava
             for(let x = 0; x < NO_ACCESS_AREA; x++){
-                array.push(<NoAccessAreaComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={NUM_OF_COLUMNS - x}/>)
+                array.push(<NoAccessComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={NUM_OF_COLUMNS - x}/>)
             }
         }
     }
@@ -103,6 +103,7 @@ export default function GameBoard() {
 
 
     const scrollerRef = useRef(null);
+    const worldRef = useRef(null);
     const carPostitionRef = useRef({});
     const figurePositionRef = useRef({});
     const [posX, setPosX] = useState((NUM_OF_COLUMNS + 1) / 2);
@@ -119,9 +120,13 @@ export default function GameBoard() {
     const NUM_OF_ROWS = CURRENT_LEVEL.rowsCount
     const roadsPositions = CURRENT_LEVEL.roadsPositions                                              // pole pozicii vsetkych ciest v aktualnom leveli
 
+    useEffect(() => {
+        console.log(worldRef.current.getBoundingClientRect().height / SQUARE_SIZE);
+    }, []);
+
     useEffect(() => { // scroll uplne dole pri prvom nacitani
         scrollerRef.current.scrollTo({
-            top: 100000,
+            top: Math.floor((CURRENT_LEVEL.rowsCount) * SQUARE_SIZE),
             behavior: "smooth"
         })
     }, []);
@@ -155,6 +160,7 @@ export default function GameBoard() {
                       setCollectedCoins = {setCollectedCoins}
                       figureRef = {figurePositionRef}
                       coinsPositions = {CURRENT_LEVEL.coinsPositions}
+                      obstaclesPositions = {CURRENT_LEVEL.obstaclesPositions}
                       coinsRefs = {coinsRefs}
             />
             <div id = "WORLD_CONTAINER" className="gameBoardContainer relative w-screen h-screen overflow-hidden">
@@ -179,7 +185,7 @@ export default function GameBoard() {
                 </motion.div>}
 
                 {isDeathModalVisible && <motion.div id="START_GAME_POPUP" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.1}}}
-                                                   className="border-2 fixed m-0 top-1/2 left-1/2 -translate-x-1/2 transition-transform -translate-y-1/2 rounded-2xl w-[370px] overflow-hidden z-999">
+                                                    className="border-2 fixed m-0 top-1/2 left-1/2 -translate-x-1/2 transition-transform -translate-y-1/2 rounded-2xl w-[370px] overflow-hidden z-999">
                     <div>
                         <h3 className="font-bold text-2xl text-center bg-yellow-300 p-2 "> Are you sure you want to leave?</h3>
                         <div>
@@ -207,7 +213,7 @@ export default function GameBoard() {
 
                 <div id="WORLD_SCROLLER" ref={scrollerRef}
                      className="scroller h-full overflow-y-auto overflow-x-hidden">
-                    <div id="WORLD" className="relative w-screen bg-[url('/grass.jpg')] grid"
+                    <div id="WORLD" className="relative w-screen bg-[url('/grass.jpg')] grid" ref = {worldRef}
                          style={{
                              height: `${NUM_OF_ROWS * SQUARE_SIZE}px`,
                              gridTemplateRows: `repeat(${NUM_OF_ROWS},${SQUARE_SIZE}px)`,
@@ -220,7 +226,9 @@ export default function GameBoard() {
                         <Road rowsFromTop={35} carPositionRef={carPostitionRef}/>
                         {CURRENT_LEVEL.roadsPositions.map((road, index) => (<Road rowsFromTop={road} carPositionRef={carPostitionRef} key={index}/>))}
 
-                        {CURRENT_LEVEL.coinsPositions.map((coin, i) => (<Coin positionFromLeft = {coin.x + NO_ACCESS_AREA} positionFromTop={coin.y} key={coin.x + coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>))}
+                        {CURRENT_LEVEL.coinsPositions.map((coin, i) => (<Coin positionFromLeft = {coin.x + NO_ACCESS_AREA} positionFromTop={coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>))}
+
+                        {CURRENT_LEVEL.obstaclesPositions.map(coin => (<NoAccessComponent SQUARE_SIZE={SQUARE_SIZE} colsFromSide = {coin.x + NO_ACCESS_AREA} rowsFromTop={coin.y}/>))}
                     </div>
                 </div>
 
@@ -229,7 +237,7 @@ export default function GameBoard() {
                         {abilities.map(ability =>
                             ability.owned > 0 && (<DraggableAbility ability={ability} key={ability.id}/>)
                         )}
-                    </motion.div>d
+                    </motion.div>
 
                     <DroppableFigure posX={posX} rotate={rotate} SQUARE_SIZE = {SQUARE_SIZE} NUM_OF_COLUMNS = {NUM_OF_COLUMNS} ref = {figurePositionRef}/>
                 </DndContext>

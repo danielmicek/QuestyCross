@@ -30,3 +30,7 @@ export function getCurrentLevel(levels){
         if(!level.passed) return level
     }
 }
+
+export function getRandomTree(trees){
+    return trees[Math.floor(Math.random()*trees.length)];
+}

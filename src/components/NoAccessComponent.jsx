@@ -1,10 +1,6 @@
+import {getRandomTree} from "./shared/functions.jsx";
 
-
-function getRandomTree(trees){
-    return trees[Math.floor(Math.random()*trees.length)];
-}
-
-export default function NoAccessAreaComponent({SQUARE_SIZE, colsFromSide, rowsFromTop}) {
+export default function NoAccessComponent({SQUARE_SIZE, colsFromSide, rowsFromTop}) {
 
     const trees = [
         "/tree1.png"
