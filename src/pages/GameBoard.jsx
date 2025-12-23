@@ -14,6 +14,7 @@ import {calculateGridLocationFromPixels, getCurrentLevel} from "../components/sh
 import FinishLine from "../components/FinishLine.jsx";
 import {NUM_OF_COLUMNS, SQUARE_SIZE, ACTIVE_AREA, NO_ACCESS_AREA} from "../components/shared/constants.jsx";
 import NoAccessComponent from "../components/NoAccessComponent.jsx";
+import UpperBar from "../components/UpperBar.jsx";
 
 
 function handleDragEnd(event, abilities, setAbilities) {
@@ -190,9 +191,7 @@ export default function GameBoard() {
                         <h3 className="font-bold text-2xl text-center bg-yellow-300 p-2 "> Are you sure you want to leave?</h3>
                         <div>
                             <Link to = "/" className="buttonLink">
-                                <motion.button id = "YES_BUTTON" className="bg-black text-white font-bold w-full h-16 hover:bg-gray-600 border-b-yellow-300 border-b-2"
-                                               onClick={() => deathHandler(setIsDeathModalVisible)}>Yes
-                                </motion.button>
+                                <motion.button id = "YES_BUTTON" className="bg-black text-white font-bold w-full h-16 hover:bg-gray-600 border-b-yellow-300 border-b-2">Yes</motion.button>
                             </Link>
 
                             <motion.button id = "NO_BUTTON" className="bg-black text-white font-bold w-full h-16 hover:bg-gray-600"
@@ -203,13 +202,7 @@ export default function GameBoard() {
 
                 </motion.div>}
 
-                <div id = "EXIT_BUTTON" className= "absolute rounded-full top-2 left-2 z-999" onClick={() => exitHandler(setIsExitPopupVisible)}>
-                    <CustomButton text="Exit"/>
-                </div>
-
-                <div id = "COLLECTED_COINS" className= "absolute rounded-full top-5 left-70 font-bold text-lg text-shadow-lg z-1005">
-                    collected coins: {collectedCoins}
-                </div>
+                <UpperBar collectedCoins = {collectedCoins} exitHandler = {exitHandler} setIsExitPopupVisible = {setIsExitPopupVisible}/>
 
                 <div id="WORLD_SCROLLER" ref={scrollerRef}
                      className="scroller h-full overflow-y-auto overflow-x-hidden">
