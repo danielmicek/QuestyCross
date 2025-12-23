@@ -16,7 +16,6 @@ import FinishLine from "../components/FinishLine.jsx";
 import {NUM_OF_COLUMNS, SQUARE_SIZE, ACTIVE_AREA, NO_ACCESS_AREA} from "../components/shared/constants.jsx";
 
 
-
 function handleDragEnd(event, abilities, setAbilities) {
     const { active, over } = event;
 
@@ -35,16 +34,23 @@ function exitHandler(setExitPopupVisible){
     // TODO dorobit stopnutie timera
 }
 
+function deathHandler(setDeathModalVisible){
+    setDeathModalVisible(prev => !prev)
+}
+
 function getAllOwnedAbilities(abilities){
     return abilities.filter(ability => ability.owned > 0).length
 }
 
 
-function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef) {
+
+
+function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef, CURRENT_LEVEL) {
     const figureX_px = posX
-    const figureY_px = figureRef.current.getBoundingClientRect().y
     const figure_grid_position = calculateGridLocationFromPixels(figureX_px, scrollerRef);
+    if (!CURRENT_LEVEL.roadsPositions.some(roadY => roadY === figure_grid_position.y_grid || roadY + 1 === figure_grid_position.y_grid)) return false;
     for (const car of Object.values(carRef.current)) {
+        if (car.y !== Math.floor(figure_grid_position.y_grid) && car.y !== Math.ceil(figure_grid_position.y_grid)) continue;
         if (
             //Pevne hodnoty co priratavame su vyska a sirka figurky a aut,
             //menime ich kvoli lepsim hitboxom (obidva objekte su default 1x1 stvorecek)
@@ -97,12 +103,12 @@ export default function GameBoard() {
 
 
     const scrollerRef = useRef(null);
-    const carPostition1Ref = useRef({});
-    const carPostition2Ref = useRef({});
+    const carPostitionRef = useRef({});
     const figurePositionRef = useRef({});
     const [posX, setPosX] = useState((NUM_OF_COLUMNS + 1) / 2);
     const [rotate, setRotate] = useState(0);
     const [isExitPopupVisible, setIsExitPopupVisible] = useState(false);
+    const [isDeathModalVisible, setIsDeathModalVisible] = useState(false);
     const [abilities, setAbilities] = useState(JSON.parse(localStorage.getItem("abilities")))
     const [levels, setLevels] = useState(JSON.parse(localStorage.getItem("levels")))
     const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
@@ -124,16 +130,19 @@ export default function GameBoard() {
         let animationId;
 
         const checkCollisions = () => {
-            detectCollision(carPostition1Ref,figurePositionRef,posX, SQUARE_SIZE, scrollerRef);
-            detectCollision(carPostition2Ref,figurePositionRef,posX, SQUARE_SIZE, scrollerRef);
+            const collision = detectCollision(carPostitionRef,figurePositionRef,posX, SQUARE_SIZE, scrollerRef,CURRENT_LEVEL);
 
+            if (collision) {
+                setIsDeathModalVisible(true);
+                return;
+            }
             animationId = requestAnimationFrame(checkCollisions);
         };
 
         checkCollisions();
 
         return () => cancelAnimationFrame(animationId);
-    }, [SQUARE_SIZE, posX]);
+    }, [posX]);
 
     return (
         <>
@@ -169,6 +178,25 @@ export default function GameBoard() {
 
                 </motion.div>}
 
+                {isDeathModalVisible && <motion.div id="START_GAME_POPUP" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.1}}}
+                                                   className="border-2 fixed m-0 top-1/2 left-1/2 -translate-x-1/2 transition-transform -translate-y-1/2 rounded-2xl w-[370px] overflow-hidden z-999">
+                    <div>
+                        <h3 className="font-bold text-2xl text-center bg-yellow-300 p-2 "> Are you sure you want to leave?</h3>
+                        <div>
+                            <Link to = "/" className="buttonLink">
+                                <motion.button id = "YES_BUTTON" className="bg-black text-white font-bold w-full h-16 hover:bg-gray-600 border-b-yellow-300 border-b-2"
+                                               onClick={() => deathHandler(setIsDeathModalVisible)}>Yes
+                                </motion.button>
+                            </Link>
+
+                            <motion.button id = "NO_BUTTON" className="bg-black text-white font-bold w-full h-16 hover:bg-gray-600"
+                                           onClick={() => deathHandler(setIsDeathModalVisible)}>No
+                            </motion.button>
+                        </div>
+                    </div>
+
+                </motion.div>}
+
                 <div id = "EXIT_BUTTON" className= "absolute rounded-full top-2 left-2 z-999" onClick={() => exitHandler(setIsExitPopupVisible)}>
                     <CustomButton text="Exit"/>
                 </div>
@@ -188,7 +216,9 @@ export default function GameBoard() {
                         <FinishLine SQUARE_SIZE={SQUARE_SIZE}/>
                         {createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roadsPositions).map(singleComponent => singleComponent)}
 
-                        <Road rowsFromTop={35} carPosition1Ref={carPostition1Ref} carPosition2Ref={carPostition2Ref}/>
+                        {/*V tomto pripade akceptovatelne pouzit indexy ako keys*/}
+                        <Road rowsFromTop={35} carPositionRef={carPostitionRef}/>
+                        {CURRENT_LEVEL.roadsPositions.map((road, index) => (<Road rowsFromTop={road} carPositionRef={carPostitionRef} key={index}/>))}
 
                         {CURRENT_LEVEL.coinsPositions.map((coin, i) => (<Coin positionFromLeft = {coin.x + NO_ACCESS_AREA} positionFromTop={coin.y} key={coin.x + coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>))}
                     </div>

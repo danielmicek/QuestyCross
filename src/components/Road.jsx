@@ -8,7 +8,7 @@ function rand(min, max) {
 }
 
 
-export default function Road({rowsFromTop, carPosition1Ref, carPosition2Ref}) {
+export default function Road({rowsFromTop, carPositionRef}) {
     const [cars1, setCars1] = useState([]);
     const [cars2, setCars2] = useState([]);
     const carId1 = useRef(0)
@@ -48,11 +48,11 @@ export default function Road({rowsFromTop, carPosition1Ref, carPosition2Ref}) {
                                     transition={{ duration: 5, ease: "linear" }}
                                     onAnimationComplete={() => {
                                         setCars1((prev) => prev.filter((c) => c !== car));
-                                        delete carPosition1Ref.current[car];
+                                        delete carPositionRef.current[car];
                                     }}
                                     onUpdate={(latest) =>{
-                                        if (carPosition1Ref.current) {
-                                            carPosition1Ref.current[car] = {
+                                        if (carPositionRef.current) {
+                                            carPositionRef.current[car] = {
                                                 x:latest.x / SQUARE_SIZE,
                                                 y: rowsFromTop,
                                             }
@@ -74,11 +74,11 @@ export default function Road({rowsFromTop, carPosition1Ref, carPosition2Ref}) {
                                     transition={{ duration: 7, ease: "linear" }}
                                     onAnimationComplete={() => {
                                         setCars2((prev) => prev.filter((c) => c !== car));
-                                        delete carPosition2Ref.current[car];
+                                        delete carPositionRef.current[car];
                                     }}
                                     onUpdate={(latest) =>{
-                                        if (carPosition2Ref.current) {
-                                            carPosition2Ref.current[car] = {
+                                        if (carPositionRef.current) {
+                                            carPositionRef.current[car] = {
                                                 x: latest.x / SQUARE_SIZE,
                                                 y: rowsFromTop + 1,
                                             }
