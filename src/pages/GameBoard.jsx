@@ -107,22 +107,46 @@ export default function GameBoard() {
     const worldRef = useRef(null);
     const carPostitionRef = useRef({});
     const figurePositionRef = useRef({});
+    const roadContainerRef = useRef(null);
     const [posX, setPosX] = useState((NUM_OF_COLUMNS + 1) / 2);
     const [rotate, setRotate] = useState(0);
     const [isExitPopupVisible, setIsExitPopupVisible] = useState(false);
     const [isDeathModalVisible, setIsDeathModalVisible] = useState(false);
+    const [isRoadVisible, setIsRoadVisible] = useState(false);
     const [abilities, setAbilities] = useState(JSON.parse(localStorage.getItem("abilities")))
     const [levels, setLevels] = useState(JSON.parse(localStorage.getItem("levels")))
     const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
     const coinsRefs = useRef([])                                             // referencia na vsetky mince na mape -> sluzi na odstranenie mince z mapy po collectnuti
-
+    const counterRef = useRef(null)
 
     const CURRENT_LEVEL = getCurrentLevel(levels)                                                   // aktualny level, ktory je vykresleny
     const NUM_OF_ROWS = CURRENT_LEVEL.rowsCount
     const roadsPositions = CURRENT_LEVEL.roadsPositions                                              // pole pozicii vsetkych ciest v aktualnom leveli
 
     useEffect(() => {
-        console.log(worldRef.current.getBoundingClientRect().height / SQUARE_SIZE);
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    setIsRoadVisible(entry.isIntersecting);
+                    console.log(entry.isIntersecting)
+                });
+            },
+            {
+                root: null,
+                rootMargin: '200px',
+                threshold: 0
+            }
+        );
+
+        if (roadContainerRef.current) {
+            observer.observe(roadContainerRef.current);
+        }
+
+        return () => {
+            if (roadContainerRef.current) {
+                observer.unobserve(roadContainerRef.current);
+            }
+        };
     }, []);
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani
@@ -202,7 +226,7 @@ export default function GameBoard() {
 
                 </motion.div>}
 
-                <UpperBar collectedCoins = {collectedCoins} exitHandler = {exitHandler} setIsExitPopupVisible = {setIsExitPopupVisible}/>
+                <UpperBar collectedCoins = {collectedCoins} exitHandler = {exitHandler} setIsExitPopupVisible = {setIsExitPopupVisible} CURRENT_LEVEL={CURRENT_LEVEL} counterRef = {counterRef}/>
 
                 <div id="WORLD_SCROLLER" ref={scrollerRef}
                      className="scroller h-full overflow-y-auto overflow-x-hidden">
@@ -216,8 +240,7 @@ export default function GameBoard() {
                         {createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roadsPositions).map(singleComponent => singleComponent)}
 
                         {/*V tomto pripade akceptovatelne pouzit indexy ako keys*/}
-                        <Road rowsFromTop={35} carPositionRef={carPostitionRef}/>
-                        {CURRENT_LEVEL.roadsPositions.map((road, index) => (<Road rowsFromTop={road} carPositionRef={carPostitionRef} key={index}/>))}
+                        {CURRENT_LEVEL.roadsPositions.map((road, index) => (<Road rowsFromTop={road} carPositionRef={carPostitionRef} key={index} ref={roadContainerRef}/>))}
 
                         {CURRENT_LEVEL.coinsPositions.map((coin, i) => (<Coin positionFromLeft = {coin.x + NO_ACCESS_AREA} positionFromTop={coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>))}
 
@@ -226,7 +249,7 @@ export default function GameBoard() {
                 </div>
 
                 <DndContext onDragEnd={e => handleDragEnd(e, abilities, setAbilities)}>
-                    <motion.div id = "ABILITIES_CONTAINER" className= "w-[100px] z-999 absolute flex flex-col top-0 right-4" style={{ height: `${getAllOwnedAbilities(abilities) * 62}px` }}> {/*TODO zmenit right-4 na right-0 ked odstranis scrollbar !!!*/}
+                    <motion.div id = "ABILITIES_CONTAINER" className= "w-[100px] z-1002 absolute flex flex-col right-2" style={{ height: `${getAllOwnedAbilities(abilities) * 62}px`, top: window.innerWidth <= 550 ? "70px" : 0}}> {/*TODO zmenit right-4 na right-0 ked odstranis scrollbar !!!*/}
                         {abilities.map(ability =>
                             ability.owned > 0 && (<DraggableAbility ability={ability} key={ability.id}/>)
                         )}

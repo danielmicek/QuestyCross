@@ -7,17 +7,19 @@ import {NO_ACCESS_AREA, NUM_OF_COLUMNS, SQUARE_SIZE} from "./shared/constants.js
 function obstacleFinder(figureX_grid, figureY_grid, obstaclesPositions){
     for(let obstacle of obstaclesPositions){
         if(figureX_grid === (obstacle.x + NO_ACCESS_AREA) && figureY_grid === obstacle.y) {
-            console.log("obs finder")
             return true
         }
     }
     return false
 }
 
+function showWinningPopup(){
+}
+
 function coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins){
     // suradnice figurky v gride
     const figure_grid_position = calculateGridLocationFromPixels(posX, scrollerRef)
-    console.log("fig: ", figure_grid_position.x_grid, figure_grid_position.y_grid)
+    //console.log("fig: ", figure_grid_position.x_grid, figure_grid_position.y_grid)
     for(let i = 0; i < coinsPositions.length; i++) {
         // suradnice coinu v gride
         const coin_grid_position = {
@@ -69,7 +71,7 @@ function upClickHandler({ scrollerRef, setRotate, setCollectedCoins, figureRef, 
     scrollerRef.current.scrollTop = newTopRow * SQUARE_SIZE;
     figurePosition = calculateGridLocationFromPixels(posX, scrollerRef); // vypocitame nanovo po tom, ako sme sa posunuli (po scrolle)
 
-    if (figurePosition.y_grid === 10) alert("WIN!");
+    if (figurePosition.y_grid === 10) showWinningPopup()
 
     coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins);
 }
