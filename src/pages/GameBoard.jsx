@@ -72,7 +72,7 @@ function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef) {
         if (Math.abs(car.y - figure_grid_position.y_grid) > checkRange) continue;
         if (
             //Pevne hodnoty co priratavame su vyska a sirka figurky a aut,
-            //menime ich kvoli lepsim hitboxom (obidva objekte su default 1x1 stvorecek)
+            //menime ich kvoli lepsim hitboxom (obidva objekte su default 1x1 stvorcek)
             car.x + 0.6 < figure_grid_position.x_grid + 0.3 &&
             car.x + 1.5 > figure_grid_position.x_grid &&
             car.y < figure_grid_position.y_grid + 0.75 &&
@@ -155,7 +155,10 @@ export default function GameBoard() {
     const checkCollisionCallback = () => {
         const collision = detectCollision(carPostitionRef, figurePositionRef, posX, SQUARE_SIZE, scrollerRef);
         if (collision && !isLosingPopupVisible) {
-            // setIsLosingModalVisible(true);
+            if (shield) {
+                return;
+            }
+            setIsLosingModalVisible(true);
         }
     };
 
@@ -179,23 +182,6 @@ export default function GameBoard() {
                 {isExitPopupVisible && <ExitModal setIsExitPopupVisible = {setIsExitPopupVisible}/>}
                 {isWinningPopupVisible && <WinningPopup CURRENT_LEVEL={CURRENT_LEVEL} collectedCoins={collectedCoins} coins2x={coin2x} coins3x={coin3x}/>}
                 {isLosingPopupVisible && <LosingPopup/>}
-
-                {/*{isLosingModalVisible &&<>*/}
-                {/*    <div className="fixed inset-0 backdrop-blur-md bg-black/30 pointer-events-auto z-[998]"></div>*/}
-                {/*    <motion.div className="bg-white border-3 fixed m-0 p-3 top-1/2 left-1/2 -translate-x-1/2 transition-transform -translate-y-1/2 rounded-[20px] overflow-hidden z-999 justify-center flex flex-col"*/}
-                {/*                initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.1}}} style={{width: SQUARE_SIZE * ACTIVE_AREA}}>*/}
-                {/*        <h1 className="font-bold text-5xl text-center">Game Over</h1>*/}
-                {/*        <p className="text-center mt-5 text-lg">Oops, car go brm!<br/>Do you want try again?</p>*/}
-                {/*        <div className="flex justify-around mt-5">*/}
-                {/*            <Link to = "/" className="buttonLink">*/}
-                {/*                <CustomButton text="Exit to Menu"/>*/}
-                {/*            </Link>*/}
-                {/*            <div id = "PLAY_AGAIN_BUTTON" className= "rounded-full" onClick={() => window.location.reload()}>*/}
-                {/*                <CustomButton text="Play again"/>*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    </motion.div>*/}
-                {/*</>}*/}
 
 
                 <UpperBar collectedCoins = {collectedCoins}
