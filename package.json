@@ -25,7 +25,8 @@
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.19",
     "swiper": "^12.0.3",
-    "tailwindcss": "^4.1.17"
+    "tailwindcss": "^4.1.17",
+    "use-timer": "^2.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

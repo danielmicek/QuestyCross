@@ -5,6 +5,7 @@ import { motion } from "motion/react"
 import figuresFromJsonFile from "../../data/figures.json"
 import abilitiesFromJsonFile from "../../data/abilities.json"
 import levelsFromJsonFile from "../../data/levels.json"
+import RulesModal from "../components/RulesModal.jsx";
 
 function popupVisibilityHandler(setIsStartPopupVisible, setIsMenuVisible){
     setIsStartPopupVisible(prev => !prev);
@@ -31,6 +32,7 @@ export default function Menu() {
     const [isMenuVisible, setIsMenuVisible] = useState(true)
     const [coins, setCoins] = useState(parseInt(localStorage.getItem("coins")) || 1000)
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; // zistime, ci sme na dotykovom zariadeni alebo pc
+    const [isRulesVisible, setIsRulesVisible] = useState(false);
 
     const levelsData = levelsFromJsonFile;
     const shuffled = shuffleLevels(levelsData);
@@ -100,8 +102,9 @@ export default function Menu() {
                             className="bg-black text-white w-full h-16 hover:bg-gray-600 border-b-yellow-300 border-b-2">Shop
                         </button>
                     </Link>
-                    <button className="bg-black text-white w-full h-16 hover:bg-gray-600">Rules</button>
+                    <button className="bg-black text-white w-full h-16 hover:bg-gray-600" onClick={() => setIsRulesVisible(true)}>Rules</button>
                 </motion.div>}
+            {isRulesVisible && <RulesModal setIsRulesVisible={setIsRulesVisible}/>}
         </div>
     )
 }

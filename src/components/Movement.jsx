@@ -14,6 +14,7 @@ function obstacleFinder(figureX_grid, figureY_grid, obstaclesPositions){
 }
 
 function showWinningPopup(){
+    console.log("winning")
 }
 
 function coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins){
@@ -58,7 +59,7 @@ function leftClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRe
     coinCollector(figureRef, newPosX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins)
 }
 
-function upClickHandler({ scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX }) {
+function upClickHandler({ scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, setIsWinningModalVisible}) {
     const currentScrollTop = scrollerRef.current.scrollTop;
     const topRow = Math.round(currentScrollTop / SQUARE_SIZE);
     const newTopRow = topRow - 1;
@@ -71,7 +72,7 @@ function upClickHandler({ scrollerRef, setRotate, setCollectedCoins, figureRef, 
     scrollerRef.current.scrollTop = newTopRow * SQUARE_SIZE;
     figurePosition = calculateGridLocationFromPixels(posX, scrollerRef); // vypocitame nanovo po tom, ako sme sa posunuli (po scrolle)
 
-    if (figurePosition.y_grid === 10) showWinningPopup()
+    if (figurePosition.y_grid === 10) setIsWinningModalVisible(true)
 
     coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins);
 }
@@ -106,7 +107,8 @@ function whatKeyWasPressed({
                                figureRef,
                                coinsPositions,
                                obstaclesPositions,
-                               coinsRefs
+                               coinsRefs,
+                               setIsWinningModalVisible
                            }){
     switch(key){
         case "w": upClickHandler({
@@ -118,9 +120,10 @@ function whatKeyWasPressed({
             coinsPositions,
             obstaclesPositions,
             coinsRefs,
-            posX
+            posX,
+            setIsWinningModalVisible
         })
-                  break
+            break
         case "a": leftClickHandler({
             posX,
             setPosX,
@@ -133,7 +136,7 @@ function whatKeyWasPressed({
             scrollerRef,
             coinsRefs
         })
-                  break
+            break
         case "s": downClickHandler({
             scrollerRef,
             setRotate,
@@ -145,7 +148,7 @@ function whatKeyWasPressed({
             coinsRefs,
             posX
         })
-                  break
+            break
         case "d": rightClickHandler({
             posX,
             setPosX,
@@ -158,7 +161,7 @@ function whatKeyWasPressed({
             scrollerRef,
             coinsRefs
         })
-                  break
+            break
     }
 }
 
@@ -173,6 +176,7 @@ export default function Movement({
                                      coinsPositions,
                                      obstaclesPositions,
                                      coinsRefs,
+                                     setIsWinningModalVisible
                                  }){
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; // zistime, ci sme na dotykovom zariadeni alebo pc
     useEffect(() => {   // eventlistener na WASD clicky, odstrani sa po unmounte komponentu
@@ -188,12 +192,13 @@ export default function Movement({
                 figureRef,
                 coinsPositions,
                 obstaclesPositions,
-                coinsRefs
+                coinsRefs,
+                setIsWinningModalVisible
             });
         }
-        window.addEventListener("keydown", handler);
+        window.addEventListener("keydown", handler)
         return () => window.removeEventListener("keydown", handler);
-    }, [scrollerRef, setRotate, setPosX, NUM_OF_ROWS, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX]);
+    }, [scrollerRef, setRotate, setPosX, NUM_OF_ROWS, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, setIsWinningModalVisible]);
 
 
     return(
@@ -204,7 +209,7 @@ export default function Movement({
                                 whileTap={{scale: 0.95}}
                                 className="col-start-1 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat w-22 h-22"
                                 onClick={() =>
-                                    upClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, NUM_OF_ROWS})}>
+                                    upClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, NUM_OF_ROWS, setIsWinningModalVisible})}>
                     </motion.div>
                     <motion.div whileHover={{scale: 1.1}} // ARROW DOWN ↓
                                 whileTap={{scale: 0.95}}
@@ -235,7 +240,7 @@ export default function Movement({
                             whileTap={{scale: 0.95}}
                             className="col-start-2 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat"
                             onClick={() =>
-                                upClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, NUM_OF_ROWS})}>
+                                upClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, NUM_OF_ROWS, setIsWinningModalVisible})}>
                 </motion.div>
                 <motion.div whileHover={{scale: 1.1}} // ARROW LEFT ←
                             whileTap={{scale: 0.95}}

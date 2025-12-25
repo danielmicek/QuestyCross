@@ -8,7 +8,7 @@ function rand(min, max) {
 }
 
 
-export default function Road({rowsFromTop, carPositionRef}) {
+export default function Road({rowsFromTop, carPositionRef,onCollisionCheck}) {
     const [cars1, setCars1] = useState([]);
     const [cars2, setCars2] = useState([]);
     const carId1 = useRef(0)
@@ -56,6 +56,7 @@ export default function Road({rowsFromTop, carPositionRef}) {
                                                 x:latest.x / SQUARE_SIZE,
                                                 y: rowsFromTop,
                                             }
+                                            onCollisionCheck?.();
                                         }
                                     }}
                         >
@@ -82,6 +83,7 @@ export default function Road({rowsFromTop, carPositionRef}) {
                                                 x: latest.x / SQUARE_SIZE,
                                                 y: rowsFromTop + 1,
                                             }
+                                            onCollisionCheck?.();
                                         }
                                     }}
                         >
