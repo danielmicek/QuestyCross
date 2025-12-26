@@ -1,24 +1,21 @@
 import Road from "../components/Road.jsx";
 import {useEffect, useRef, useState} from "react";
 import Movement from "../components/Movement.jsx";
-import { motion } from "framer-motion"
-import CustomButton from "../components/CustomButton.jsx";
-import {Link} from "react-router-dom";
+import {motion} from "framer-motion"
 import {DndContext} from '@dnd-kit/core';
-import {CSS} from '@dnd-kit/utilities';
 import DraggableAbility from "../components/dnd/DraggableAbility.jsx";
 import DroppableFigure from "../components/dnd/DroppableFigure.jsx";
 import {toast, Toaster} from "react-hot-toast";
 import Coin from "../components/Coin.jsx";
 import {calculateGridLocationFromPixels, getCurrentLevel} from "../components/shared/functions.jsx";
 import FinishLine from "../components/FinishLine.jsx";
-import {NUM_OF_COLUMNS, SQUARE_SIZE, ACTIVE_AREA, NO_ACCESS_AREA} from "../components/shared/constants.jsx";
+import {NO_ACCESS_AREA, NUM_OF_COLUMNS, SQUARE_SIZE} from "../components/shared/constants.jsx";
 import NoAccessComponent from "../components/NoAccessComponent.jsx";
 import UpperBar from "../components/UpperBar.jsx";
 import AbilityTimer from "../components/AbilityTimer.jsx";
 import WinningPopup from "../components/WinningPopup.jsx";
 import LosingPopup from "../components/LosingPopup.jsx";
-import ExitModal from "../components/ExitModal.jsx";
+import Start_PauseModal from "../components/Start_PauseModal.jsx";
 
 
 function handleDragEnd(event, abilities, setAbilities, setCoin2x, setCoin3x, setDurability, setShield) {
@@ -44,10 +41,9 @@ function handleDragEnd(event, abilities, setAbilities, setCoin2x, setCoin3x, set
                 break
         }
     }
-
-
 }
 
+// TODO potrebujeme alebo vymazeme?
 function exitHandler(setExitPopupVisible){
     setExitPopupVisible(prev => !prev)
 }
@@ -60,12 +56,8 @@ function getAllOwnedAbilities(abilities){
     return abilities.filter(ability => ability.owned > 0).length
 }
 
-
-
-
 function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef) {
-    const figureX_px = posX
-    const figure_grid_position = calculateGridLocationFromPixels(figureX_px, scrollerRef);
+    const figure_grid_position = calculateGridLocationFromPixels(posX, scrollerRef);
     const checkRange = 5;
 
     for (const car of Object.values(carRef.current)) {
@@ -84,7 +76,6 @@ function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef) {
     }
     return false;
 }
-
 
 // pri vyplnani NO_ACCESS_AREA vynechame tie riadky, na ktorych je Road
 function isRoadOnPosition(roadsPositions, y){
@@ -125,7 +116,7 @@ export default function GameBoard() {
     const figurePositionRef = useRef({});
     const [posX, setPosX] = useState((NUM_OF_COLUMNS + 1) / 2);
     const [rotate, setRotate] = useState(0);
-    const [isExitPopupVisible, setIsExitPopupVisible] = useState(false);
+    const [isPausePopupVisible, setIsPausePopupVisible] = useState(false);
     const [isLosingPopupVisible, setIsLosingModalVisible] = useState(false);
     const [isWinningPopupVisible, setIsWinningModalVisible] = useState(false);
     const [abilities, setAbilities] = useState(JSON.parse(localStorage.getItem("abilities")))
@@ -136,9 +127,6 @@ export default function GameBoard() {
     const levels = JSON.parse(localStorage.getItem("levels"))
     const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
     const coinsRefs = useRef([])                                             // referencia na vsetky mince na mape -> sluzi na odstranenie mince z mapy po collectnuti
-    const counterRef = useRef(null)
-    const abilityCounterRef = useRef(null)
-
     const CURRENT_LEVEL = getCurrentLevel(levels)                                                   // aktualny level, ktory je vykresleny
     const NUM_OF_ROWS = CURRENT_LEVEL.rowsCount
     const roadsPositions = CURRENT_LEVEL.roadsPositions                                              // pole pozicii vsetkych ciest v aktualnom leveli
@@ -179,21 +167,20 @@ export default function GameBoard() {
             />
             <div id = "WORLD_CONTAINER" className="gameBoardContainer relative w-screen h-screen overflow-hidden">
 
-                {isExitPopupVisible && <ExitModal setIsExitPopupVisible = {setIsExitPopupVisible}/>}
-                {isWinningPopupVisible && <WinningPopup CURRENT_LEVEL={CURRENT_LEVEL} collectedCoins={collectedCoins} coins2x={coin2x} coins3x={coin3x}/>}
+                {isPausePopupVisible && <Start_PauseModal setIsPopupVisible = {setIsPausePopupVisible} text = "Game paused" secondaryText ={true}/>}
+                {isWinningPopupVisible && <WinningPopup CURRENT_LEVEL = {CURRENT_LEVEL} collectedCoins = {collectedCoins} coins2x = {coin2x} coins3x = {coin3x}/>}
                 {isLosingPopupVisible && <LosingPopup/>}
 
 
                 <UpperBar collectedCoins = {collectedCoins}
-                          exitHandler = {exitHandler}
-                          isExitPopupVisible = {isExitPopupVisible}
-                          setIsExitPopupVisible = {setIsExitPopupVisible}
-                          CURRENT_LEVEL={CURRENT_LEVEL}/>
+                          isPausePopupVisible = {isPausePopupVisible}
+                          setIsPausePopupVisible = {setIsPausePopupVisible}
+                          isLosingPopupVisible = {isLosingPopupVisible}/>
 
-                <AbilityTimer isLosingPopupVisible = {isLosingPopupVisible} setShield={setShield} shield={shield} />
+                <AbilityTimer isLosingPopupVisible = {isLosingPopupVisible} setShield = {setShield} shield = {shield} />
 
                 <div id="WORLD_SCROLLER" ref={scrollerRef}
-                     className="scroller h-full overflow-y-auto overflow-x-hidden">
+                     className="scroller h-full overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     <div id="WORLD" className="relative w-screen bg-[url('/grass.jpg')] grid" ref = {worldRef}
                          style={{
                              height: `${NUM_OF_ROWS * SQUARE_SIZE}px`,

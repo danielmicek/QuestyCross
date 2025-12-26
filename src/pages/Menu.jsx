@@ -6,6 +6,8 @@ import figuresFromJsonFile from "../../data/figures.json"
 import abilitiesFromJsonFile from "../../data/abilities.json"
 import levelsFromJsonFile from "../../data/levels.json"
 import RulesModal from "../components/RulesModal.jsx";
+import Start_ExitModal from "../components/Start_PauseModal.jsx";
+import Start_PauseModal from "../components/Start_PauseModal.jsx";
 
 function popupVisibilityHandler(setIsStartPopupVisible, setIsMenuVisible){
     setIsStartPopupVisible(prev => !prev);
@@ -61,27 +63,7 @@ export default function Menu() {
                        className="font-bold absolute top-0 md:text-8xl text-6xl mt-10 text-shadow-lg">QuestyCross
             </motion.h1>
 
-            {isStartPopupVisible &&
-                <motion.div id="START_GAME_POPUP" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}
-                            className="border-2 absolute rounded-2xl w-[370px] overflow-hidden z-999">
-                    <div>
-                        <h3 className="font-bold text-2xl text-center bg-yellow-300 p-2 "> Ready to start the game?</h3>
-                        <div>
-                            <Link to="/game" className="buttonLink">
-                                <motion.button id="YES_BUTTON"
-                                               className="bg-black font-bold text-white w-full h-16 hover:bg-gray-600 border-b-yellow-300 border-b-2"
-                                               onClick={() => popupVisibilityHandler(setIsStartPopupVisible, setIsMenuVisible)}>Yes
-                                </motion.button>
-                            </Link>
-
-                            <motion.button id="NO_BUTTON"
-                                           className="bg-black font-bold text-white w-full h-16 hover:bg-gray-600"
-                                           onClick={() => popupVisibilityHandler(setIsStartPopupVisible, setIsMenuVisible)}>No
-                            </motion.button>
-                        </div>
-                    </div>
-
-                </motion.div>}
+            {isStartPopupVisible && <Start_PauseModal setIsPopupVisible = {setIsStartPopupVisible} text = "Ready to start the game?"/>}
 
             {isMenuVisible &&
                 <motion.div id="MENU" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}

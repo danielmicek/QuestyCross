@@ -1,4 +1,4 @@
-import {calculateNoAccessArea, getCurrentLevel, getNumOfColumns} from "./functions.jsx";
+import {calculateNoAccessArea, getNumOfColumns} from "./functions.jsx";
 
 export const NUM_OF_COLUMNS = getNumOfColumns()
 export const SQUARE_SIZE = Math.floor(window.innerWidth / NUM_OF_COLUMNS)
