@@ -3,7 +3,7 @@ import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import {Link} from "react-router-dom";
 import CustomButton from "./CustomButton.jsx";
 
-export default function LosingPopup() {
+export default function LosingPopup({time}) {
     return (
         <>
             <div className="fixed inset-0 backdrop-blur-md bg-black/30 pointer-events-auto z-1003"></div>
@@ -11,7 +11,10 @@ export default function LosingPopup() {
                         initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.1}}} style={{width: SQUARE_SIZE * ACTIVE_AREA}}>
                 <h1 className="font-bold text-5xl text-center mb-2">Game Over</h1>
                 <div id = "line" className="w-full border"></div>
-                <p className="text-center mt-3 text-lg">Oops, car go brm!<br/>Do you want try again?</p>
+                {time > 0 ?
+                    <p className="text-center mt-3 text-lg">Oops, car go brm!<br/>Do you want try again?</p>
+                    :
+                    <p className="text-center mt-3 text-lg">You did not make it in time!<br/>Do you want try again?</p>}
                 <div className="flex justify-around mt-5">
                     <Link to = "/" className="buttonLink">
                         <CustomButton text="Exit to Menu"/>

@@ -23,7 +23,7 @@ export default function DroppableFigure({posX, rotate, SQUARE_SIZE, NUM_OF_COLUM
                  gridTemplateRows: `repeat(${NUM_OF_ROWS}, ${SQUARE_SIZE}px)`,
                  gridTemplateColumns: `repeat(${NUM_OF_COLUMNS}, ${SQUARE_SIZE}px)`
              }}>
-            <motion.div id = "FIGURE" className="bg-[url('/figure1_from_top.png')] absolute bg-center bg-cover border-2 border-black" ref = {ref}
+            <motion.div id = "FIGURE" className="bg-[url('/figure1_from_top.png')] absolute bg-center bg-cover" ref = {ref}
                         style={{
                             backgroundImage: `url(${equippedFigure.imageFromTop})`,
                             gridColumnStart: posX,

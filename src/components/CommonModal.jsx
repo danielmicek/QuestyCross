@@ -3,7 +3,7 @@ import { motion } from "framer-motion"
 import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import CustomButton from "./CustomButton.jsx";
 
-export default function Start_PauseModal({setIsPopupVisible, text, secondaryText = false}) {
+export default function CommonModal({setIsPopupVisible, text, secondaryText = false}) {
     return (
         <>
             <div className="fixed inset-0 backdrop-blur-md bg-black/30 pointer-events-auto z-1003"></div>
@@ -13,11 +13,14 @@ export default function Start_PauseModal({setIsPopupVisible, text, secondaryText
                 <div id = "line" className="w-full border"></div>
                 {secondaryText && <h2 className="font-bold text-xl text-center mt-2">If you decide to leave, your will be lost</h2>}
                 <div className="flex justify-around mt-5">
-                    <Link to = "/" className="buttonLink">
+                    {secondaryText && <Link to="/" className="buttonLink">
                         <CustomButton text="Exit to Menu"/>
-                    </Link>
+                    </Link>}
                     {secondaryText && <div id = "CONTINUE_PLAYING_BUTTON" className= "rounded-full" onClick={() => setIsPopupVisible(false)}>
                         <CustomButton text="Resume"/>
+                    </div>}
+                    {!secondaryText && <div id = "CLOSE_START_POPUP_BUTTON" className= "rounded-full" onClick={() => setIsPopupVisible(false)}>
+                        <CustomButton text="Exit to Menu"/>
                     </div>}
                     {!secondaryText && <Link to="/game" className="buttonLink">
                         <CustomButton text="Play"/>

@@ -1,33 +1,29 @@
 import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import CustomButton from "./CustomButton.jsx";
-import {useEffect, useRef, useState} from "react";
-import {useTimer} from "use-timer";
+import {useEffect, useRef} from "react";
 
 
 export default function UpperBar({
                                      collectedCoins,
                                      isPausePopupVisible,
                                      setIsPausePopupVisible,
-                                     isLosingPopupVisible}) {
+                                     isLosingPopupVisible,
+                                     isWinningPopupVisible,
+                                     time,
+                                     start,
+                                     pause}) {
 
     const divRef = useRef(null);
-    const { time, start, pause, reset, status } = useTimer({
-        initialTime: 5000, //CURRENT_LEVEL.time,
-        endTime: 0,
-        autoStart: true,
-        timerType: 'DECREMENTAL',
-        onTimeOver: () => setIsPausePopupVisible(true)
-    });
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
 
     useEffect(() => {
-        if (isPausePopupVisible || isLosingPopupVisible) {
+        if (isPausePopupVisible || isLosingPopupVisible || isWinningPopupVisible) {
             pause()
         } else {
             start()
         }
-    }, [isPausePopupVisible, pause, start])
+    }, [isLosingPopupVisible, isPausePopupVisible, isWinningPopupVisible, pause, start])
 
 
     return (

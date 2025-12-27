@@ -31,6 +31,6 @@ export function getCurrentLevel(levels){
     }
 }
 
-export function getRandomTree(trees){
-    return trees[Math.floor(Math.random()*trees.length)];
+export function getRandomElement(array){
+    return array[Math.floor(Math.random()*array.length)];
 }

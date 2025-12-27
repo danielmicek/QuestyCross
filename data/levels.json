@@ -2,10 +2,13 @@
   {
     "passed": false,
     "id": 1,
-    "difficulty": "easy",
+    "difficulty": "hard",
     "time": 120,
+    "bestTime":0,
     "rowsCount": 100,
     "reward": 20,
+    "numOfPlays":0,
+
 
     "roadsCount": 5,
     "roadsPositions": [15, 25, 35, 45, 55],
@@ -74,10 +77,13 @@
   {
     "passed": false,
     "id": 2,
-    "difficulty": "easy",
+    "difficulty": "hard",
     "time": 120,
+    "bestTime":0,
     "rowsCount": 100,
     "reward": 20,
+    "numOfPlays": 0,
+
 
     "roadsCount": 5,
     "roadsPositions": [15, 25, 35, 45, 55],
@@ -145,10 +151,13 @@
   {
     "passed": false,
     "id": 3,
-    "difficulty": "easy",
+    "difficulty": "hard",
     "time": 120,
+    "bestTime": 0,
     "rowsCount": 100,
     "reward": 20,
+    "numOfPlays": 0,
+
 
     "roadsCount": 5,
     "roadsPositions": [15, 25, 35, 45, 55],
@@ -216,10 +225,13 @@
   {
     "passed": false,
     "id": 4,
-    "difficulty": "easy",
+    "difficulty": "hard",
     "time": 120,
+    "bestTime": 0,
     "rowsCount": 100,
     "reward": 20,
+    "numOfPlays": 0,
+
 
     "roadsCount": 5,
     "roadsPositions": [15, 25, 35, 45, 55],
@@ -287,10 +299,13 @@
   {
     "passed": false,
     "id": 5,
-    "difficulty": "easy",
+    "difficulty": "hard",
     "time": 120,
+    "bestTime": 0,
     "rowsCount": 100,
     "reward": 20,
+    "numOfPlays": 0,
+
 
     "roadsCount": 5,
     "roadsPositions": [15, 25, 35, 45, 55],
@@ -358,10 +373,12 @@
   {
     "passed": false,
     "id": 6,
-    "difficulty": "easy",
+    "difficulty": "hard",
     "time": 120,
+    "bestTime":0,
     "rowsCount": 100,
     "reward": 20,
+    "numOfPlays":0,
 
     "roadsCount": 5,
     "roadsPositions": [15, 25, 35, 45, 55],
@@ -429,10 +446,13 @@
   {
     "passed": false,
     "id": 7,
-    "difficulty": "easy",
+    "difficulty": "hard",
     "time": 120,
+    "bestTime": 0,
     "rowsCount": 100,
     "reward": 20,
+    "numOfPlays": 0,
+
 
     "roadsCount": 5,
     "roadsPositions": [15, 25, 35, 45, 55],
@@ -500,10 +520,13 @@
   {
     "passed": false,
     "id": 8,
-    "difficulty": "easy",
+    "difficulty": "hard",
     "time": 120,
+    "bestTime": 0,
     "rowsCount": 100,
     "reward": 20,
+    "numOfPlays": 0,
+
 
     "roadsCount": 5,
     "roadsPositions": [15, 25, 35, 45, 55],

@@ -1,12 +1,11 @@
-import { motion } from "framer-motion"
 import {useEffect, useRef, useState} from "react";
 import {SQUARE_SIZE} from "./shared/constants.jsx";
+import Car from "./Car.jsx";
 
 
 function rand(min, max) {
     return Math.random() * (max - min) + min;
 }
-
 
 export default function Road({rowsFromTop, carPositionRef,onCollisionCheck}) {
     const [cars1, setCars1] = useState([]);
@@ -16,79 +15,44 @@ export default function Road({rowsFromTop, carPositionRef,onCollisionCheck}) {
 
 
     useEffect(() => {
-        let alive = true; // kvoli tomu, aby pri unmounte komponentu nevzniklo viacero timeoutov
-        let timeoutId;
+        let alive = true;
+        let t1, t2;
 
-        function spawnCar() {
-            if(!alive) return
-            const spawnRate1 = Math.floor(rand(1000, 9200)); // hustota premavky
-            setCars1(cars1 => [...cars1, ++carId1.current]);
-            setCars2(cars2 => [...cars2, ++carId2.current]);
+        const spawnLane1 = () => {
+            if (!alive) return;
+            setCars1(prev => [...prev, ++carId1.current]);
+            const next = Math.floor(rand(900, 4200));
+            t1 = setTimeout(spawnLane1, next);
+        };
 
-            timeoutId = setTimeout(spawnCar, spawnRate1)
-        }
-        spawnCar();
+        const spawnLane2 = () => {
+            if (!alive) return;
+            setCars2(prev => [...prev, ++carId2.current]);
+            const next = Math.floor(rand(1200, 5200));
+            t2 = setTimeout(spawnLane2, next);
+        };
 
-        return () => { alive = false; clearTimeout(timeoutId); };
+        // aby nezačali naraz:
+        const offset2 = Math.floor(rand(200, 1500));
+        spawnLane1();
+        t2 = setTimeout(spawnLane2, offset2);
+
+        return () => {
+            alive = false;
+            clearTimeout(t1);
+            clearTimeout(t2);
+        };
     }, []);
 
     return (
         <>
-            <div className="road grid grid-rows-2 absolute w-full border-amber-700 border-2 bg-[url('/road.png')] bg-center bg-size[100%] overflow-hidden"
+            <div className="road grid grid-rows-2 absolute w-full bg-[url('/road.png')] bg-center bg-size[100%] overflow-hidden"
                  style={{gridRowStart: rowsFromTop, height: 2*SQUARE_SIZE}}> {/*`${ROW_HEIGHT*2}px`*/}
                 <div className="relative h-full flex items-center">
-                    {cars1.map(car => (
-                        <motion.div key ={car} className="bg-[url('/red_car.png')] bg-contain bg-no-repeat absolute left-0 z-10 border-amber-500 border-2"
-                                    style={{
-                                        width: SQUARE_SIZE,
-                                        height: SQUARE_SIZE
-                                    }}
-                                    initial={{x: -0.1 * window.innerWidth}}
-                                    animate={{x: window.innerWidth}}
-                                    transition={{ duration: 5, ease: "linear" }}
-                                    onAnimationComplete={() => {
-                                        setCars1((prev) => prev.filter((c) => c !== car));
-                                        delete carPositionRef.current[car];
-                                    }}
-                                    onUpdate={(latest) =>{
-                                        if (carPositionRef.current) {
-                                            carPositionRef.current[car] = {
-                                                x:latest.x / SQUARE_SIZE,
-                                                y: rowsFromTop,
-                                            }
-                                            onCollisionCheck?.();
-                                        }
-                                    }}
-                        >
-                        </motion.div>
-                    ))}
+                    {cars1.map(car => (<Car key ={car} car={car} carPositionRef={carPositionRef} setCars={setCars1} rowsFromTop={rowsFromTop} onCollisionCheck={onCollisionCheck}/>))}
                 </div>
                 <div className="relative h-full flex items-center">
-                    {cars2.map(car => (
-                        <motion.div key ={car} className="bg-[url('/red_car.png')] bg-contain bg-no-repeat absolute left-0 z-10 border-amber-500 border-2"
-                                    style={{
-                                        width: SQUARE_SIZE,
-                                        height: SQUARE_SIZE
-                                    }}
-                                    initial={{x: -0.1 * window.innerWidth, y:0}}
-                                    animate={{x: window.innerWidth, y:0}}
-                                    transition={{ duration: 7, ease: "linear" }}
-                                    onAnimationComplete={() => {
-                                        setCars2((prev) => prev.filter((c) => c !== car));
-                                        delete carPositionRef.current[car];
-                                    }}
-                                    onUpdate={(latest) =>{
-                                        if (carPositionRef.current) {
-                                            carPositionRef.current[car] = {
-                                                x: latest.x / SQUARE_SIZE,
-                                                y: rowsFromTop + 1,
-                                            }
-                                            onCollisionCheck?.();
-                                        }
-                                    }}
-                        >
-                        </motion.div>
-                    ))}
+                    {cars2.map(car => (<Car key ={car} car={car} carPositionRef={carPositionRef} setCars={setCars2} rowsFromTop={rowsFromTop} onCollisionCheck={onCollisionCheck} firstLane = {false}/>))}
                 </div>
             </div>
         </>

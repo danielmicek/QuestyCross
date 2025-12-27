@@ -1,5 +1,5 @@
 import Road from "../components/Road.jsx";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import Movement from "../components/Movement.jsx";
 import {motion} from "framer-motion"
 import {DndContext} from '@dnd-kit/core';
@@ -15,7 +15,8 @@ import UpperBar from "../components/UpperBar.jsx";
 import AbilityTimer from "../components/AbilityTimer.jsx";
 import WinningPopup from "../components/WinningPopup.jsx";
 import LosingPopup from "../components/LosingPopup.jsx";
-import Start_PauseModal from "../components/Start_PauseModal.jsx";
+import CommonModal from "../components/CommonModal.jsx";
+import {useTimer} from "use-timer";
 
 
 function handleDragEnd(event, abilities, setAbilities, setCoin2x, setCoin3x, setDurability, setShield) {
@@ -43,24 +44,23 @@ function handleDragEnd(event, abilities, setAbilities, setCoin2x, setCoin3x, set
     }
 }
 
-// TODO potrebujeme alebo vymazeme?
-function exitHandler(setExitPopupVisible){
-    setExitPopupVisible(prev => !prev)
-}
-
-function deathHandler(setDeathModalVisible){
-    setDeathModalVisible(prev => !prev)
+function getBgImageBasedOnDifficulty(difficulty){
+    switch(difficulty){
+        case "easy": return `url('/grass.jpg')`
+        case "medium": return `url('/sand_bg.jpg')`
+        case "hard": return `url('/moon_bg.jpg')`
+    }
 }
 
 function getAllOwnedAbilities(abilities){
     return abilities.filter(ability => ability.owned > 0).length
 }
 
-function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef) {
+function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef, durability, lastDurabilityCar, setDurability) {
     const figure_grid_position = calculateGridLocationFromPixels(posX, scrollerRef);
     const checkRange = 5;
 
-    for (const car of Object.values(carRef.current)) {
+    for (const [carId,car] of Object.entries(carRef.current)) {
         if (Math.abs(car.y - figure_grid_position.y_grid) > checkRange) continue;
         if (
             //Pevne hodnoty co priratavame su vyska a sirka figurky a aut,
@@ -70,6 +70,17 @@ function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef) {
             car.y < figure_grid_position.y_grid + 0.75 &&
             car.y + 0.4 > figure_grid_position.y_grid
         ) {
+
+            if (carId === lastDurabilityCar.current) {
+                return false;
+            }
+
+            if (durability && lastDurabilityCar.current === null) {
+                lastDurabilityCar.current = carId;
+                setDurability(false);
+                return false;
+            }
+
             console.log("collision detected!");
             return true;
         }
@@ -85,21 +96,30 @@ function isRoadOnPosition(roadsPositions, y){
     return false
 }
 
-function createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roadsPositions){
+function createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roadsPositions, CURRENT_LEVEL){
     const array = []
     for(let y = 11; y <= NUM_OF_ROWS; y++){  // zaciname na 11, pretoze FinishLine ma vysku 10 * SQUARE_SIZE
         if(!isRoadOnPosition(roadsPositions, y)){
             // vyplnanie stlpcov zlava
             for(let x = 0; x < NO_ACCESS_AREA; x++){
-                array.push(<NoAccessComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={x}/>)
+                array.push(<NoAccessComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={x} difficulty = {CURRENT_LEVEL.difficulty}/>)
             }
             // vyplnanie stlpcov zprava
             for(let x = 0; x < NO_ACCESS_AREA; x++){
-                array.push(<NoAccessComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={NUM_OF_COLUMNS - x}/>)
+                array.push(<NoAccessComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={NUM_OF_COLUMNS - x} difficulty = {CURRENT_LEVEL.difficulty}/>)
             }
         }
     }
     return array
+}
+
+function incrementNumOfPlays(){
+    console.log("incrementing number of plays")
+    const levels = JSON.parse(localStorage.getItem("levels"))
+    const currentLevel = getCurrentLevel(levels)
+    const updatedLevels = levels.map(level => level.id === currentLevel.id ? {...level, numOfPlays: ++level.numOfPlays} : level)
+    localStorage.setItem("levels", JSON.stringify(updatedLevels))
+    return updatedLevels
 }
 
 // WORLD_CONTAINER je v podstate tvoja obrazovka, nema overflow, je to teda len to co sa mesti na obrazovku
@@ -110,6 +130,7 @@ function createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COL
 // DraggableAbility a DroppableFigure su schvalne ako externe komponenty, pretoze Dnd kniznica to vyzaduje - hooky musia byt vo vnutri DndContext
 export default function GameBoard() {
 
+    const lastDurabilityCarRef = useRef(null);
     const scrollerRef = useRef(null);
     const worldRef = useRef(null);
     const carPostitionRef = useRef({});
@@ -117,19 +138,32 @@ export default function GameBoard() {
     const [posX, setPosX] = useState((NUM_OF_COLUMNS + 1) / 2);
     const [rotate, setRotate] = useState(0);
     const [isPausePopupVisible, setIsPausePopupVisible] = useState(false);
-    const [isLosingPopupVisible, setIsLosingModalVisible] = useState(false);
+    const [isLosingPopupVisible, setIsLosingPopupVisible] = useState(false);
     const [isWinningPopupVisible, setIsWinningModalVisible] = useState(false);
     const [abilities, setAbilities] = useState(JSON.parse(localStorage.getItem("abilities")))
+    const [coins, setCoins] = useState(() => parseInt(localStorage.getItem("coins")))
     const [coin2x, setCoin2x] = useState(false);
     const [coin3x, setCoin3x] = useState(false);
     const [durability, setDurability] = useState(false);
     const [shield, setShield] = useState(false);
-    const levels = JSON.parse(localStorage.getItem("levels"))
+    const [levels] = useState(() => incrementNumOfPlays())
     const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
     const coinsRefs = useRef([])                                             // referencia na vsetky mince na mape -> sluzi na odstranenie mince z mapy po collectnuti
-    const CURRENT_LEVEL = getCurrentLevel(levels)                                                   // aktualny level, ktory je vykresleny
-    const NUM_OF_ROWS = CURRENT_LEVEL.rowsCount
-    const roadsPositions = CURRENT_LEVEL.roadsPositions                                              // pole pozicii vsetkych ciest v aktualnom leveli
+    const [CURRENT_LEVEL] = useState(() => getCurrentLevel(levels))                      // aktualny level, ktory je vykresleny
+    const [NUM_OF_ROWS] = useState(() => CURRENT_LEVEL.rowsCount)
+    const [roadsPositions] = useState(() => CURRENT_LEVEL.roadsPositions)               // pole pozicii vsetkych ciest v aktualnom leveli
+    const noAccessAreaComponents = useMemo(() => createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roadsPositions, CURRENT_LEVEL), [CURRENT_LEVEL, NUM_OF_ROWS, roadsPositions])
+    const activeAreaObstacles = useMemo(() => CURRENT_LEVEL.obstaclesPositions.map((coin, i) => (<NoAccessComponent key = {i} SQUARE_SIZE={SQUARE_SIZE} colsFromSide = {coin.x + NO_ACCESS_AREA} rowsFromTop={coin.y} activeArea ={true} difficulty = {CURRENT_LEVEL.difficulty}/>)), [CURRENT_LEVEL.difficulty, CURRENT_LEVEL.obstaclesPositions])
+    const activeAreaCoins = useMemo(() => CURRENT_LEVEL.coinsPositions.map((coin, i) => (<Coin key = {i} positionFromLeft = {coin.x + NO_ACCESS_AREA} positionFromTop={coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>)), [CURRENT_LEVEL.coinsPositions])
+    const { time, start, pause} = useTimer({        // timer component, aby sme mohli passnut time field do WinningPopup
+        initialTime: CURRENT_LEVEL.time,
+        endTime: 0,
+        autoStart: true,
+        timerType: 'DECREMENTAL',
+        onTimeOver: () => setIsLosingPopupVisible(true)
+    });
+
+    console.log(CURRENT_LEVEL.id)
 
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani
@@ -139,14 +173,21 @@ export default function GameBoard() {
         })
     }, []);
 
+    useEffect(() => {
+        if (durability) {
+            lastDurabilityCarRef.current = null;
+        }
+    }, [durability]);
+
+
     // Callback volame v onUpdate funkcii cesty, cize po kazdej zmene pozicie auta
     const checkCollisionCallback = () => {
-        const collision = detectCollision(carPostitionRef, figurePositionRef, posX, SQUARE_SIZE, scrollerRef);
+        const collision = detectCollision(carPostitionRef, figurePositionRef, posX, SQUARE_SIZE, scrollerRef,durability, lastDurabilityCarRef, setDurability);
         if (collision && !isLosingPopupVisible) {
             if (shield) {
                 return;
             }
-            setIsLosingModalVisible(true);
+            setIsLosingPopupVisible(true);
         }
     };
 
@@ -167,15 +208,25 @@ export default function GameBoard() {
             />
             <div id = "WORLD_CONTAINER" className="gameBoardContainer relative w-screen h-screen overflow-hidden">
 
-                {isPausePopupVisible && <Start_PauseModal setIsPopupVisible = {setIsPausePopupVisible} text = "Game paused" secondaryText ={true}/>}
-                {isWinningPopupVisible && <WinningPopup CURRENT_LEVEL = {CURRENT_LEVEL} collectedCoins = {collectedCoins} coins2x = {coin2x} coins3x = {coin3x}/>}
-                {isLosingPopupVisible && <LosingPopup/>}
+                {isPausePopupVisible && <CommonModal setIsPopupVisible = {setIsPausePopupVisible} text = "Game paused" secondaryText ={true}/>}
+                {isWinningPopupVisible && <WinningPopup CURRENT_LEVEL = {CURRENT_LEVEL}
+                                                        collectedCoins = {collectedCoins}
+                                                        coins2x = {coin2x}
+                                                        coins3x = {coin3x}
+                                                        coins = {coins}
+                                                        setCoins = {setCoins}
+                                                        time = {time}/>}
+                {isLosingPopupVisible && <LosingPopup time={time}/>}
 
 
                 <UpperBar collectedCoins = {collectedCoins}
                           isPausePopupVisible = {isPausePopupVisible}
                           setIsPausePopupVisible = {setIsPausePopupVisible}
-                          isLosingPopupVisible = {isLosingPopupVisible}/>
+                          isLosingPopupVisible = {isLosingPopupVisible}
+                          isWinningPopupVisible = {isWinningPopupVisible}
+                          time ={time}
+                          start = {start}
+                          pause = {pause}/>
 
                 <AbilityTimer isLosingPopupVisible = {isLosingPopupVisible} setShield = {setShield} shield = {shield} />
 
@@ -184,18 +235,19 @@ export default function GameBoard() {
                     <div id="WORLD" className="relative w-screen bg-[url('/grass.jpg')] grid" ref = {worldRef}
                          style={{
                              height: `${NUM_OF_ROWS * SQUARE_SIZE}px`,
+                             backgroundImage: getBgImageBasedOnDifficulty(CURRENT_LEVEL.difficulty),
                              gridTemplateRows: `repeat(${NUM_OF_ROWS},${SQUARE_SIZE}px)`,
                              gridTemplateColumns: `repeat(${NUM_OF_COLUMNS},${SQUARE_SIZE}px)`
                          }}>
                         <FinishLine SQUARE_SIZE={SQUARE_SIZE}/>
-                        {createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roadsPositions).map(singleComponent => singleComponent)}
+                        {noAccessAreaComponents}
 
                         {/*V tomto pripade akceptovatelne pouzit indexy ako keys*/}
                         {CURRENT_LEVEL.roadsPositions.map((road, index) => (<Road rowsFromTop={road} carPositionRef={carPostitionRef} key={index} onCollisionCheck={checkCollisionCallback}/>))}
 
-                        {CURRENT_LEVEL.coinsPositions.map((coin, i) => (<Coin positionFromLeft = {coin.x + NO_ACCESS_AREA} positionFromTop={coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>))}
+                        {activeAreaCoins}
 
-                        {CURRENT_LEVEL.obstaclesPositions.map(coin => (<NoAccessComponent SQUARE_SIZE={SQUARE_SIZE} colsFromSide = {coin.x + NO_ACCESS_AREA} rowsFromTop={coin.y}/>))}
+                        {activeAreaObstacles}
                     </div>
                 </div>
 

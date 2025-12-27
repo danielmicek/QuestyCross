@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Link, useLocation} from "react-router-dom";
 import { motion } from "motion/react"
 
@@ -6,13 +6,9 @@ import figuresFromJsonFile from "../../data/figures.json"
 import abilitiesFromJsonFile from "../../data/abilities.json"
 import levelsFromJsonFile from "../../data/levels.json"
 import RulesModal from "../components/RulesModal.jsx";
-import Start_ExitModal from "../components/Start_PauseModal.jsx";
-import Start_PauseModal from "../components/Start_PauseModal.jsx";
+import CommonModal from "../components/CommonModal.jsx";
+import LevelsCarousel from "../components/LevelsCarousel.jsx";
 
-function popupVisibilityHandler(setIsStartPopupVisible, setIsMenuVisible){
-    setIsStartPopupVisible(prev => !prev);
-    setIsMenuVisible(prev => !prev)
-}
 
 function shuffleLevels(levelsData) {
     const easy = shuffle(levelsData.filter(level => level.difficulty === "easy"));
@@ -32,9 +28,13 @@ function shuffle(array) {
 export default function Menu() {
     const [isStartPopupVisible, setIsStartPopupVisible] = useState(false)
     const [isMenuVisible, setIsMenuVisible] = useState(true)
-    const [coins, setCoins] = useState(parseInt(localStorage.getItem("coins")) || 1000)
+    const [coins] = useState(parseInt(localStorage.getItem("coins")) || 1000)
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; // zistime, ci sme na dotykovom zariadeni alebo pc
     const [isRulesVisible, setIsRulesVisible] = useState(false);
+    const [isLevelsVisible, setIsLevelsVisible] = useState(false);
+    const OPTIONS = {}
+    const SLIDE_COUNT = 10
+    const SLIDES = Array.from(Array(SLIDE_COUNT).keys())
 
     const levelsData = levelsFromJsonFile;
     const shuffled = shuffleLevels(levelsData);
@@ -63,20 +63,17 @@ export default function Menu() {
                        className="font-bold absolute top-0 md:text-8xl text-6xl mt-10 text-shadow-lg">QuestyCross
             </motion.h1>
 
-            {isStartPopupVisible && <Start_PauseModal setIsPopupVisible = {setIsStartPopupVisible} text = "Ready to start the game?"/>}
+            {isStartPopupVisible && <CommonModal setIsPopupVisible = {setIsStartPopupVisible} text = "Ready to start the game?"/>}
 
             {isMenuVisible &&
                 <motion.div id="MENU" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}
                             className="rounded-2xl overflow-hidden w-[370px]  h-fit  border-yellow-300 border-3 shadow-2xl z-999">
 
                     <button className="bg-black text-white w-full h-16 hover:bg-gray-600 border-b-yellow-300 border-b-2"
-                            onClick={() => {
-                                setIsStartPopupVisible(prev => !prev);
-                                setIsMenuVisible(prev => !prev)
-                            }}>Play
+                            onClick={() => {setIsStartPopupVisible(true)}}>Play
                     </button>
                     <button
-                        className="bg-black text-white w-full h-16 hover:bg-gray-600 border-b-yellow-300 border-b-2">Levels
+                        className="bg-black text-white w-full h-16 hover:bg-gray-600 border-b-yellow-300 border-b-2" onClick={() => setIsLevelsVisible(true)}>Levels
                     </button>
 
                     <Link to="/shop" className="buttonLink">
@@ -86,7 +83,8 @@ export default function Menu() {
                     </Link>
                     <button className="bg-black text-white w-full h-16 hover:bg-gray-600" onClick={() => setIsRulesVisible(true)}>Rules</button>
                 </motion.div>}
-            {isRulesVisible && <RulesModal setIsRulesVisible={setIsRulesVisible}/>}
+            {isRulesVisible && <RulesModal setIsRulesVisible={setIsRulesVisible} isRulesVisible={isRulesVisible}/>}
+            {isLevelsVisible && <LevelsCarousel slides={SLIDES} options={OPTIONS} isLevelsVisible={isLevelsVisible} setIsLevelsVisible={setIsLevelsVisible}/>}
         </div>
     )
 }

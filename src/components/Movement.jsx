@@ -3,7 +3,6 @@ import {useEffect} from "react";
 import {calculateGridLocationFromPixels} from "./shared/functions.jsx";
 import {NO_ACCESS_AREA, NUM_OF_COLUMNS, SQUARE_SIZE} from "./shared/constants.jsx";
 
-
 function obstacleFinder(figureX_grid, figureY_grid, obstaclesPositions){
     for(let obstacle of obstaclesPositions){
         if(figureX_grid === (obstacle.x + NO_ACCESS_AREA) && figureY_grid === obstacle.y) {
@@ -11,10 +10,6 @@ function obstacleFinder(figureX_grid, figureY_grid, obstaclesPositions){
         }
     }
     return false
-}
-
-function showWinningPopup(){
-    console.log("winning")
 }
 
 function coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins){
