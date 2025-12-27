@@ -21,7 +21,6 @@ import {useTimer} from "use-timer";
 
 function handleDragEnd(event, abilities, setAbilities, setCoin2x, setCoin3x, setDurability, setShield) {
     const { active, over } = event;
-    console.log(active.id);
     if (!over) return;
 
     if (over.id === "droppable_skibidi_id") {
@@ -33,8 +32,10 @@ function handleDragEnd(event, abilities, setAbilities, setCoin2x, setCoin3x, set
         // apply the ability
         switch (active.id) {
             case "2x coins": setCoin2x(true);
+                localStorage.setItem("coin2x", "true")
                 break
             case "3x coins": setCoin3x(true);
+                localStorage.setItem("coin3x", "true")
                 break
             case "car durability": setDurability(true);
                 break
@@ -114,7 +115,6 @@ function createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COL
 }
 
 function incrementNumOfPlays(){
-    console.log("incrementing number of plays")
     const levels = JSON.parse(localStorage.getItem("levels"))
     const currentLevel = getCurrentLevel(levels)
     const updatedLevels = levels.map(level => level.id === currentLevel.id ? {...level, numOfPlays: ++level.numOfPlays} : level)
@@ -174,6 +174,12 @@ export default function GameBoard() {
     }, []);
 
     useEffect(() => {
+        // povodne nastavenie abilit v localStorage
+        localStorage.setItem("coin2x", "false")
+        localStorage.setItem("coin3x", "false")
+    }, [])
+
+    useEffect(() => {
         if (durability) {
             lastDurabilityCarRef.current = null;
         }
@@ -211,8 +217,6 @@ export default function GameBoard() {
                 {isPausePopupVisible && <CommonModal setIsPopupVisible = {setIsPausePopupVisible} text = "Game paused" secondaryText ={true}/>}
                 {isWinningPopupVisible && <WinningPopup CURRENT_LEVEL = {CURRENT_LEVEL}
                                                         collectedCoins = {collectedCoins}
-                                                        coins2x = {coin2x}
-                                                        coins3x = {coin3x}
                                                         coins = {coins}
                                                         setCoins = {setCoins}
                                                         time = {time}/>}

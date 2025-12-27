@@ -24,10 +24,10 @@ function calculateTime(totalTime, playersTime){
     return String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0")
 }
 
-export default function WinningPopup({collectedCoins, coins2x, coins3x, CURRENT_LEVEL, time, coins, setCoins}) {
+export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins, setCoins}) {
     let total = CURRENT_LEVEL.coinsCount // vzdy 20
-    if(coins2x) total *= 2;
-    if(coins3x) total *= 3;
+    if(localStorage.getItem("coin2x") === "true") total *= 2;
+    if(localStorage.getItem("coin3x") === "true") total *= 3;
 
     const levels = JSON.parse(localStorage.getItem("levels"))
     const actualTime = calculateTime(CURRENT_LEVEL.time, time)

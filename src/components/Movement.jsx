@@ -13,6 +13,10 @@ function obstacleFinder(figureX_grid, figureY_grid, obstaclesPositions){
 }
 
 function coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins){
+    let amount = 1
+    if(localStorage.getItem("coin2x") === "true") amount = 2
+    if(localStorage.getItem("coin3x") === "true") amount = 3
+
     // suradnice figurky v gride
     const figure_grid_position = calculateGridLocationFromPixels(posX, scrollerRef)
     //console.log("fig: ", figure_grid_position.x_grid, figure_grid_position.y_grid)
@@ -25,7 +29,7 @@ function coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, 
         // zistime, ci sa nachadza v rovnakom mieste v gride ako figure a zaroven ci nema display none (ci uz minca nebola vzatá)
         if(figure_grid_position.x_grid === coin_grid_position.x_grid && figure_grid_position.y_grid === coin_grid_position.y_grid && coinsRefs.current[i].style.display !== "none"){
             coinsRefs.current[i].style.display = "none" // odstranime coin z mapy
-            setCollectedCoins(prev => prev + 1) // ak je coin na danom square na ktory som stupil => collectedCoins +1
+            setCollectedCoins(prev => prev + amount) // ak je coin na danom square na ktory som stupil => collectedCoins +amount
             return true
         }
     }

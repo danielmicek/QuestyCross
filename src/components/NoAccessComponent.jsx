@@ -25,7 +25,7 @@ const allObstaclesForEasy = [
     "/tree3.png",
     "/wood.png",
     "/box.png",
-    "/spikeBall.png",
+    "/spikes.png",
 ]
 
 const allObstaclesForMedium = [

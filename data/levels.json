@@ -2,7 +2,7 @@
   {
     "passed": false,
     "id": 1,
-    "difficulty": "hard",
+    "difficulty": "easy",
     "time": 120,
     "bestTime":0,
     "rowsCount": 100,
@@ -77,7 +77,7 @@
   {
     "passed": false,
     "id": 2,
-    "difficulty": "hard",
+    "difficulty": "easy",
     "time": 120,
     "bestTime":0,
     "rowsCount": 100,
@@ -151,7 +151,7 @@
   {
     "passed": false,
     "id": 3,
-    "difficulty": "hard",
+    "difficulty": "easy",
     "time": 120,
     "bestTime": 0,
     "rowsCount": 100,
@@ -225,7 +225,7 @@
   {
     "passed": false,
     "id": 4,
-    "difficulty": "hard",
+    "difficulty": "easy",
     "time": 120,
     "bestTime": 0,
     "rowsCount": 100,
@@ -299,7 +299,7 @@
   {
     "passed": false,
     "id": 5,
-    "difficulty": "hard",
+    "difficulty": "easy",
     "time": 120,
     "bestTime": 0,
     "rowsCount": 100,
@@ -373,7 +373,7 @@
   {
     "passed": false,
     "id": 6,
-    "difficulty": "hard",
+    "difficulty": "easy",
     "time": 120,
     "bestTime":0,
     "rowsCount": 100,
@@ -446,7 +446,7 @@
   {
     "passed": false,
     "id": 7,
-    "difficulty": "hard",
+    "difficulty": "easy",
     "time": 120,
     "bestTime": 0,
     "rowsCount": 100,
@@ -520,7 +520,7 @@
   {
     "passed": false,
     "id": 8,
-    "difficulty": "hard",
+    "difficulty": "easy",
     "time": 120,
     "bestTime": 0,
     "rowsCount": 100,
