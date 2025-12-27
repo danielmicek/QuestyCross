@@ -29,15 +29,11 @@ export default function Menu() {
     const [isStartPopupVisible, setIsStartPopupVisible] = useState(false)
     const [isMenuVisible, setIsMenuVisible] = useState(true)
     const [coins] = useState(parseInt(localStorage.getItem("coins")) || 1000)
-    const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; // zistime, ci sme na dotykovom zariadeni alebo pc
     const [isRulesVisible, setIsRulesVisible] = useState(false);
     const [isLevelsVisible, setIsLevelsVisible] = useState(false);
-    const OPTIONS = {}
-    const SLIDE_COUNT = 10
-    const SLIDES = Array.from(Array(SLIDE_COUNT).keys())
-
     const levelsData = levelsFromJsonFile;
-    const shuffled = shuffleLevels(levelsData);
+    const [levels] = useState(() => shuffleLevels(levelsData));//Levely zamiesame a lazy inicializujeme
+
 
     useEffect(() => { // ulozenie figures.json do localStorage
         if(localStorage.getItem("figures") === null) localStorage.setItem("figures", JSON.stringify(figuresFromJsonFile));
@@ -49,9 +45,12 @@ export default function Menu() {
         localStorage.setItem("coins", coins.toString());
     }, [coins]);
     useEffect(() => { // ulozenie levelov do localStorage
-        localStorage.setItem("levels", JSON.stringify(shuffled));
-    }, [shuffled]);
-    const [levels, setLevels] = useState(JSON.parse(localStorage.getItem("levels")))
+        localStorage.setItem("levels", JSON.stringify(levels));
+    }, [levels]);
+    const OPTIONS = {}
+    //Urobime array s IDs levelov
+    const LEVEL_IDS = levels ? levels.map(level => level.id) : [];
+
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-[url('/grass.jpg')]">
@@ -84,7 +83,7 @@ export default function Menu() {
                     <button className="bg-black text-white w-full h-16 hover:bg-gray-600" onClick={() => setIsRulesVisible(true)}>Rules</button>
                 </motion.div>}
             {isRulesVisible && <RulesModal setIsRulesVisible={setIsRulesVisible} isRulesVisible={isRulesVisible}/>}
-            {isLevelsVisible && <LevelsCarousel slides={SLIDES} options={OPTIONS} isLevelsVisible={isLevelsVisible} setIsLevelsVisible={setIsLevelsVisible}/>}
+            {isLevelsVisible && <LevelsCarousel slides={LEVEL_IDS} options={OPTIONS} isLevelsVisible={isLevelsVisible} setIsLevelsVisible={setIsLevelsVisible}/>}
         </div>
     )
 }

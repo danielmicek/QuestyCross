@@ -17,6 +17,7 @@ import WinningPopup from "../components/WinningPopup.jsx";
 import LosingPopup from "../components/LosingPopup.jsx";
 import CommonModal from "../components/CommonModal.jsx";
 import {useTimer} from "use-timer";
+import {useSearchParams} from "react-router-dom";
 
 
 function handleDragEnd(event, abilities, setAbilities, setCoin2x, setCoin3x, setDurability, setShield) {
@@ -114,9 +115,10 @@ function createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COL
     return array
 }
 
-function incrementNumOfPlays(){
+function incrementNumOfPlays(selectedLevel){
     const levels = JSON.parse(localStorage.getItem("levels"))
-    const currentLevel = getCurrentLevel(levels)
+    const currentLevel = getCurrentLevel(levels,selectedLevel)
+    console.log("Current level:",currentLevel)
     const updatedLevels = levels.map(level => level.id === currentLevel.id ? {...level, numOfPlays: ++level.numOfPlays} : level)
     localStorage.setItem("levels", JSON.stringify(updatedLevels))
     return updatedLevels
@@ -129,7 +131,10 @@ function incrementNumOfPlays(){
 // posuvanie dolava a doprava posuva samotneho panacika
 // DraggableAbility a DroppableFigure su schvalne ako externe komponenty, pretoze Dnd kniznica to vyzaduje - hooky musia byt vo vnutri DndContext
 export default function GameBoard() {
-
+    const [searchParams] = useSearchParams();
+    // ziskavame z url level, ktory sme zvolili v menu
+    const selectedLevelId = searchParams.get("level") !== null ? parseInt(searchParams.get("level")) : undefined;
+    console.log("Selected level:", selectedLevelId);
     const lastDurabilityCarRef = useRef(null);
     const scrollerRef = useRef(null);
     const worldRef = useRef(null);
@@ -146,10 +151,10 @@ export default function GameBoard() {
     const [coin3x, setCoin3x] = useState(false);
     const [durability, setDurability] = useState(false);
     const [shield, setShield] = useState(false);
-    const [levels] = useState(() => incrementNumOfPlays())
+    const [levels] = useState(() => incrementNumOfPlays(selectedLevelId))
     const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
     const coinsRefs = useRef([])                                             // referencia na vsetky mince na mape -> sluzi na odstranenie mince z mapy po collectnuti
-    const [CURRENT_LEVEL] = useState(() => getCurrentLevel(levels))                      // aktualny level, ktory je vykresleny
+    const [CURRENT_LEVEL] = useState(() => getCurrentLevel(levels,selectedLevelId))                      // aktualny level, ktory je vykresleny
     const [NUM_OF_ROWS] = useState(() => CURRENT_LEVEL.rowsCount)
     const [roadsPositions] = useState(() => CURRENT_LEVEL.roadsPositions)               // pole pozicii vsetkych ciest v aktualnom leveli
     const noAccessAreaComponents = useMemo(() => createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roadsPositions, CURRENT_LEVEL), [CURRENT_LEVEL, NUM_OF_ROWS, roadsPositions])
@@ -164,6 +169,8 @@ export default function GameBoard() {
     });
 
     console.log(CURRENT_LEVEL.id)
+    console.log("Current level:", CURRENT_LEVEL);
+    console.log("Levels:", levels);
 
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani

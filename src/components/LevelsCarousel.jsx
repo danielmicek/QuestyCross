@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import { Thumb } from './LevelsCarouselThumbsButton.jsx'
+import {Link} from "react-router-dom";
 
 export default function LevelsCarousel({slides, options, isLevelsVisible, setIsLevelsVisible}) {
     const carouselRef = useRef(null)
@@ -53,10 +54,10 @@ export default function LevelsCarousel({slides, options, isLevelsVisible, setIsL
             <div className="embla z-1004 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl px-4" ref={carouselRef}>
                 <div className="embla__viewport" ref={emblaMainRef}>
                     <div className="embla__container">
-                        {slides.map((index) => (
-                            <div className="embla__slide" key={index}>
+                        {slides.map((levelId,index) => (
+                            <Link to={`/game?level=${levelId}`} key={index} className="embla__slide">
                                 <div className="embla__slide__number">{index + 1}</div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
@@ -64,7 +65,7 @@ export default function LevelsCarousel({slides, options, isLevelsVisible, setIsL
                 <div className="embla-thumbs">
                     <div className="embla-thumbs__viewport" ref={emblaThumbsRef}>
                         <div className="embla-thumbs__container">
-                            {slides.map((index) => (
+                            {slides.map((_,index) => (
                                 <Thumb
                                     key={index}
                                     onClick={() => onThumbClick(index)}

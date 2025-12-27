@@ -1,4 +1,3 @@
-import {useEffect} from "react";
 import {SQUARE_SIZE} from "./constants.jsx";
 
 export function calculateGridLocationFromPixels(posX, scrollerRef){
@@ -25,7 +24,15 @@ export function calculateNoAccessArea(NUM_OF_COLUMNS, ACTIVE_AREA){
     return Math.floor((NUM_OF_COLUMNS - ACTIVE_AREA) / 2)
 }
 
-export function getCurrentLevel(levels){
+export function getCurrentLevel(levels,selectedLevel = null){
+    if (selectedLevel !== null) {
+        console.log("The levels man", levels)
+        console.log("The selected level man", selectedLevel)
+        const level = levels.find(level => level.id === selectedLevel)
+        console.log("The return man",level)
+        return level
+    }
+
     for(let level of levels){
         if(!level.passed) return level
     }
