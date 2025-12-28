@@ -77,7 +77,7 @@ function CarouselItem({
                         <p className="text-lg font-bold text-black">price: {item.price} coins</p>
                         <CustomButton
                             text="Buy"
-                            buyHandler={() => buyHandler(coins, setCoins, item, items, setItems)}
+                            buyHandler={() => buyHandler(coins, setCoins, item, items, setItems, "figures")}
                         />
                     </div>
                 ) : (

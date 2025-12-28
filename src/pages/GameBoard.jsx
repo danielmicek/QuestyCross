@@ -25,7 +25,7 @@ function handleDragEnd(event, abilities, setAbilities, setCoin2x, setCoin3x, set
     if (!over) return;
 
     if (over.id === "droppable_skibidi_id") {
-        toast.success('Applied ability: ' + active.id);
+        toast.success('Applied ability: ' + active.id, {style: {fontWeight: "bold"}});
         let newAbilities = abilities.map(ability => ability.id === active.id ? {...ability, owned: --ability.owned} : ability)
         setAbilities(newAbilities)
         localStorage.setItem("abilities", JSON.stringify(newAbilities));
@@ -83,7 +83,6 @@ function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef, dura
                 return false;
             }
 
-            console.log("collision detected!");
             return true;
         }
     }
@@ -91,37 +90,44 @@ function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef, dura
 }
 
 // pri vyplnani NO_ACCESS_AREA vynechame tie riadky, na ktorych je Road
-function isRoadOnPosition(roadsPositions, y){
-    for(let road of roadsPositions){
-        if(road === y || road === y - 1) return true
+function isRoadOnPosition(roads, y){
+    for(let road of roads){
+        if(road.position === y || road.position === y - 1) return true
     }
     return false
 }
 
-function createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roadsPositions, CURRENT_LEVEL){
+function createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roads, CURRENT_LEVEL){
     const array = []
     for(let y = 11; y <= NUM_OF_ROWS; y++){  // zaciname na 11, pretoze FinishLine ma vysku 10 * SQUARE_SIZE
-        if(!isRoadOnPosition(roadsPositions, y)){
+        if(!isRoadOnPosition(roads, y)){
             // vyplnanie stlpcov zlava
             for(let x = 0; x < NO_ACCESS_AREA; x++){
-                array.push(<NoAccessComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={x} difficulty = {CURRENT_LEVEL.difficulty}/>)
+                array.push(<NoAccessComponent key = {"L" + x + y} SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={x} difficulty = {CURRENT_LEVEL.difficulty}/>)
             }
             // vyplnanie stlpcov zprava
             for(let x = 0; x < NO_ACCESS_AREA; x++){
-                array.push(<NoAccessComponent SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={NUM_OF_COLUMNS - x} difficulty = {CURRENT_LEVEL.difficulty}/>)
+                array.push(<NoAccessComponent key = {"R" + x + y} SQUARE_SIZE={SQUARE_SIZE} NO_ACCESS_AREA={NO_ACCESS_AREA} rowsFromTop={y} colsFromSide={NUM_OF_COLUMNS - x} difficulty = {CURRENT_LEVEL.difficulty}/>)
             }
         }
     }
     return array
 }
 
-function incrementNumOfPlays(selectedLevel){
+function incrementNumOfPlays(selectedLevel, currentLevelIndex){
     const levels = JSON.parse(localStorage.getItem("levels"))
-    const currentLevel = getCurrentLevel(levels,selectedLevel)
-    console.log("Current level:",currentLevel)
+    const currentLevel = getCurrentLevel(levels, selectedLevel, currentLevelIndex)
     const updatedLevels = levels.map(level => level.id === currentLevel.id ? {...level, numOfPlays: ++level.numOfPlays} : level)
     localStorage.setItem("levels", JSON.stringify(updatedLevels))
     return updatedLevels
+}
+
+function getCurrentLevelIndex(selectedLevelId){
+    const levels = JSON.parse(localStorage.getItem("levels"))
+    if(selectedLevelId){
+        return levels.findIndex(level => level.id === selectedLevelId)
+    }
+    return parseInt(localStorage.getItem("currentLevelIndex"))
 }
 
 // WORLD_CONTAINER je v podstate tvoja obrazovka, nema overflow, je to teda len to co sa mesti na obrazovku
@@ -133,12 +139,12 @@ function incrementNumOfPlays(selectedLevel){
 export default function GameBoard() {
     const [searchParams] = useSearchParams();
     // ziskavame z url level, ktory sme zvolili v menu
-    const selectedLevelId = searchParams.get("level") !== null ? parseInt(searchParams.get("level")) : undefined;
-    console.log("Selected level:", selectedLevelId);
+    const selectedLevelId = searchParams.get("levelId") !== null ? parseInt(searchParams.get("levelId")) : undefined;
     const lastDurabilityCarRef = useRef(null);
     const scrollerRef = useRef(null);
     const worldRef = useRef(null);
     const carPostitionRef = useRef({});
+
     const figurePositionRef = useRef({});
     const [posX, setPosX] = useState((NUM_OF_COLUMNS + 1) / 2);
     const [rotate, setRotate] = useState(0);
@@ -151,13 +157,14 @@ export default function GameBoard() {
     const [coin3x, setCoin3x] = useState(false);
     const [durability, setDurability] = useState(false);
     const [shield, setShield] = useState(false);
-    const [levels] = useState(() => incrementNumOfPlays(selectedLevelId))
+    const [currentLevelIndex, setCurrentLevelIndex] = useState(() => getCurrentLevelIndex(selectedLevelId))
+    const [levels] = useState(() => incrementNumOfPlays(selectedLevelId, currentLevelIndex))
     const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
     const coinsRefs = useRef([])                                             // referencia na vsetky mince na mape -> sluzi na odstranenie mince z mapy po collectnuti
-    const [CURRENT_LEVEL] = useState(() => getCurrentLevel(levels,selectedLevelId))                      // aktualny level, ktory je vykresleny
+    const [CURRENT_LEVEL] = useState(() => getCurrentLevel(levels, selectedLevelId, currentLevelIndex))       // aktualny level, ktory je vykresleny
     const [NUM_OF_ROWS] = useState(() => CURRENT_LEVEL.rowsCount)
-    const [roadsPositions] = useState(() => CURRENT_LEVEL.roadsPositions)               // pole pozicii vsetkych ciest v aktualnom leveli
-    const noAccessAreaComponents = useMemo(() => createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roadsPositions, CURRENT_LEVEL), [CURRENT_LEVEL, NUM_OF_ROWS, roadsPositions])
+    const [roads] = useState(() => CURRENT_LEVEL.roads)                 // pole pozicii vsetkych ciest v aktualnom leveli
+    const noAccessAreaComponents = useMemo(() => createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roads, CURRENT_LEVEL), [CURRENT_LEVEL, NUM_OF_ROWS, roads])
     const activeAreaObstacles = useMemo(() => CURRENT_LEVEL.obstaclesPositions.map((coin, i) => (<NoAccessComponent key = {i} SQUARE_SIZE={SQUARE_SIZE} colsFromSide = {coin.x + NO_ACCESS_AREA} rowsFromTop={coin.y} activeArea ={true} difficulty = {CURRENT_LEVEL.difficulty}/>)), [CURRENT_LEVEL.difficulty, CURRENT_LEVEL.obstaclesPositions])
     const activeAreaCoins = useMemo(() => CURRENT_LEVEL.coinsPositions.map((coin, i) => (<Coin key = {i} positionFromLeft = {coin.x + NO_ACCESS_AREA} positionFromTop={coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>)), [CURRENT_LEVEL.coinsPositions])
     const { time, start, pause} = useTimer({        // timer component, aby sme mohli passnut time field do WinningPopup
@@ -168,9 +175,13 @@ export default function GameBoard() {
         onTimeOver: () => setIsLosingPopupVisible(true)
     });
 
-    console.log(CURRENT_LEVEL.id)
-    console.log("Current level:", CURRENT_LEVEL);
-    console.log("Levels:", levels);
+    // useEffect(() => {
+    //     function handleResize() {
+    //         window.location.reload();
+    //     }
+    //     window.addEventListener("resize", handleResize);
+    //     return () => window.removeEventListener("resize", handleResize);
+    // }, []);
 
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani
@@ -204,6 +215,7 @@ export default function GameBoard() {
         }
     };
 
+
     return (
         <>
             <Toaster position="top-left" reverseOrder={false}/>
@@ -226,7 +238,9 @@ export default function GameBoard() {
                                                         collectedCoins = {collectedCoins}
                                                         coins = {coins}
                                                         setCoins = {setCoins}
-                                                        time = {time}/>}
+                                                        time = {time}
+                                                        currentLevelIndex = {currentLevelIndex}
+                                                        setCurrentLevelIndex = {setCurrentLevelIndex}/>}
                 {isLosingPopupVisible && <LosingPopup time={time}/>}
 
 
@@ -254,7 +268,13 @@ export default function GameBoard() {
                         {noAccessAreaComponents}
 
                         {/*V tomto pripade akceptovatelne pouzit indexy ako keys*/}
-                        {CURRENT_LEVEL.roadsPositions.map((road, index) => (<Road rowsFromTop={road} carPositionRef={carPostitionRef} key={index} onCollisionCheck={checkCollisionCallback}/>))}
+                        {CURRENT_LEVEL.roads.map((road, index) => (<Road rowsFromTop={road.position}
+                                                                         spawnRate1={road.spawnRate1}
+                                                                         spawnRate2 = {road.spawnRate2}
+                                                                         direction={road.direction}
+                                                                         carPositionRef={carPostitionRef}
+                                                                         key={index}
+                                                                         onCollisionCheck={checkCollisionCallback}/>))}
 
                         {activeAreaCoins}
 

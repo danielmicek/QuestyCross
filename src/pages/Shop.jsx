@@ -14,10 +14,10 @@ function showOtherShop(setShowFigures, setShowAbilities){
 
 // type je but "figures" alebo "abilities"
 function buyHandler(coins, setCoins, item, items, setItems, type){
-    if(coins < item.price) toast.error('Not enough coins!')
+    if(coins < item.price) toast.error('Not enough coins!', {style: {fontWeight: "bold"}})
     else {
-        type === "figure" ? toast.success('New character bought!') : toast.success('New ability bought!')
-        let updatedItems = type === "figure" ? items.map(figure => figure.id === item.id ? {...figure, owned: true} : figure) : items.map(ability => ability.id === item.id ? {...ability, owned: ++ability.owned} : ability)
+        type === "figures" ? toast.success('New character bought!', {style: {fontWeight: "bold"}}) : toast.success('New ability bought!', {style: {fontWeight: "bold"}})
+        let updatedItems = type === "figures" ? items.map(figure => figure.id === item.id ? {...figure, owned: true} : figure) : items.map(ability => ability.id === item.id ? {...ability, owned: ++ability.owned} : ability)
         let newCoins = coins - item.price
         setCoins(newCoins)
         setItems(updatedItems)
@@ -78,7 +78,7 @@ export default function Shop(){
                         <div className="border-white rounded-xl border flex flex-col w-[300px] h-[360px] relative overflow-hidden shadow-2xl hover:scale-105 transition-all justify-center items-center">
                             <img
                                 src={ability.image}
-                                className="w-[240px] h-[240px] object-cover mb-28"
+                                className="w-60 h-60 object-cover mb-28"
                                 alt={ability.name}
                             />
                             <div className="bg-linear-to-t from-[#EDDD53] to-transparent absolute w-full flex flex-col bottom-0 pb-2 gap-2 h-fit">

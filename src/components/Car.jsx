@@ -4,7 +4,7 @@ import {getRandomElement} from "./shared/functions.jsx";
 import {useMemo} from "react";
 
 const SPEED_PX_PER_SEC_LANE1 = 300;
-const SPEED_PX_PER_SEC_LANE2 = 220; // pomalšie
+const SPEED_PX_PER_SEC_LANE2 = 220;
 
 const cars = [
     '/red_car.png',
@@ -13,10 +13,9 @@ const cars = [
     '/green_car.png',
 ]
 
-export default function Car({ car, carPositionRef, setCars, rowsFromTop, onCollisionCheck, firstLane = true }) {
+export default function Car({ car, carPositionRef, setCars, rowsFromTop, onCollisionCheck, firstLane = true, direction}) {
     const startX = -0.1 * window.innerWidth;
     const endX = window.innerWidth;
-
     const speed = firstLane ? SPEED_PX_PER_SEC_LANE1 : SPEED_PX_PER_SEC_LANE2;
     const duration = (endX - startX) / speed;
 
@@ -25,10 +24,10 @@ export default function Car({ car, carPositionRef, setCars, rowsFromTop, onColli
 
     return (
         <motion.div
-            className="bg-[url('/red_car.png')] bg-contain bg-no-repeat absolute left-0 z-10"
-            style={{ width: SQUARE_SIZE, height: SQUARE_SIZE, backgroundImage: `url(${carType})` }}
-            initial={{ x: startX }}
-            animate={{ x: endX }}
+            className="bg-contain bg-no-repeat absolute left-0 z-10"
+            style={{ width: SQUARE_SIZE, height: SQUARE_SIZE, backgroundImage: `url(${carType})`, rotate: direction === "right" ? 180 : 0}}
+            initial={{ x: direction === "left" ? startX : endX }}
+            animate={{ x: direction === "left" ? endX : startX }}
             transition={{ duration, ease: "linear" }}
             onAnimationComplete={() => {
                 setCars((prev) => prev.filter((c) => c !== car));

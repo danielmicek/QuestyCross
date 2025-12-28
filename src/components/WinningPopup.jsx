@@ -6,14 +6,19 @@ import {getCurrentLevel} from "./shared/functions.jsx";
 
 // updates "passed" field from false to true
 // pripocitaj collectedCoins k celkovym coinom
-function finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime){
+function finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime, setCurrentLevelIndex){
     let updatedLevels = levels.map(level => level.id === CURRENT_LEVEL.id ? {...level, passed: true} : level)
-    updatedLevels = levels.map(level => actualTime > level.bestTime ? {...level, bestTime: actualTime} : level)
+    updatedLevels = updatedLevels.map(level => actualTime > level.bestTime ? {...level, bestTime: actualTime} : level)
     const newCoins = collectedCoins + coins
     setCoins(newCoins)
     localStorage.setItem("coins", newCoins.toString())
     localStorage.setItem("levels", JSON.stringify(updatedLevels))
 
+    setCurrentLevelIndex(prev => {
+        const newIndex = prev + 1
+        localStorage.setItem("currentLevelIndex", newIndex.toString())
+        return newIndex
+    })
     window.location.reload()
 }
 
@@ -24,14 +29,15 @@ function calculateTime(totalTime, playersTime){
     return String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0")
 }
 
-export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins, setCoins}) {
+export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins, setCoins, currentLevelIndex, setCurrentLevelIndex}) {
     let total = CURRENT_LEVEL.coinsCount // vzdy 20
     if(localStorage.getItem("coin2x") === "true") total *= 2;
     if(localStorage.getItem("coin3x") === "true") total *= 3;
 
     const levels = JSON.parse(localStorage.getItem("levels"))
     const actualTime = calculateTime(CURRENT_LEVEL.time, time)
-    const bestTime = CURRENT_LEVEL.bestTime
+    const bestTime = actualTime > CURRENT_LEVEL.bestTime ? CURRENT_LEVEL.bestTime : actualTime
+
 
     return (
         <>
@@ -45,8 +51,8 @@ export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins
                 <p className="text-center mt-2"><b>collected coins: </b>{collectedCoins}/{total}</p>
                 <p className="text-center"><b>total coins: </b>{coins + collectedCoins}</p>
                 <p className="text-center mt-2"><b>time: </b>{calculateTime(CURRENT_LEVEL.time, time)}</p>
-                <p className="text-center"><b>best time: </b>{actualTime}</p>
-                <p className="text-center mt-2 mb-2"><b>next level difficulty: </b>{getCurrentLevel(levels).difficulty}</p>
+                <p className="text-center"><b>best time: </b>{bestTime}</p>
+                <p className="text-center mt-2 mb-2"><b>next level difficulty: </b>{getCurrentLevel(levels, currentLevelIndex + 1).difficulty}</p>
 
 
                 <div id = "line2" className="w-full border"></div>
@@ -57,9 +63,10 @@ export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins
                     <div id = "PLAY_AGAIN_BUTTON" className= "rounded-full" onClick={() => window.location.reload()}>
                         <CustomButton text="Play again"/>
                     </div>
-                    <div id = "PLAY_AGAIN_BUTTON" className= "rounded-full" onClick={() => finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime)}>
+                    {currentLevelIndex !== levels.length && <div id="NEXT_LEVEL_BUTTON" className="rounded-full"
+                          onClick={() => finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime, setCurrentLevelIndex)}>
                         <CustomButton text="Next level"/>
-                    </div>
+                    </div>}
                 </div>
             </motion.div>
         </>

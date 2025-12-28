@@ -3,55 +3,107 @@
     "passed": false,
     "id": 1,
     "difficulty": "easy",
-    "time": 90,
+    "time": 120,
     "bestTime": 0,
-    "rowsCount": 70,
-    "reward": 10,
+    "rowsCount": 100,
+    "reward": 20,
     "numOfPlays": 0,
 
-    "roadsCount": 3,
-    "roadsPositions": [20, 35, 50],
-    "roadsDirections": ["right", "left", "right"],
-    "spawnRate": [
-      [800, 2500], [800, 2500], [800, 2500]
+    "roadsCount": 6,
+    "roads": [
+      {
+        "position": 15,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "left"
+      },
+      {
+        "position": 25,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "right"
+      },
+      {
+        "position": 40,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "left"
+      },
+
+      {
+        "position": 60,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "right"
+      },
+      {
+        "position": 70,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "left"
+      },
+      {
+        "position": 80,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "left"
+      }
     ],
 
-    "coinsCount": 20,
+    "coinsCount": 5,
     "coinsPositions": [
-      { "x": 1, "y": 15 },
-      { "x": 2, "y": 25 },
-      { "x": 4, "y": 30 },
-      { "x": 5, "y": 40 },
-      { "x": 1, "y": 45 },
-      { "x": 3, "y": 55 },
-      { "x": 4, "y": 60 },
-      { "x": 2, "y": 65 },
-      { "x": 5, "y": 18 },
-      { "x": 3, "y": 28 },
-      { "x": 1, "y": 58 },
-      { "x": 4, "y": 48 },
-      { "x": 2, "y": 13 },
-      { "x": 5, "y": 33 },
-      { "x": 1, "y": 43 },
-      { "x": 3, "y": 53 },
-      { "x": 4, "y": 63 },
-      { "x": 2, "y": 68 },
-      { "x": 5, "y": 23 },
-      { "x": 1, "y": 38 }
+      { "x": 4, "y": 50 },
+      { "x": 3, "y": 99 },
+      { "x": 1, "y": 89 },
+      { "x": 2, "y": 17 },
+      { "x": 5, "y": 54 },
+      { "x": 1, "y": 66 },
+      { "x": 3, "y": 14 },
+      { "x": 4, "y": 98 },
+      { "x": 3, "y": 90 },
+      { "x": 5, "y": 24 },
+      { "x": 5, "y": 27 },
+      { "x": 4, "y": 29 },
+      { "x": 3, "y": 32 },
+      { "x": 3, "y": 48 },
+      { "x": 1, "y": 85 },
+      { "x": 4, "y": 75 },
+      { "x": 4, "y": 47 },
+      { "x": 2, "y": 92 },
+      { "x": 1, "y": 44 },
+      { "x": 5, "y": 28 }
     ],
     "obstaclesPositions": [
-      { "x": 2, "y": 17 },
-      { "x": 5, "y": 22 },
-      { "x": 1, "y": 32 },
-      { "x": 4, "y": 38 },
-      { "x": 3, "y": 42 },
-      { "x": 5, "y": 52 },
-      { "x": 2, "y": 57 },
-      { "x": 1, "y": 62 },
-      { "x": 4, "y": 67 },
-      { "x": 3, "y": 12 },
-      { "x": 5, "y": 27 },
-      { "x": 2, "y": 47 }
+      { "x": 5, "y": 93 },
+      { "x": 2, "y": 67 },
+      { "x": 4, "y": 61 },
+      { "x": 1, "y": 31 },
+      { "x": 2, "y": 90 },
+      { "x": 3, "y": 23 },
+      { "x": 5, "y": 11 },
+      { "x": 1, "y": 29 },
+      { "x": 4, "y": 21 },
+      { "x": 4, "y": 58 },
+      { "x": 2, "y": 95 },
+      { "x": 1, "y": 12 },
+      { "x": 3, "y": 64 },
+      { "x": 5, "y": 80 },
+      { "x": 1, "y": 75 },
+      { "x": 2, "y": 19 },
+      { "x": 4, "y": 76 },
+      { "x": 3, "y": 69 },
+      { "x": 2, "y": 97 },
+      { "x": 4, "y": 53 },
+      { "x": 1, "y": 88 },
+      { "x": 5, "y": 96 },
+      { "x": 3, "y": 24 },
+      { "x": 2, "y": 70 },
+      { "x": 4, "y": 51 },
+      { "x": 1, "y": 77 },
+      { "x": 3, "y": 91 },
+      { "x": 2, "y": 89 },
+      { "x": 5, "y": 48 },
+      { "x": 3, "y": 84 }
     ]
   },
   {
@@ -60,15 +112,49 @@
     "difficulty": "easy",
     "time": 90,
     "bestTime": 0,
-    "rowsCount": 70,
+    "rowsCount": 100,
     "reward": 10,
     "numOfPlays": 0,
 
-    "roadsCount": 3,
-    "roadsPositions": [18, 36, 54],
-    "roadsDirections": ["left", "right", "left"],
-    "spawnRate": [
-      [750, 2400], [750, 2400], [750, 2400]
+    "roadsCount": 4,
+    "roads": [
+      {
+        "position": 15,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "left"
+      },
+      {
+        "position": 25,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "right"
+      },
+      {
+        "position": 40,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "left"
+      },
+
+      {
+        "position": 60,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "right"
+      },
+      {
+        "position": 70,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "left"
+      },
+      {
+        "position": 80,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "left"
+      }
     ],
 
     "coinsCount": 20,
@@ -466,10 +552,38 @@
 
 
     "roadsCount": 5,
-    "roadsPositions": [15, 25, 35, 45, 55],
-    "roadsDirections": ["left", "right", "left", "right", "left"],
-    "spawnRate": [
-      [500, 2200], [500, 2200], [500, 2200], [500, 2200], [500, 2200]
+    "roads": [
+      {
+        "position": 15,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "left"
+      },
+      {
+        "position": 25,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "right"
+      },
+      {
+        "position": 35,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "left"
+      },
+
+      {
+        "position": 45,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "right"
+      },
+      {
+        "position": 55,
+        "spawnRate1": [900, 4200],
+        "spawnRate2": [1200, 5200],
+        "direction": "left"
+      }
     ],
 
     "coinsCount": 5,

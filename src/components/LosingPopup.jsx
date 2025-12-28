@@ -12,7 +12,7 @@ export default function LosingPopup({time}) {
                 <h1 className="font-bold text-5xl text-center mb-2">Game Over</h1>
                 <div id = "line" className="w-full border"></div>
                 {time > 0 ?
-                    <p className="text-center mt-3 text-lg">Oops, car go brm!<br/>Do you want try again?</p>
+                    <p className="text-center mt-3 text-lg">Oops, car go brm!<br/>Do you want to try again?</p>
                     :
                     <p className="text-center mt-3 text-lg">You did not make it in time!<br/>Do you want try again?</p>}
                 <div className="flex justify-around mt-5">

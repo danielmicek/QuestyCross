@@ -7,7 +7,7 @@ function rand(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-export default function Road({rowsFromTop, carPositionRef,onCollisionCheck}) {
+export default function Road({rowsFromTop, carPositionRef,onCollisionCheck, spawnRate1, spawnRate2, direction}) {
     const [cars1, setCars1] = useState([]);
     const [cars2, setCars2] = useState([]);
     const carId1 = useRef(0)
@@ -21,18 +21,18 @@ export default function Road({rowsFromTop, carPositionRef,onCollisionCheck}) {
         const spawnLane1 = () => {
             if (!alive) return;
             setCars1(prev => [...prev, ++carId1.current]);
-            const next = Math.floor(rand(900, 4200));
+            const next = Math.floor(rand(spawnRate1[0], spawnRate1[1]));
             t1 = setTimeout(spawnLane1, next);
         };
 
         const spawnLane2 = () => {
             if (!alive) return;
             setCars2(prev => [...prev, ++carId2.current]);
-            const next = Math.floor(rand(1200, 5200));
+            const next = Math.floor(rand(spawnRate2[0], spawnRate2[1]));
             t2 = setTimeout(spawnLane2, next);
         };
 
-        // aby nezačali naraz:
+        // aby nezacali naraz:
         const offset2 = Math.floor(rand(200, 1500));
         spawnLane1();
         t2 = setTimeout(spawnLane2, offset2);
@@ -49,10 +49,23 @@ export default function Road({rowsFromTop, carPositionRef,onCollisionCheck}) {
             <div className="road grid grid-rows-2 absolute w-full bg-[url('/road.png')] bg-center bg-size[100%] overflow-hidden"
                  style={{gridRowStart: rowsFromTop, height: 2*SQUARE_SIZE}}> {/*`${ROW_HEIGHT*2}px`*/}
                 <div className="relative h-full flex items-center">
-                    {cars1.map(car => (<Car key ={car} car={car} carPositionRef={carPositionRef} setCars={setCars1} rowsFromTop={rowsFromTop} onCollisionCheck={onCollisionCheck}/>))}
+                    {cars1.map(car => (<Car key ={car}
+                                            car={car}
+                                            carPositionRef={carPositionRef}
+                                            setCars={setCars1}
+                                            rowsFromTop={rowsFromTop}
+                                            onCollisionCheck={onCollisionCheck}
+                                            direction={direction}/>))}
                 </div>
                 <div className="relative h-full flex items-center">
-                    {cars2.map(car => (<Car key ={car} car={car} carPositionRef={carPositionRef} setCars={setCars2} rowsFromTop={rowsFromTop} onCollisionCheck={onCollisionCheck} firstLane = {false}/>))}
+                    {cars2.map(car => (<Car key ={car}
+                                            car={car}
+                                            carPositionRef={carPositionRef}
+                                            setCars={setCars2}
+                                            rowsFromTop={rowsFromTop}
+                                            onCollisionCheck={onCollisionCheck}
+                                            firstLane = {false}
+                                            direction={direction}/>))}
                 </div>
             </div>
         </>

@@ -24,18 +24,12 @@ export function calculateNoAccessArea(NUM_OF_COLUMNS, ACTIVE_AREA){
     return Math.floor((NUM_OF_COLUMNS - ACTIVE_AREA) / 2)
 }
 
-export function getCurrentLevel(levels,selectedLevel = null){
+export function getCurrentLevel(levels,selectedLevel = null, currentLevelIndex){
     if (selectedLevel !== null) {
-        console.log("The levels man", levels)
-        console.log("The selected level man", selectedLevel)
-        const level = levels.find(level => level.id === selectedLevel)
-        console.log("The return man",level)
-        return level
+        return levels.find(level => level.id === selectedLevel)
     }
 
-    for(let level of levels){
-        if(!level.passed) return level
-    }
+    return levels[currentLevelIndex]
 }
 
 export function getRandomElement(array){

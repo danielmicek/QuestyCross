@@ -20,7 +20,7 @@ export default function CommonModal({setIsPopupVisible, text, secondaryText = fa
                         <CustomButton text="Resume"/>
                     </div>}
                     {!secondaryText && <div id = "CLOSE_START_POPUP_BUTTON" className= "rounded-full" onClick={() => setIsPopupVisible(false)}>
-                        <CustomButton text="Exit to Menu"/>
+                        <CustomButton text={secondaryText === true ? "Ready to start the game?" : "No"}/>
                     </div>}
                     {!secondaryText && <Link to="/game" className="buttonLink">
                         <CustomButton text="Play"/>
