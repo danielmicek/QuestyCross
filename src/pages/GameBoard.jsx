@@ -178,11 +178,14 @@ export default function GameBoard() {
         onTimeOver: () => setIsLosingPopupVisible(true)
     });
 
-
-    // remove scrolling
-    document.addEventListener("wheel",function(e) {
-        e.preventDefault();
-    }, { passive: false })
+    // disable manual scrolling
+    useEffect(() => {
+        if(scrollerRef){
+            scrollerRef.current.addEventListener("wheel",function(e) {
+                e.preventDefault();
+            }, { passive: false })
+        }
+    }, []);
 
     // reload on resize
     useEffect(() => {
