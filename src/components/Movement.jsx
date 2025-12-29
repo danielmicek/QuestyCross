@@ -19,7 +19,6 @@ function coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, 
 
     // suradnice figurky v gride
     const figure_grid_position = calculateGridLocationFromPixels(posX, scrollerRef)
-    //console.log("fig: ", figure_grid_position.x_grid, figure_grid_position.y_grid)
     for(let i = 0; i < coinsPositions.length; i++) {
         // suradnice coinu v gride
         const coin_grid_position = {
@@ -175,10 +174,13 @@ export default function Movement({
                                      coinsPositions,
                                      obstaclesPositions,
                                      coinsRefs,
-                                     setIsWinningModalVisible
+                                     setIsWinningModalVisible,
+                                     isAnyPopupVisible
                                  }){
+
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches; // zistime, ci sme na dotykovom zariadeni alebo pc
     useEffect(() => {   // eventlistener na WASD clicky, odstrani sa po unmounte komponentu
+        if(isAnyPopupVisible) return // ak je otvoreny nejaky popup, nefunguje hybanie
         const handler = (e) => {
             whatKeyWasPressed({
                 key: e.key,
@@ -197,8 +199,7 @@ export default function Movement({
         }
         window.addEventListener("keydown", handler)
         return () => window.removeEventListener("keydown", handler);
-    }, [scrollerRef, setRotate, setPosX, NUM_OF_ROWS, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, setIsWinningModalVisible]);
-
+    }, [scrollerRef, setRotate, setPosX, NUM_OF_ROWS, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, setIsWinningModalVisible, isAnyPopupVisible]);
 
     return(
         isTouchDevice ?

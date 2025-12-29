@@ -2,13 +2,19 @@ import {motion, time} from "framer-motion";
 import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import {Link, useSearchParams} from "react-router-dom";
 import CustomButton from "./CustomButton.jsx";
-import {calculateBestTime, calculateTime, getCurrentLevel, levelIdDecryptor} from "./shared/functions.jsx";
+import {
+    calculateBestTime,
+    calculateTime,
+    getCurrentLevel,
+    levelIdDecryptor
+} from "./shared/functions.jsx";
 import {useEffect} from "react";
 
 // ziska id nasledujuceho levelu
 function getNextLevelId(levels, currentLevelId){
+    console.log("current level id from getNextLevelid: " + currentLevelId);
     for(let i = 0; i < levels.length; i++){
-        if(levels[i].id === currentLevelId) return levelIdDecryptor(levels[i + 1].id)
+        if(levelIdDecryptor(levels[i].id) === currentLevelId) return levelIdDecryptor(levels[i + 1].id)
     }
 }
 
@@ -33,13 +39,13 @@ function finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoi
 
 function loadNextLevel(levels, searchParam, setSearchParams, setCurrentLevelIndex){
     if(searchParam){
-        const nextLevelId = getNextLevelId(levels, parseInt(searchParam))
+        const nextLevelId = getNextLevelId(levels, levelIdDecryptor(parseInt(searchParam)))
         setSearchParams({"levelId": `7845${nextLevelId}9`})
     }
 
     // nacitanie indexu dalsieho levelu do localStorage
     setCurrentLevelIndex(prev => {
-        const newIndex = prev + 1 < levels.length - 1 ? prev + 1 : 0
+        const newIndex = prev + 1 <= levels.length - 1 ? prev + 1 : 0
         localStorage.setItem("currentLevelIndex", newIndex.toString())
         return newIndex
     })
@@ -62,6 +68,12 @@ export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins
         finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime)
     }, []);
 
+    const currentLevelId = CURRENT_LEVEL.id
+    const nextLevel = currentLevelIndex < 7 ? getCurrentLevel(levels, getNextLevelId(levels, selectedLevelId ? selectedLevelId : levelIdDecryptor(currentLevelId))) : null
+
+    console.log("current level id: ", getCurrentLevel(levels, selectedLevelId ? selectedLevelId : null, currentLevelIndex).id);
+    if(currentLevelIndex < 7) console.log("next level id: ", nextLevel.id);
+
     return (
         <>
             <div className="fixed inset-0 backdrop-blur-md bg-black/30 pointer-events-auto z-1003"></div>
@@ -76,7 +88,7 @@ export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins
                 <p className="text-center mt-2"><b>time: </b>{calculateTime(CURRENT_LEVEL.time, time)}</p>
                 <p className="text-center"><b>best time: </b>{calculateBestTime(bestTime)}</p>
                 {currentLevelIndex !== levels.length - 1 &&
-                    <p className="text-center mt-2 mb-2"><b>next level difficulty: </b>{getCurrentLevel(levels, selectedLevelId ? selectedLevelId + 1 : null, currentLevelIndex +1).difficulty}</p>}
+                    <p className="text-center mt-2 mb-2"><b>next level difficulty: </b>{nextLevel.difficulty}</p>}
 
 
                 <div id = "line2" className="w-full border"></div>

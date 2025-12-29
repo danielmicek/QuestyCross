@@ -54,3 +54,12 @@ export function levelIdDecryptor(id){
     let idString = id.toString()
     return parseInt(idString[idString.length - 2])
 }
+
+// ziska index aktualneho levelu podla levelId
+export function getCurrentLevelIndex(selectedLevelId){
+    const levels = JSON.parse(localStorage.getItem("levels"))
+    if(selectedLevelId){
+        return levels.findIndex(level => levelIdDecryptor(level.id) === selectedLevelId)
+    }
+    return parseInt(localStorage.getItem("currentLevelIndex"))
+}

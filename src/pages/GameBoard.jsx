@@ -7,7 +7,12 @@ import DraggableAbility from "../components/dnd/DraggableAbility.jsx";
 import DroppableFigure from "../components/dnd/DroppableFigure.jsx";
 import {toast, Toaster} from "react-hot-toast";
 import Coin from "../components/Coin.jsx";
-import {calculateGridLocationFromPixels, getCurrentLevel, levelIdDecryptor} from "../components/shared/functions.jsx";
+import {
+    calculateGridLocationFromPixels,
+    getCurrentLevel,
+    getCurrentLevelIndex,
+    levelIdDecryptor
+} from "../components/shared/functions.jsx";
 import FinishLine from "../components/FinishLine.jsx";
 import {NO_ACCESS_AREA, NUM_OF_COLUMNS, SQUARE_SIZE} from "../components/shared/constants.jsx";
 import NoAccessComponent from "../components/NoAccessComponent.jsx";
@@ -116,20 +121,16 @@ function createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COL
     return array
 }
 
+function isAnyPopupVisible(isPausePopupVisible, isLosingPopupVisible, isInitialInfoPopupVisible){
+    return isPausePopupVisible || isLosingPopupVisible || isInitialInfoPopupVisible
+}
+
 function incrementNumOfPlays(selectedLevel, currentLevelIndex){
     const levels = JSON.parse(localStorage.getItem("levels"))
     const currentLevel = getCurrentLevel(levels, selectedLevel, currentLevelIndex)
     const updatedLevels = levels.map(level => level.id === currentLevel.id ? {...level, numOfPlays: ++level.numOfPlays} : level)
     localStorage.setItem("levels", JSON.stringify(updatedLevels))
     return updatedLevels
-}
-
-function getCurrentLevelIndex(selectedLevelId){
-    const levels = JSON.parse(localStorage.getItem("levels"))
-    if(selectedLevelId){
-        return levels.findIndex(level => levelIdDecryptor(level.id) === selectedLevelId)
-    }
-    return parseInt(localStorage.getItem("currentLevelIndex"))
 }
 
 // WORLD_CONTAINER je v podstate tvoja obrazovka, nema overflow, je to teda len to co sa mesti na obrazovku
@@ -155,8 +156,8 @@ export default function GameBoard() {
     const [isInitialInfoPopupVisible, setIsInitialInfoPopupVisible] = useState(true);
     const [abilities, setAbilities] = useState(JSON.parse(localStorage.getItem("abilities")))
     const [coins, setCoins] = useState(() => parseInt(localStorage.getItem("coins")))
-    const [coin2x, setCoin2x] = useState(false);
-    const [coin3x, setCoin3x] = useState(false);
+    const [setCoin2x] = useState(false);
+    const [setCoin3x] = useState(false);
     const [durability, setDurability] = useState(false);
     const [shield, setShield] = useState(false);
     const [currentLevelIndex, setCurrentLevelIndex] = useState(() => getCurrentLevelIndex(selectedLevelId))
@@ -164,7 +165,6 @@ export default function GameBoard() {
     const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
     const coinsRefs = useRef([])                                             // referencia na vsetky mince na mape -> sluzi na odstranenie mince z mapy po collectnuti
     const [CURRENT_LEVEL] = useState(() => getCurrentLevel(levels, selectedLevelId, currentLevelIndex))       // aktualny level, ktory je vykresleny
-    console.log(currentLevelIndex);
     const [NUM_OF_ROWS] = useState(() => CURRENT_LEVEL.rowsCount)
     const [roads] = useState(() => CURRENT_LEVEL.roads)                 // pole pozicii vsetkych ciest v aktualnom leveli
     const noAccessAreaComponents = useMemo(() => createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roads, CURRENT_LEVEL), [CURRENT_LEVEL, NUM_OF_ROWS, roads])
@@ -178,14 +178,14 @@ export default function GameBoard() {
         onTimeOver: () => setIsLosingPopupVisible(true)
     });
 
-    // disable manual scrolling todo odkomentuj
-    /*useEffect(() => {
+    // disable manual scrolling
+    useEffect(() => {
         if(scrollerRef){
             scrollerRef.current.addEventListener("wheel",function(e) {
                 e.preventDefault();
             }, { passive: false })
         }
-    }, []);*/
+    }, []);
 
     // reload on resize
     useEffect(() => {
@@ -249,6 +249,7 @@ export default function GameBoard() {
                       obstaclesPositions = {CURRENT_LEVEL.obstaclesPositions}
                       coinsRefs = {coinsRefs}
                       setIsWinningModalVisible = {setIsWinningModalVisible}
+                      isAnyPopupVisible = {isAnyPopupVisible(isPausePopupVisible, isLosingPopupVisible, isInitialInfoPopupVisible)}
             />
             <div id = "WORLD_CONTAINER" className="gameBoardContainer relative w-screen h-screen overflow-hidden">
 
@@ -261,9 +262,9 @@ export default function GameBoard() {
                                                         currentLevelIndex = {currentLevelIndex}
                                                         setCurrentLevelIndex = {setCurrentLevelIndex}
                                                         selectedLevelId = {selectedLevelId}/>}
-                {/*{isLosingPopupVisible && <LosingPopup time={time}/>}*/}
-                {isInitialInfoPopupVisible && <InitialInfoPopup setIsPopupVisible = {setIsInitialInfoPopupVisible} CURRENT_LEVEL = {CURRENT_LEVEL} levels = {levels}/>}
 
+                {isLosingPopupVisible && <LosingPopup time={time}/>}
+                {isInitialInfoPopupVisible && <InitialInfoPopup setIsPopupVisible = {setIsInitialInfoPopupVisible} CURRENT_LEVEL = {CURRENT_LEVEL}/>}
 
                 <UpperBar collectedCoins = {collectedCoins}
                           isPausePopupVisible = {isPausePopupVisible}

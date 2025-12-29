@@ -1,19 +1,21 @@
-import {Link} from "react-router-dom";
 import { motion } from "framer-motion"
 import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import CustomButton from "./CustomButton.jsx";
-import {toast, Toaster} from "react-hot-toast";
+import {toast} from "react-hot-toast";
 import React from "react";
-import Road from "./Road.jsx";
 
+// resetovanie hodnot v jsone, ktore sa menili
 function resetGame(levels){
     for(let level of levels){
         level.passed = false
+        level.bestTime = 0
+        level.numOfPlays = 0
     }
     localStorage.setItem("levels", JSON.stringify(levels))
     localStorage.setItem("currentLevelIndex", "0")
     toast.success('Game reset successfully', {style: {fontWeight: "bold"}});
 }
+
 export default function ResetGamePopup({setIsPopupVisible, levels}) {
     return (
         <>
@@ -22,7 +24,7 @@ export default function ResetGamePopup({setIsPopupVisible, levels}) {
                         initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.1}}} style={{width: SQUARE_SIZE * ACTIVE_AREA}}>
                 <h1 className="font-bold text-5xl text-center mb-3">Do you want to reset your entire progress?</h1>
                 <div id = "line" className="w-full border"></div>
-                <h2 className="font-bold text-xl text-center mt-2">If you do so, your game progress will be lost<br/>Coins, bought characters and abilities will persist</h2>
+                <h2 className="font-bold text-xl text-center mt-2">If you do so, your game progress and stats will be lost<br/>Coins, bought characters and abilities will persist</h2>
                 <div id = "CLOSE_BUTTON" className="flex justify-around mt-5">
                     <div onClick={() => setIsPopupVisible(false)}>
                         <CustomButton text="Close"/>

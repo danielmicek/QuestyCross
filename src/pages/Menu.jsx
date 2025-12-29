@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {Link, useLocation} from "react-router-dom";
-import { motion } from "motion/react"
-
+import {Link} from "react-router-dom";
+import {motion} from "motion/react"
 import figuresFromJsonFile from "../../data/figures.json"
 import abilitiesFromJsonFile from "../../data/abilities.json"
 import levelsFromJsonFile from "../../data/levels.json"
@@ -9,8 +8,7 @@ import RulesModal from "../components/RulesModal.jsx";
 import CommonModal from "../components/CommonModal.jsx";
 import LevelsCarousel from "../components/LevelsCarousel.jsx";
 import {toast, Toaster} from "react-hot-toast";
-import {ACTIVE_AREA, SQUARE_SIZE} from "../components/shared/constants.jsx";
-import CustomButton from "../components/CustomButton.jsx";
+import {SQUARE_SIZE} from "../components/shared/constants.jsx";
 import ResetGamePopup from "../components/ResetGamePopup.jsx";
 import Road from "../components/Road.jsx";
 
@@ -79,7 +77,6 @@ export default function Menu() {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
-
 
     return (
         <>
