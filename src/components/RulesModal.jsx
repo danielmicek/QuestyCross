@@ -30,20 +30,21 @@ export default function RulesModal({ setIsRulesVisible, isRulesVisible }) {
     return (
         <>
             <div className="fixed inset-0 backdrop-blur-md bg-black/30 pointer-events-auto z-1003"></div>
-            <motion.div className="bg-white border-3 fixed m-0 p-3 top-1/2 left-1/2 -translate-x-1/2 transition-transform -translate-y-1/2 rounded-[20px] overflow-hidden z-1004 justify-center flex flex-col"
+            <motion.div className="bg-white border-3 fixed m-0 h-[80%] lg:w-[50%]  w-[90%] overflow-y-auto p-3 top-1/2 left-1/2 -translate-x-1/2 transition-transform -translate-y-1/2 rounded-[20px] z-1004 flex flex-col"
                         initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.1}}} ref={modalRef}>
                 <div ref={contentRef}>
-                    <h1 className="font-bold text-5xl text-center">Rules and game info</h1>
+                    <h1 className="font-bold text-5xl text-center ">Rules and game info</h1>
+                    <div id = "line" className="w-full border mt-1"></div>
                     <p className=" text-xl text-center mt-2">
                         <strong>Questy Cross</strong> is an arcade game inspired by Crossy Road. Your goal is to deliver the package to the finish
                         point within a time limit while safely avoiding cars and other obstacles.
                         <br/>
-                        The game features three difficulty levels:
                     </p>
+                    <p className="underline mt-2 text-center font-bold text-xl">The game features three difficulty levels:</p>
                     <ul className="text-xl text-center mt-2">
                         <li><strong>Easy</strong> – slower traffic and more time</li>
                         <li><strong>Medium</strong> – balanced difficulty</li>
-                        <li><strong>Hard</strong> – fast vehicles and limited time</li>
+                        <li><strong>Hard</strong> – fast vehicles, worse visibility and limited time</li>
                     </ul>
                     <p className="text-xl text-center mt-2">
                         During gameplay, you can collect coins.
@@ -51,7 +52,20 @@ export default function RulesModal({ setIsRulesVisible, isRulesVisible }) {
                         and equip character skins, and abilities such as shields and coin multipliers.
                         <br/>
                     </p>
-                    <h2 className="font-bold text-xl text-center mt-2">Controls</h2>
+                    <h2 className="font-bold text-xl text-center mt-2 underline">Abilities</h2>
+                    <p className="text-xl text-center mt-2">
+                        Abilities will either help you earn more money, or make you durable against cars.<br/>
+                        To apply ability, simply drag from top right corner and drop it on the character.
+                        <br/>
+                    </p>
+                    <p className="underline mt-2 text-center text-xl">There are 4 types of abilities:</p>
+                    <ul className="text-xl text-center mt-1">
+                        <li><strong>2x coins</strong> – each collected coin will be counted as 2 for the rest of the game</li>
+                        <li><strong>3x coins</strong> – each collected coin will be counted as 3 for the rest of the game</li>
+                        <li><strong>Car durability</strong> – makes you durable against one car hit</li>
+                        <li><strong>5s shield</strong> – makes you durable against cars hits for 5 seconds</li>
+                    </ul>
+                    <h2 className="font-bold text-xl text-center mt-2 underline">Controls</h2>
                     <p className="text-xl text-center mt-2">
                         {isTouchDevice ? (
                             <>

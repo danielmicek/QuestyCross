@@ -9,6 +9,7 @@ export default function UpperBar({
                                      setIsPausePopupVisible,
                                      isLosingPopupVisible,
                                      isWinningPopupVisible,
+                                     isInitialInfoPopupVisible,
                                      time,
                                      start,
                                      pause}) {
@@ -18,12 +19,12 @@ export default function UpperBar({
     const seconds = time % 60;
 
     useEffect(() => {
-        if (isPausePopupVisible || isLosingPopupVisible || isWinningPopupVisible) {
+        if (isPausePopupVisible || isLosingPopupVisible || isWinningPopupVisible || isInitialInfoPopupVisible) {
             pause()
         } else {
             start()
         }
-    }, [isLosingPopupVisible, isPausePopupVisible, isWinningPopupVisible, pause, start])
+    }, [isInitialInfoPopupVisible, isLosingPopupVisible, isPausePopupVisible, isWinningPopupVisible, pause, start])
 
 
     return (

@@ -1,12 +1,19 @@
 import {motion, time} from "framer-motion";
 import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
-import {Link} from "react-router-dom";
+import {Link, useSearchParams} from "react-router-dom";
 import CustomButton from "./CustomButton.jsx";
 import {getCurrentLevel} from "./shared/functions.jsx";
 
+// ziska id nasledujuceho levelu
+function getNextLevelId(levels, currentLevelId){
+    for(let i = 0; i < levels.length; i++){
+        if(levels[i].id === currentLevelId) return levels[i + 1].id
+    }
+}
+
 // updates "passed" field from false to true
 // pripocitaj collectedCoins k celkovym coinom
-function finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime, setCurrentLevelIndex){
+function finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime, setCurrentLevelIndex, searchParam, setSearchParams){
     let updatedLevels = levels.map(level => level.id === CURRENT_LEVEL.id ? {...level, passed: true} : level)
     updatedLevels = updatedLevels.map(level => actualTime > level.bestTime ? {...level, bestTime: actualTime} : level)
     const newCoins = collectedCoins + coins
@@ -19,6 +26,9 @@ function finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoi
         localStorage.setItem("currentLevelIndex", newIndex.toString())
         return newIndex
     })
+    if(searchParam){
+        setSearchParams({"levelId": getNextLevelId(levels, parseInt(searchParam))})
+    }
     window.location.reload()
 }
 
@@ -37,7 +47,7 @@ export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins
     const levels = JSON.parse(localStorage.getItem("levels"))
     const actualTime = calculateTime(CURRENT_LEVEL.time, time)
     const bestTime = actualTime > CURRENT_LEVEL.bestTime ? CURRENT_LEVEL.bestTime : actualTime
-
+    const [searchParams, setSearchParams] = useSearchParams();
 
     return (
         <>
@@ -63,10 +73,12 @@ export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins
                     <div id = "PLAY_AGAIN_BUTTON" className= "rounded-full" onClick={() => window.location.reload()}>
                         <CustomButton text="Play again"/>
                     </div>
-                    {currentLevelIndex !== levels.length && <div id="NEXT_LEVEL_BUTTON" className="rounded-full"
-                          onClick={() => finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime, setCurrentLevelIndex)}>
-                        <CustomButton text="Next level"/>
-                    </div>}
+                    {currentLevelIndex !== levels.length &&
+                        <div id="NEXT_LEVEL_BUTTON" className="rounded-full"
+                             onClick={() => finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime, setCurrentLevelIndex, searchParams.get("levelId"), setSearchParams)}>
+                            <CustomButton text="Next level"/>
+                        </div>
+                    }
                 </div>
             </motion.div>
         </>

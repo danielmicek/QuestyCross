@@ -18,6 +18,7 @@ import LosingPopup from "../components/LosingPopup.jsx";
 import CommonModal from "../components/CommonModal.jsx";
 import {useTimer} from "use-timer";
 import {useSearchParams} from "react-router-dom";
+import InitialInfoPopup from "../components/InitialInfoPopup.jsx";
 
 
 function handleDragEnd(event, abilities, setAbilities, setCoin2x, setCoin3x, setDurability, setShield) {
@@ -58,7 +59,8 @@ function getAllOwnedAbilities(abilities){
     return abilities.filter(ability => ability.owned > 0).length
 }
 
-function detectCollision(carRef, figureRef, posX, SQUARE_SIZE, scrollerRef, durability, lastDurabilityCar, setDurability) {
+function detectCollision(carRef, posX, SQUARE_SIZE, scrollerRef, durability, lastDurabilityCar, setDurability, isInitialInfoPopupVisible) {
+    if(isInitialInfoPopupVisible) return
     const figure_grid_position = calculateGridLocationFromPixels(posX, scrollerRef);
     const checkRange = 5;
 
@@ -144,13 +146,13 @@ export default function GameBoard() {
     const scrollerRef = useRef(null);
     const worldRef = useRef(null);
     const carPostitionRef = useRef({});
-
-    const figurePositionRef = useRef({});
+    const figurePositionRef = useRef(null);
     const [posX, setPosX] = useState((NUM_OF_COLUMNS + 1) / 2);
     const [rotate, setRotate] = useState(0);
     const [isPausePopupVisible, setIsPausePopupVisible] = useState(false);
     const [isLosingPopupVisible, setIsLosingPopupVisible] = useState(false);
     const [isWinningPopupVisible, setIsWinningModalVisible] = useState(false);
+    const [isInitialInfoPopupVisible, setIsInitialInfoPopupVisible] = useState(true);
     const [abilities, setAbilities] = useState(JSON.parse(localStorage.getItem("abilities")))
     const [coins, setCoins] = useState(() => parseInt(localStorage.getItem("coins")))
     const [coin2x, setCoin2x] = useState(false);
@@ -162,6 +164,7 @@ export default function GameBoard() {
     const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
     const coinsRefs = useRef([])                                             // referencia na vsetky mince na mape -> sluzi na odstranenie mince z mapy po collectnuti
     const [CURRENT_LEVEL] = useState(() => getCurrentLevel(levels, selectedLevelId, currentLevelIndex))       // aktualny level, ktory je vykresleny
+    console.log(CURRENT_LEVEL.id);
     const [NUM_OF_ROWS] = useState(() => CURRENT_LEVEL.rowsCount)
     const [roads] = useState(() => CURRENT_LEVEL.roads)                 // pole pozicii vsetkych ciest v aktualnom leveli
     const noAccessAreaComponents = useMemo(() => createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roads, CURRENT_LEVEL), [CURRENT_LEVEL, NUM_OF_ROWS, roads])
@@ -170,18 +173,25 @@ export default function GameBoard() {
     const { time, start, pause} = useTimer({        // timer component, aby sme mohli passnut time field do WinningPopup
         initialTime: CURRENT_LEVEL.time,
         endTime: 0,
-        autoStart: true,
+        autoStart: false,
         timerType: 'DECREMENTAL',
         onTimeOver: () => setIsLosingPopupVisible(true)
     });
 
-    // useEffect(() => {
-    //     function handleResize() {
-    //         window.location.reload();
-    //     }
-    //     window.addEventListener("resize", handleResize);
-    //     return () => window.removeEventListener("resize", handleResize);
-    // }, []);
+
+    // remove scrolling todo odkomentuj
+    /*document.addEventListener("wheel",function(e) {
+        e.preventDefault();
+    }, { passive: false })*/
+
+    // reload on resize
+    useEffect(() => {
+        function handleResize() {
+            window.location.reload();
+        }
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
 
     useEffect(() => { // scroll uplne dole pri prvom nacitani
@@ -190,6 +200,12 @@ export default function GameBoard() {
             behavior: "smooth"
         })
     }, []);
+
+
+    useEffect(() => {
+        if(isInitialInfoPopupVisible) figurePositionRef.current.style.display = "none"
+        else figurePositionRef.current.style.display = "block"
+    }, [isInitialInfoPopupVisible]);
 
     useEffect(() => {
         // povodne nastavenie abilit v localStorage
@@ -206,7 +222,7 @@ export default function GameBoard() {
 
     // Callback volame v onUpdate funkcii cesty, cize po kazdej zmene pozicie auta
     const checkCollisionCallback = () => {
-        const collision = detectCollision(carPostitionRef, figurePositionRef, posX, SQUARE_SIZE, scrollerRef,durability, lastDurabilityCarRef, setDurability);
+        const collision = detectCollision(carPostitionRef, posX, SQUARE_SIZE, scrollerRef,durability, lastDurabilityCarRef, setDurability, isInitialInfoPopupVisible);
         if (collision && !isLosingPopupVisible) {
             if (shield) {
                 return;
@@ -240,8 +256,10 @@ export default function GameBoard() {
                                                         setCoins = {setCoins}
                                                         time = {time}
                                                         currentLevelIndex = {currentLevelIndex}
-                                                        setCurrentLevelIndex = {setCurrentLevelIndex}/>}
+                                                        setCurrentLevelIndex = {setCurrentLevelIndex}
+                                                        selectedLevelId = {selectedLevelId}/>}
                 {isLosingPopupVisible && <LosingPopup time={time}/>}
+                {isInitialInfoPopupVisible && <InitialInfoPopup setIsPopupVisible = {setIsInitialInfoPopupVisible} CURRENT_LEVEL = {CURRENT_LEVEL}/>}
 
 
                 <UpperBar collectedCoins = {collectedCoins}
@@ -249,6 +267,7 @@ export default function GameBoard() {
                           setIsPausePopupVisible = {setIsPausePopupVisible}
                           isLosingPopupVisible = {isLosingPopupVisible}
                           isWinningPopupVisible = {isWinningPopupVisible}
+                          isInitialInfoPopupVisible = {isInitialInfoPopupVisible}
                           time ={time}
                           start = {start}
                           pause = {pause}/>
@@ -283,7 +302,7 @@ export default function GameBoard() {
                 </div>
 
                 <DndContext onDragEnd={e => handleDragEnd(e, abilities, setAbilities, setCoin2x, setCoin3x, setDurability, setShield)}>
-                    <motion.div id = "ABILITIES_CONTAINER" className= "w-[100px] z-1002 absolute flex flex-col right-2" style={{ height: `${getAllOwnedAbilities(abilities) * 62}px`, top: window.innerWidth <= 550 ? "70px" : 0}}> {/*TODO zmenit right-4 na right-0 ked odstranis scrollbar !!!*/}
+                    <motion.div id = "ABILITIES_CONTAINER" className= "w-[100px] z-1002 absolute flex flex-col right-2" style={{ height: `${getAllOwnedAbilities(abilities) * 62}px`, top: window.innerWidth <= 550 ? "70px" : 0}}>
                         {abilities.map(ability =>
                             ability.owned > 0 && (<DraggableAbility ability={ability} key={ability.id}/>)
                         )}

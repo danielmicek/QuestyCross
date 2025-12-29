@@ -11,7 +11,7 @@ export default function CommonModal({setIsPopupVisible, text, secondaryText = fa
                         initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.1}}} style={{width: SQUARE_SIZE * ACTIVE_AREA}}>
                 <h1 className="font-bold text-5xl text-center mb-3">{text}</h1>
                 <div id = "line" className="w-full border"></div>
-                {secondaryText && <h2 className="font-bold text-xl text-center mt-2">If you decide to leave, your will be lost</h2>}
+                {secondaryText && <h2 className="text-xl text-center mt-2">If you decide to leave, your progress will be lost</h2>}
                 <div className="flex justify-around mt-5">
                     {secondaryText && <Link to="/" className="buttonLink">
                         <CustomButton text="Exit to Menu"/>
