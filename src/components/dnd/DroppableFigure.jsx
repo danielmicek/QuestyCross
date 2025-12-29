@@ -1,4 +1,4 @@
-import React, {forwardRef} from 'react';
+import React from 'react';
 import {useDroppable} from '@dnd-kit/core';
 import { motion } from "framer-motion"
 

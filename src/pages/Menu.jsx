@@ -12,7 +12,6 @@ import {SQUARE_SIZE} from "../components/shared/constants.jsx";
 import ResetGamePopup from "../components/ResetGamePopup.jsx";
 import Road from "../components/Road.jsx";
 
-
 function shuffleLevels(levelsData) {
     const easy = shuffle(levelsData.filter(level => level.difficulty === "easy"));
     const medium = shuffle(levelsData.filter(level => level.difficulty === "medium"));
@@ -41,13 +40,13 @@ function isGameFinishedFinder(levels) {
 
 export default function Menu() {
     const [isStartPopupVisible, setIsStartPopupVisible] = useState(false)
-    const [coins] = useState(parseInt(localStorage.getItem("coins")) || 1000)
+    const [coins] = useState(parseInt(localStorage.getItem("coins")) || 50)
     const [isRulesVisible, setIsRulesVisible] = useState(false);
     const [isLevelsVisible, setIsLevelsVisible] = useState(false);
     const [isGameResetVisible, setIsGameResetVisible] = useState(false);
     const levelsData = levelsFromJsonFile;
     const [levels] = useState(localStorage.getItem("levels") !== null ? JSON.parse(localStorage.getItem("levels")) : shuffleLevels(levelsData));  // Levely zamiesame a lazy inicializujeme, ak predtym neboli zamiesane
-    const [isGameFinished, setIsGameFinished] = useState(() => isGameFinishedFinder(levels))
+    const [isGameFinished] = useState(() => isGameFinishedFinder(levels))
     const carPostitionRef = useRef({});
 
     useEffect(() => { // ulozenie figures.json do localStorage

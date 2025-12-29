@@ -5,7 +5,6 @@ import SwiperComponent from "../components/SwiperComponent.jsx";
 import {toast, Toaster} from "react-hot-toast";
 import {useState} from "react";
 
-
 // po kliknuti na button sa zmeni shop z figures na abilities
 function showOtherShop(setShowFigures, setShowAbilities){
     setShowFigures(prev => !prev)

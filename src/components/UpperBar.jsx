@@ -2,7 +2,6 @@ import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import CustomButton from "./CustomButton.jsx";
 import {useEffect, useRef} from "react";
 
-
 export default function UpperBar({
                                      collectedCoins,
                                      isPausePopupVisible,

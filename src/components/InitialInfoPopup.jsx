@@ -4,7 +4,6 @@ import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import CustomButton from "./CustomButton.jsx";
 import {getCurrentLevelIndex, getRandomElement, levelIdDecryptor} from "./shared/functions.jsx";
 
-
 const packages = [
     "Spoiled eggs",
     "Stinky left sock",
@@ -18,7 +17,6 @@ const packages = [
     "Mountain air",
     "Dua Lipa shoe"
 ]
-
 
 export default function InitialInfoPopup({setIsPopupVisible, CURRENT_LEVEL}) {
     const [searchParams] = useSearchParams();

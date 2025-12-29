@@ -234,7 +234,6 @@ export default function GameBoard() {
         }
     };
 
-
     return (
         <>
             <Toaster position="top-left" reverseOrder={false}/>

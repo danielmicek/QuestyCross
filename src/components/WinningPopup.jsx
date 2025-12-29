@@ -1,4 +1,4 @@
-import {motion, time} from "framer-motion";
+import {motion} from "framer-motion";
 import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import {Link, useSearchParams} from "react-router-dom";
 import CustomButton from "./CustomButton.jsx";
@@ -12,7 +12,6 @@ import {useEffect} from "react";
 
 // ziska id nasledujuceho levelu
 function getNextLevelId(levels, currentLevelId){
-    console.log("current level id from getNextLevelid: " + currentLevelId);
     for(let i = 0; i < levels.length; i++){
         if(levelIdDecryptor(levels[i].id) === currentLevelId) return levelIdDecryptor(levels[i + 1].id)
     }
@@ -70,9 +69,6 @@ export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins
 
     const currentLevelId = CURRENT_LEVEL.id
     const nextLevel = currentLevelIndex < 7 ? getCurrentLevel(levels, getNextLevelId(levels, selectedLevelId ? selectedLevelId : levelIdDecryptor(currentLevelId))) : null
-
-    console.log("current level id: ", getCurrentLevel(levels, selectedLevelId ? selectedLevelId : null, currentLevelIndex).id);
-    if(currentLevelIndex < 7) console.log("next level id: ", nextLevel.id);
 
     return (
         <>

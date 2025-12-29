@@ -2,7 +2,6 @@ import {useEffect, useRef, useState} from "react";
 import {SQUARE_SIZE} from "./shared/constants.jsx";
 import Car from "./Car.jsx";
 
-
 function rand(min, max) {
     return Math.random() * (max - min) + min;
 }

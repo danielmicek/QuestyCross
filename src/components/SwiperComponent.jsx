@@ -143,8 +143,6 @@ export default function SwiperComponent({
     const [isJumping, setIsJumping] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
 
-    const itemHeight = Math.round(itemWidth * 0.7);
-
     useEffect(() => {
         if (pauseOnHover && containerRef.current) {
             const container = containerRef.current;

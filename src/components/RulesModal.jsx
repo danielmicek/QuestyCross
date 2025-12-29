@@ -1,5 +1,4 @@
 import {motion} from "framer-motion";
-import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import {Link} from "react-router-dom";
 import CustomButton from "./CustomButton.jsx";
 import {useReactToPrint} from "react-to-print";

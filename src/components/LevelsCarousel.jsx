@@ -118,4 +118,3 @@ export default function LevelsCarousel({slides, options, isLevelsVisible, setIsL
         </div>
     )
 }
-

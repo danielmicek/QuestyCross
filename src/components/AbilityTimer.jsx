@@ -5,7 +5,7 @@ import {useTimer} from "use-timer";
 
 export default function AbilityTimer({shield, setShield, isLosingPopupVisible}) {
 
-    const { time, start, pause, reset, status } = useTimer({
+    const { time, start, pause } = useTimer({
         initialTime: 5,
         endTime: 0,
         autoStart: false,
