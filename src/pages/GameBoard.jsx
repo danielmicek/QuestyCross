@@ -179,10 +179,10 @@ export default function GameBoard() {
     });
 
 
-    // remove scrolling todo odkomentuj
-    /*document.addEventListener("wheel",function(e) {
+    // remove scrolling
+    document.addEventListener("wheel",function(e) {
         e.preventDefault();
-    }, { passive: false })*/
+    }, { passive: false })
 
     // reload on resize
     useEffect(() => {
