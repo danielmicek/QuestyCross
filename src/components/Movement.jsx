@@ -12,6 +12,13 @@ function obstacleFinder(figureX_grid, figureY_grid, obstaclesPositions){
     return false
 }
 
+function rotateToShortest(current, target) {
+    const cur = ((current % 360) + 360) % 360;
+    let delta = target - cur;
+    delta = ((delta + 540) % 360) - 180;
+    return current + delta;
+}
+
 function coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins){
     let amount = 1
     if(localStorage.getItem("coin2x") === "true") amount = 2
@@ -38,7 +45,7 @@ function coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, 
 function rightClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, scrollerRef, coinsRefs}){
     const newPosX = posX === NUM_OF_COLUMNS - NO_ACCESS_AREA ? posX : posX + 1
     const posY = calculateGridLocationFromPixels(posX, scrollerRef).y_grid
-    setRotate(90)
+    setRotate(prev => rotateToShortest(prev, 90));
 
     if(obstacleFinder(newPosX, posY, obstaclesPositions)) return
     else setPosX(newPosX)
@@ -49,7 +56,7 @@ function rightClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureR
 function leftClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, scrollerRef, coinsRefs}){
     const newPosX = posX === NO_ACCESS_AREA + 1 ? posX : posX - 1
     const posY = calculateGridLocationFromPixels(posX, scrollerRef).y_grid
-    setRotate(270)
+    setRotate(prev => rotateToShortest(prev, 270));
 
     if(obstacleFinder(newPosX, posY, obstaclesPositions)) return
     else setPosX(newPosX)
@@ -63,7 +70,7 @@ function upClickHandler({ scrollerRef, setRotate, setCollectedCoins, figureRef, 
     const newTopRow = topRow - 1;
     let figurePosition = calculateGridLocationFromPixels(posX, scrollerRef);
 
-    setRotate(prev => (prev === 270 || prev === 360 ? 360 : 0));
+    setRotate(prev => rotateToShortest(prev, 0));
 
     if(obstacleFinder(figurePosition.x_grid, figurePosition.y_grid - 1, obstaclesPositions)) return;
 
@@ -75,13 +82,13 @@ function upClickHandler({ scrollerRef, setRotate, setCollectedCoins, figureRef, 
     coinCollector(figureRef, posX, coinsPositions, scrollerRef, coinsRefs, setCollectedCoins);
 }
 
-function downClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, NUM_OF_ROWS}){
+function downClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX}){
     const currentScrollTop = scrollerRef.current.scrollTop;
     const topRow = Math.round(currentScrollTop / SQUARE_SIZE);
     const newTopRow = topRow + 1;
     const figurePosition = calculateGridLocationFromPixels(posX, scrollerRef);
 
-    setRotate(180);
+    setRotate(prev => rotateToShortest(prev, 180));
 
     if(obstacleFinder(figurePosition.x_grid, figurePosition.y_grid + 1, obstaclesPositions)) {
         return;
@@ -138,7 +145,6 @@ function whatKeyWasPressed({
         case "s": downClickHandler({
             scrollerRef,
             setRotate,
-            NUM_OF_ROWS,
             setCollectedCoins,
             figureRef,
             coinsPositions,
@@ -215,7 +221,7 @@ export default function Movement({
                                 whileTap={{scale: 0.95}}
                                 className="col-start-1 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-180 w-22 h-22"
                                 onClick={() =>
-                                    downClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, NUM_OF_ROWS})}>
+                                    downClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX})}>
                     </motion.div>
                 </div>
 
@@ -252,7 +258,7 @@ export default function Movement({
                             whileTap={{scale: 0.95}}
                             className="col-start-2 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-180 mb-1"
                             onClick={() =>
-                                downClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, NUM_OF_ROWS})}>
+                                downClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX})}>
                 </motion.div>
                 <motion.div whileHover={{scale: 1.1}} // ARROW RIGHT →
                             whileTap={{scale: 0.95}}
