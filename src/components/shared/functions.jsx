@@ -24,9 +24,9 @@ export function calculateNoAccessArea(NUM_OF_COLUMNS, ACTIVE_AREA){
     return Math.floor((NUM_OF_COLUMNS - ACTIVE_AREA) / 2)
 }
 
-export function getCurrentLevel(levels,selectedLevel = null, currentLevelIndex){
+export function getCurrentLevel(levels, selectedLevel = null, currentLevelIndex){
     if (selectedLevel !== null) {
-        return levels.find(level => level.id === selectedLevel)
+        return levels.find(level => levelIdDecryptor(level.id) === selectedLevel)
     }
 
     return levels[currentLevelIndex]
@@ -34,4 +34,23 @@ export function getCurrentLevel(levels,selectedLevel = null, currentLevelIndex){
 
 export function getRandomElement(array){
     return array[Math.floor(Math.random()*array.length)];
+}
+
+export function calculateTime(totalTime, playersTime){
+    const actualTime = totalTime - playersTime
+    const minutes = Math.floor(actualTime / 60);
+    const seconds = actualTime % 60;
+    return String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0")
+}
+
+export function calculateBestTime(bestTime){
+    const minutes = Math.floor(bestTime / 60);
+    const seconds = bestTime % 60;
+    return String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0")
+}
+
+// dohodnute pravidlo -> levelId je predposledne cislo daneho id, ktore passujeme ako int
+export function levelIdDecryptor(id){
+    let idString = id.toString()
+    return parseInt(idString[idString.length - 2])
 }

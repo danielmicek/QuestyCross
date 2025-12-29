@@ -1,8 +1,8 @@
-import {Link} from "react-router-dom";
+import {Link, useSearchParams} from "react-router-dom";
 import { motion } from "framer-motion"
 import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import CustomButton from "./CustomButton.jsx";
-import {getRandomElement} from "./shared/functions.jsx";
+import {getRandomElement, levelIdDecryptor} from "./shared/functions.jsx";
 
 
 const packages = [
@@ -15,12 +15,22 @@ const packages = [
     "Single AirPod (right)",
     "Rubber chicken",
     "Used toothbrush",
-    "Mountain air"
+    "Mountain air",
+    "Dua Lipa shoe"
 ]
 
-export default function InitialInfoPopup({setIsPopupVisible, CURRENT_LEVEL}) {
+// ziska index aktualneho levelu podla levelId
+function getCurrentLevelIndex(levels, currentLevelId){
+    for(let i = 0; i < levels.length; i++){
+        if(levels[i].id === currentLevelId) return i
+    }
+}
+
+export default function InitialInfoPopup({setIsPopupVisible, CURRENT_LEVEL, levels}) {
+    const [searchParams] = useSearchParams();
     const packageType = getRandomElement(packages)
-    const levelNumber = parseInt(localStorage.getItem("currentLevelIndex")) + 1
+
+    const levelNumber = searchParams.get("levelId") !== null ? getCurrentLevelIndex(levels, parseInt(searchParams.get("levelId"))) + 1 : parseInt(localStorage.getItem("currentLevelIndex")) + 1
 
     return (
         <>

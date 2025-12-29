@@ -7,7 +7,7 @@ import DraggableAbility from "../components/dnd/DraggableAbility.jsx";
 import DroppableFigure from "../components/dnd/DroppableFigure.jsx";
 import {toast, Toaster} from "react-hot-toast";
 import Coin from "../components/Coin.jsx";
-import {calculateGridLocationFromPixels, getCurrentLevel} from "../components/shared/functions.jsx";
+import {calculateGridLocationFromPixels, getCurrentLevel, levelIdDecryptor} from "../components/shared/functions.jsx";
 import FinishLine from "../components/FinishLine.jsx";
 import {NO_ACCESS_AREA, NUM_OF_COLUMNS, SQUARE_SIZE} from "../components/shared/constants.jsx";
 import NoAccessComponent from "../components/NoAccessComponent.jsx";
@@ -127,7 +127,7 @@ function incrementNumOfPlays(selectedLevel, currentLevelIndex){
 function getCurrentLevelIndex(selectedLevelId){
     const levels = JSON.parse(localStorage.getItem("levels"))
     if(selectedLevelId){
-        return levels.findIndex(level => level.id === selectedLevelId)
+        return levels.findIndex(level => levelIdDecryptor(level.id) === selectedLevelId)
     }
     return parseInt(localStorage.getItem("currentLevelIndex"))
 }
@@ -141,7 +141,7 @@ function getCurrentLevelIndex(selectedLevelId){
 export default function GameBoard() {
     const [searchParams] = useSearchParams();
     // ziskavame z url level, ktory sme zvolili v menu
-    const selectedLevelId = searchParams.get("levelId") !== null ? parseInt(searchParams.get("levelId")) : undefined;
+    const selectedLevelId = searchParams.get("levelId") !== null ? levelIdDecryptor(parseInt(searchParams.get("levelId"))) : undefined;
     const lastDurabilityCarRef = useRef(null);
     const scrollerRef = useRef(null);
     const worldRef = useRef(null);
@@ -164,14 +164,14 @@ export default function GameBoard() {
     const [collectedCoins, setCollectedCoins] = useState(0);                      // pocet minci ktore hrac zbiera na mape
     const coinsRefs = useRef([])                                             // referencia na vsetky mince na mape -> sluzi na odstranenie mince z mapy po collectnuti
     const [CURRENT_LEVEL] = useState(() => getCurrentLevel(levels, selectedLevelId, currentLevelIndex))       // aktualny level, ktory je vykresleny
-    console.log(CURRENT_LEVEL.id);
+    console.log(currentLevelIndex);
     const [NUM_OF_ROWS] = useState(() => CURRENT_LEVEL.rowsCount)
     const [roads] = useState(() => CURRENT_LEVEL.roads)                 // pole pozicii vsetkych ciest v aktualnom leveli
     const noAccessAreaComponents = useMemo(() => createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COLUMNS, roads, CURRENT_LEVEL), [CURRENT_LEVEL, NUM_OF_ROWS, roads])
     const activeAreaObstacles = useMemo(() => CURRENT_LEVEL.obstaclesPositions.map((coin, i) => (<NoAccessComponent key = {i} SQUARE_SIZE={SQUARE_SIZE} colsFromSide = {coin.x + NO_ACCESS_AREA} rowsFromTop={coin.y} activeArea ={true} difficulty = {CURRENT_LEVEL.difficulty}/>)), [CURRENT_LEVEL.difficulty, CURRENT_LEVEL.obstaclesPositions])
     const activeAreaCoins = useMemo(() => CURRENT_LEVEL.coinsPositions.map((coin, i) => (<Coin key = {i} positionFromLeft = {coin.x + NO_ACCESS_AREA} positionFromTop={coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>)), [CURRENT_LEVEL.coinsPositions])
     const { time, start, pause} = useTimer({        // timer component, aby sme mohli passnut time field do WinningPopup
-        initialTime: 8000, //CURRENT_LEVEL.time,
+        initialTime: CURRENT_LEVEL.time,
         endTime: 0,
         autoStart: false,
         timerType: 'DECREMENTAL',
@@ -261,8 +261,8 @@ export default function GameBoard() {
                                                         currentLevelIndex = {currentLevelIndex}
                                                         setCurrentLevelIndex = {setCurrentLevelIndex}
                                                         selectedLevelId = {selectedLevelId}/>}
-                {isLosingPopupVisible && <LosingPopup time={time}/>}
-                {isInitialInfoPopupVisible && <InitialInfoPopup setIsPopupVisible = {setIsInitialInfoPopupVisible} CURRENT_LEVEL = {CURRENT_LEVEL}/>}
+                {/*{isLosingPopupVisible && <LosingPopup time={time}/>}*/}
+                {isInitialInfoPopupVisible && <InitialInfoPopup setIsPopupVisible = {setIsInitialInfoPopupVisible} CURRENT_LEVEL = {CURRENT_LEVEL} levels = {levels}/>}
 
 
                 <UpperBar collectedCoins = {collectedCoins}

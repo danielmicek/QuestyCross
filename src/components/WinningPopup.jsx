@@ -2,52 +2,65 @@ import {motion, time} from "framer-motion";
 import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import {Link, useSearchParams} from "react-router-dom";
 import CustomButton from "./CustomButton.jsx";
-import {getCurrentLevel} from "./shared/functions.jsx";
+import {calculateBestTime, calculateTime, getCurrentLevel, levelIdDecryptor} from "./shared/functions.jsx";
+import {useEffect} from "react";
 
 // ziska id nasledujuceho levelu
 function getNextLevelId(levels, currentLevelId){
     for(let i = 0; i < levels.length; i++){
-        if(levels[i].id === currentLevelId) return levels[i + 1].id
+        if(levels[i].id === currentLevelId) return levelIdDecryptor(levels[i + 1].id)
     }
 }
 
 // updates "passed" field from false to true
 // pripocitaj collectedCoins k celkovym coinom
-function finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime, setCurrentLevelIndex, searchParam, setSearchParams){
+function finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime){
     let updatedLevels = levels.map(level => level.id === CURRENT_LEVEL.id ? {...level, passed: true} : level)
-    updatedLevels = updatedLevels.map(level => actualTime > level.bestTime ? {...level, bestTime: actualTime} : level)
+
+    // ak je bestTime === 0 tak to nastavi actualTime, inak sa bestTime aktualizuje iba ak je actualTime mensi
+    updatedLevels = updatedLevels.map(level => level.id === CURRENT_LEVEL.id ?
+        (level.bestTime === 0 ? {...level, bestTime: actualTime}
+            :
+            (actualTime < level.bestTime ? {...level, bestTime: actualTime} : level))
+        :
+        level)
+
     const newCoins = collectedCoins + coins
     setCoins(newCoins)
     localStorage.setItem("coins", newCoins.toString())
     localStorage.setItem("levels", JSON.stringify(updatedLevels))
+}
 
+function loadNextLevel(levels, searchParam, setSearchParams, setCurrentLevelIndex){
+    if(searchParam){
+        const nextLevelId = getNextLevelId(levels, parseInt(searchParam))
+        setSearchParams({"levelId": `7845${nextLevelId}9`})
+    }
+
+    // nacitanie indexu dalsieho levelu do localStorage
     setCurrentLevelIndex(prev => {
-        const newIndex = prev + 1
+        const newIndex = prev + 1 < levels.length - 1 ? prev + 1 : 0
         localStorage.setItem("currentLevelIndex", newIndex.toString())
         return newIndex
     })
-    if(searchParam){
-        setSearchParams({"levelId": getNextLevelId(levels, parseInt(searchParam))})
-    }
+
     window.location.reload()
 }
 
-function calculateTime(totalTime, playersTime){
-    const actualTime = totalTime - playersTime
-    const minutes = Math.floor(actualTime / 60);
-    const seconds = actualTime % 60;
-    return String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0")
-}
-
-export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins, setCoins, currentLevelIndex, setCurrentLevelIndex}) {
-    let total = CURRENT_LEVEL.coinsCount // vzdy 20
+export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins, setCoins, currentLevelIndex, setCurrentLevelIndex, selectedLevelId}) {
+    let total = 20 // vzdy 20
     if(localStorage.getItem("coin2x") === "true") total *= 2;
     if(localStorage.getItem("coin3x") === "true") total *= 3;
 
     const levels = JSON.parse(localStorage.getItem("levels"))
-    const actualTime = calculateTime(CURRENT_LEVEL.time, time)
-    const bestTime = actualTime > CURRENT_LEVEL.bestTime ? CURRENT_LEVEL.bestTime : actualTime
+    const actualTime = CURRENT_LEVEL.time - time
+    const bestTime = CURRENT_LEVEL.bestTime === 0 ? actualTime
+        : (actualTime > CURRENT_LEVEL.bestTime ? CURRENT_LEVEL.bestTime : actualTime)
     const [searchParams, setSearchParams] = useSearchParams();
+
+    useEffect(() => {
+        finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime)
+    }, []);
 
     return (
         <>
@@ -61,8 +74,9 @@ export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins
                 <p className="text-center mt-2"><b>collected coins: </b>{collectedCoins}/{total}</p>
                 <p className="text-center"><b>total coins: </b>{coins + collectedCoins}</p>
                 <p className="text-center mt-2"><b>time: </b>{calculateTime(CURRENT_LEVEL.time, time)}</p>
-                <p className="text-center"><b>best time: </b>{bestTime}</p>
-                <p className="text-center mt-2 mb-2"><b>next level difficulty: </b>{getCurrentLevel(levels, currentLevelIndex + 1).difficulty}</p>
+                <p className="text-center"><b>best time: </b>{calculateBestTime(bestTime)}</p>
+                {currentLevelIndex !== levels.length - 1 &&
+                    <p className="text-center mt-2 mb-2"><b>next level difficulty: </b>{getCurrentLevel(levels, selectedLevelId ? selectedLevelId + 1 : null, currentLevelIndex +1).difficulty}</p>}
 
 
                 <div id = "line2" className="w-full border"></div>
@@ -73,9 +87,9 @@ export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins
                     <div id = "PLAY_AGAIN_BUTTON" className= "rounded-full" onClick={() => window.location.reload()}>
                         <CustomButton text="Play again"/>
                     </div>
-                    {currentLevelIndex !== levels.length &&
+                    {currentLevelIndex !== levels.length - 1 &&
                         <div id="NEXT_LEVEL_BUTTON" className="rounded-full"
-                             onClick={() => finishCurrentLevel(CURRENT_LEVEL, levels, setCoins, coins, collectedCoins, actualTime, setCurrentLevelIndex, searchParams.get("levelId"), setSearchParams)}>
+                             onClick={() => loadNextLevel(levels, searchParams.get("levelId"), setSearchParams, setCurrentLevelIndex)}>
                             <CustomButton text="Next level"/>
                         </div>
                     }
