@@ -171,21 +171,21 @@ export default function GameBoard() {
     const activeAreaObstacles = useMemo(() => CURRENT_LEVEL.obstaclesPositions.map((coin, i) => (<NoAccessComponent key = {i} SQUARE_SIZE={SQUARE_SIZE} colsFromSide = {coin.x + NO_ACCESS_AREA} rowsFromTop={coin.y} activeArea ={true} difficulty = {CURRENT_LEVEL.difficulty}/>)), [CURRENT_LEVEL.difficulty, CURRENT_LEVEL.obstaclesPositions])
     const activeAreaCoins = useMemo(() => CURRENT_LEVEL.coinsPositions.map((coin, i) => (<Coin key = {i} positionFromLeft = {coin.x + NO_ACCESS_AREA} positionFromTop={coin.y} SQUARE_SIZE={SQUARE_SIZE} ref={el => coinsRefs.current[i] = el}/>)), [CURRENT_LEVEL.coinsPositions])
     const { time, start, pause} = useTimer({        // timer component, aby sme mohli passnut time field do WinningPopup
-        initialTime: CURRENT_LEVEL.time,
+        initialTime: 8000, //CURRENT_LEVEL.time,
         endTime: 0,
         autoStart: false,
         timerType: 'DECREMENTAL',
         onTimeOver: () => setIsLosingPopupVisible(true)
     });
 
-    // disable manual scrolling
-    useEffect(() => {
+    // disable manual scrolling todo odkomentuj
+    /*useEffect(() => {
         if(scrollerRef){
             scrollerRef.current.addEventListener("wheel",function(e) {
                 e.preventDefault();
             }, { passive: false })
         }
-    }, []);
+    }, []);*/
 
     // reload on resize
     useEffect(() => {
