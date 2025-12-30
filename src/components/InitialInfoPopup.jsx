@@ -3,6 +3,7 @@ import { motion } from "framer-motion"
 import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
 import CustomButton from "./CustomButton.jsx";
 import {getCurrentLevelIndex, getRandomElement, levelIdDecryptor} from "./shared/functions.jsx";
+import {useEffect} from "react";
 
 const packages = [
     "Spoiled eggs",
@@ -18,7 +19,14 @@ const packages = [
     "Dua Lipa shoe"
 ]
 
-export default function InitialInfoPopup({setIsPopupVisible, CURRENT_LEVEL}) {
+function isAtBottom(scrollerRef){
+    const el = scrollerRef.current;
+    if (!el) return false;
+
+    return el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
+}
+
+export default function InitialInfoPopup({setIsPopupVisible, CURRENT_LEVEL, scrollerRef}) {
     const [searchParams] = useSearchParams();
     const packageType = getRandomElement(packages)
     const decryptedSelectedLevelId = searchParams ? levelIdDecryptor(parseInt(searchParams.get("levelId"))) : null
@@ -42,7 +50,7 @@ export default function InitialInfoPopup({setIsPopupVisible, CURRENT_LEVEL}) {
                     <Link to="/" className="buttonLink">
                         <CustomButton text="Exit to Menu"/>
                     </Link>
-                    <div id = "PLAY_BUTTON" className= "rounded-full" onClick={() => {setIsPopupVisible(false)}}>
+                    <div id = "PLAY_BUTTON" className= "rounded-full" onClick={() => {if(isAtBottom(scrollerRef) === true) setIsPopupVisible(false)}}>
                         <CustomButton text="Play"/>
                     </div>
 

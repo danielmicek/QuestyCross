@@ -121,8 +121,8 @@ function createNoAccessArea(NO_ACCESS_AREA, SQUARE_SIZE, NUM_OF_ROWS, NUM_OF_COL
     return array
 }
 
-function isAnyPopupVisible(isPausePopupVisible, isLosingPopupVisible, isInitialInfoPopupVisible){
-    return isPausePopupVisible || isLosingPopupVisible || isInitialInfoPopupVisible
+function isAnyPopupVisible(isPausePopupVisible, isLosingPopupVisible, isInitialInfoPopupVisible, isWinningPopupVisible){
+    return isPausePopupVisible || isLosingPopupVisible || isInitialInfoPopupVisible || isWinningPopupVisible
 }
 
 function incrementNumOfPlays(selectedLevel, currentLevelIndex){
@@ -196,7 +196,6 @@ export default function GameBoard() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-
     useEffect(() => { // scroll uplne dole pri prvom nacitani
         scrollerRef.current.scrollTo({
             top: Math.floor((CURRENT_LEVEL.rowsCount) * SQUARE_SIZE),
@@ -248,7 +247,7 @@ export default function GameBoard() {
                       obstaclesPositions = {CURRENT_LEVEL.obstaclesPositions}
                       coinsRefs = {coinsRefs}
                       setIsWinningModalVisible = {setIsWinningModalVisible}
-                      isAnyPopupVisible = {isAnyPopupVisible(isPausePopupVisible, isLosingPopupVisible, isInitialInfoPopupVisible)}
+                      isAnyPopupVisible = {isAnyPopupVisible(isPausePopupVisible, isLosingPopupVisible, isInitialInfoPopupVisible, isWinningPopupVisible)}
             />
             <div id = "WORLD_CONTAINER" className="gameBoardContainer relative w-screen h-screen overflow-hidden">
 
@@ -263,7 +262,7 @@ export default function GameBoard() {
                                                         selectedLevelId = {selectedLevelId}/>}
 
                 {isLosingPopupVisible && <LosingPopup time={time}/>}
-                {isInitialInfoPopupVisible && <InitialInfoPopup setIsPopupVisible = {setIsInitialInfoPopupVisible} CURRENT_LEVEL = {CURRENT_LEVEL}/>}
+                {isInitialInfoPopupVisible && <InitialInfoPopup setIsPopupVisible = {setIsInitialInfoPopupVisible} CURRENT_LEVEL = {CURRENT_LEVEL} scrollerRef = {scrollerRef}/>}
 
                 <UpperBar collectedCoins = {collectedCoins}
                           isPausePopupVisible = {isPausePopupVisible}
