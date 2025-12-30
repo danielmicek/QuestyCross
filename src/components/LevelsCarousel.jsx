@@ -4,6 +4,7 @@ import { Thumb } from './LevelsCarouselThumbsButton.jsx'
 import {Link} from "react-router-dom";
 import {toast, Toaster} from "react-hot-toast";
 import {calculateBestTime} from "./shared/functions.jsx";
+import {SQUARE_SIZE} from "./shared/constants.jsx";
 
 export default function LevelsCarousel({slides, options, isLevelsVisible, setIsLevelsVisible, levels}) {
     const carouselRef = useRef(null)
@@ -60,17 +61,17 @@ export default function LevelsCarousel({slides, options, isLevelsVisible, setIsL
                         {slides.map((levelId,index) => {
                             const level = levels.find(level => level.id === levelId);
                             const difficultyBgs = {
-                                easy: "bg-[url('/level-bg-easy.png')]",
-                                medium: "bg-[url('/level-bg-medium.png')]",
-                                hard: "bg-[url('/level-bg-hard.png')]"
+                                easy: `${import.meta.env.BASE_URL}level-bg-easy.png`,
+                                medium: `${import.meta.env.BASE_URL}level-bg-medium.png`,
+                                hard: `${import.meta.env.BASE_URL}level-bg-hard.png`
                             };
                             const bestTime = calculateBestTime(level.bestTime);
 
                             return level?.passed ? (
                                 <Link to={`/game?levelId=${levelId}`} key={index}
                                       className="embla__slide embla__slide--complete">
-                                    <div
-                                        className={`embla__slide__number ${difficultyBgs[level.difficulty]} bg-center`}>
+                                    <div style={{backgroundImage: `url(${difficultyBgs[level.difficulty]})`}}
+                                        className={`embla__slide__number bg-center`}>
                                         {index + 1}
                                     </div>
                                     <div className="absolute bottom-2 left-6 text-white text-m font-bold bg-black rounded-2xl p-2">
@@ -82,7 +83,8 @@ export default function LevelsCarousel({slides, options, isLevelsVisible, setIsL
                                 <div key={index} className="embla__slide opacity-50 grayscale" onClick={() =>
                                     toast.error('You can only replay levels you have completed!', {style: {fontWeight: "bold"}})}>
                                     <div
-                                        className={`embla__slide__number ${difficultyBgs[level.difficulty]} bg-center`}>{index + 1}
+                                        className={`embla__slide__number bg-center`}
+                                        style={{backgroundImage: `url(${difficultyBgs[level.difficulty]})`}}>{index + 1}
                                     </div>
                                     <div className="absolute bottom-2 left-6 text-white text-m font-bold bg-black rounded-2xl p-2">
                                         Number of plays: {level.numOfPlays}<br/>

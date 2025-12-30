@@ -7,7 +7,7 @@ export default function Coin({positionFromLeft, positionFromTop, SQUARE_SIZE, re
                  width: `${SQUARE_SIZE}px`,
                  height: `${SQUARE_SIZE}px`
              }}>
-            <img src={'/coin.png'}  alt="coin_icon" className="md:w-10 md:h-10 w-7 h-7"/>
+            <img src={'./coin.png'}  alt="coin_icon" className="md:w-10 md:h-10 w-7 h-7"/>
         </div>
     )
 }

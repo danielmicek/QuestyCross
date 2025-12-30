@@ -43,11 +43,11 @@ export default function InitialInfoPopup({setIsPopupVisible, CURRENT_LEVEL, scro
                 <h2 className="text-xl mt-2 w-[60%]"><b>Package:</b> {packageType}</h2>
                 <h2 className="text-xl mt-2"><b>Time:</b> {CURRENT_LEVEL.time} sec</h2>
                 <h2 className="text-xl mt-2"><b>Difficulty:</b> {CURRENT_LEVEL.difficulty}</h2>
-                <img src="/backpack.png" alt="backpack" className="w-[180px] absolute right-0 mb-4"/>
+                <img src="./backpack.png" alt="backpack" className="w-[180px] absolute right-0 mb-4"/>
 
                 <div id = "line2" className="w-full border mt-2"></div>
                 <div className="flex justify-around mt-5">
-                    <Link to="/" className="buttonLink">
+                    <Link to=".." className="buttonLink">
                         <CustomButton text="Exit to Menu"/>
                     </Link>
                     <div id = "PLAY_BUTTON" className= "rounded-full" onClick={() => {if(isAtBottom(scrollerRef) === true) setIsPopupVisible(false)}}>

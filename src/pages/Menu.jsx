@@ -92,7 +92,8 @@ export default function Menu() {
                     />
                 </div>
 
-                <div className="flex relative flex-col flex-1 w-full items-center justify-center bg-[url('/grass.jpg')] gap-5 md:gap-8 ">
+                <div className="flex relative flex-col flex-1 w-full items-center justify-center gap-5 md:gap-8"
+                     style={{ backgroundImage: `url(${import.meta.env.BASE_URL}grass.jpg)`}}>
                     <motion.h1 initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}
                                className="font-bold z-1000 relative md:text-8xl text-6xl text-shadow-lg text-[#2E2E2E]">QuestyCross
                     </motion.h1>

@@ -16,7 +16,7 @@ export default function LosingPopup({time}) {
                     :
                     <p className="text-center mt-3 text-lg">You did not make it in time!<br/>Do you want try again?</p>}
                 <div className="flex justify-around mt-5">
-                    <Link to = "/" className="buttonLink">
+                    <Link to="/" className="buttonLink">
                         <CustomButton text="Exit to Menu"/>
                     </Link>
                     <div id = "PLAY_AGAIN_BUTTON" className= "rounded-full" onClick={() => window.location.reload()}>

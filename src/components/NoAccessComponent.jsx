@@ -1,52 +1,52 @@
 import {getRandomElement} from "./shared/functions.jsx";
 
 const trees = [
-    "/tree1.png",
-    "/tree2.png",
-    "/tree3.png",
+    "./tree1.png",
+    "./tree2.png",
+    "./tree3.png",
 ]
 
 const cactuses = [
-    "/cactus1.png",
-    "/cactus2.png",
-    "/cactus3.png"
+    "./cactus1.png",
+    "./cactus2.png",
+    "./cactus3.png"
 ]
 const rocksAndSatelites = [
-    "/rock1.png",
-    "/rock2.png",
-    "/rock3.png",
-    "/satelite1.png",
-    "/satelite2.png"
+    "./rock1.png",
+    "./rock2.png",
+    "./rock3.png",
+    "./satelite1.png",
+    "./satelite2.png"
 ]
 
 const allObstaclesForEasy = [
-    "/tree1.png",
-    "/tree2.png",
-    "/tree3.png",
-    "/wood.png",
-    "/box.png",
-    "/spikes.png",
+    "./tree1.png",
+    "./tree2.png",
+    "./tree3.png",
+    "./wood.png",
+    "./box.png",
+    "./spikes.png",
 ]
 
 const allObstaclesForMedium = [
-    "/cactus1.png",
-    "/cactus2.png",
-    "/cactus3.png",
-    "/skull.png",
-    "/bush.png",
-    "/spikeBall.png",
-    "/cactusAmongRocks.png",
+    "./cactus1.png",
+    "./cactus2.png",
+    "./cactus3.png",
+    "./skull.png",
+    "./bush.png",
+    "./spikeBall.png",
+    "./cactusAmongRocks.png",
 
 ]
 
 const allObstaclesForHard = [
-    "/rock1.png",
-    "/rock2.png",
-    "/rock3.png",
-    "/satelite1.png",
-    "/satelite2.png",
-    "/rover.png",
-    "/crater.png",
+    "./rock1.png",
+    "./rock2.png",
+    "./rock3.png",
+    "./satelite1.png",
+    "./satelite2.png",
+    "./rover.png",
+    "./crater.png",
 
 ]
 

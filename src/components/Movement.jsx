@@ -213,13 +213,15 @@ export default function Movement({
                 <div id = "ARROWS_UP_DOWN" className= "h-[220px] w-28 grid grid-cols-[1fr] grid-rows-[1fr_1fr] fixed  gap-2 bottom-5 left-0 z-1000 justify-items-center items-center">
                     <motion.div whileHover={{scale: 1.1}} // ARROW UP ↑
                                 whileTap={{scale: 0.95}}
-                                className="col-start-1 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat w-22 h-22"
+                                style = {{backgroundImage: `url(${import.meta.env.BASE_URL}arrow.png)`}}
+                                className="col-start-1 row-start-1 bg-contain bg-no-repeat w-22 h-22"
                                 onClick={() =>
                                     upClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, NUM_OF_ROWS, setIsWinningModalVisible})}>
                     </motion.div>
                     <motion.div whileHover={{scale: 1.1}} // ARROW DOWN ↓
                                 whileTap={{scale: 0.95}}
-                                className="col-start-1 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-180 w-22 h-22"
+                                style = {{backgroundImage: `url(${import.meta.env.BASE_URL}arrow.png)`}}
+                                className="col-start-1 row-start-2 bg-contain bg-no-repeat rotate-180 w-22 h-22"
                                 onClick={() =>
                                     downClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX})}>
                     </motion.div>
@@ -228,13 +230,15 @@ export default function Movement({
                 <div id = "ARROWS_RIGHT_LEFT" className= "w-[220px] h-28 grid grid-cols-[1fr_1fr] grid-rows-[1fr] fixed gap-2 bottom-5 right-0 z-1000 justify-items-center items-center">
                     <motion.div whileHover={{scale: 1.1}} // ARROW LEFT ←
                                 whileTap={{scale: 0.95}}
-                                className="col-start-1 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-270 w-22 h-22"
+                                style = {{backgroundImage: `url(${import.meta.env.BASE_URL}arrow.png)`}}
+                                className="col-start-1 row-start-1 bg-contain bg-no-repeat rotate-270 w-22 h-22"
                                 onClick={() =>
                                     leftClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, scrollerRef, coinsRefs, NUM_OF_ROWS})}>
                     </motion.div>
                     <motion.div whileHover={{scale: 1.1}} // ARROW RIGHT →
                                 whileTap={{scale: 0.95}}
-                                className="col-start-2 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-90 w-22 h-22"
+                                style = {{backgroundImage: `url(${import.meta.env.BASE_URL}arrow.png)`}}
+                                className="col-start-2 row-start-1 bg-contain bg-no-repeat rotate-90 w-22 h-22"
                                 onClick={() =>
                                     rightClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, scrollerRef, coinsRefs, NUM_OF_ROWS})}>
                     </motion.div>
@@ -244,25 +248,29 @@ export default function Movement({
             <div className="w-[220px] h-44 pb-6 grid grid-cols-[1fr_1fr_1fr] grid-rows-[1fr_1fr] gap-2 fixed bottom-5 right-5 z-1000">
                 <motion.div whileHover={{scale: 1.1}} // ARROW UP ↑
                             whileTap={{scale: 0.95}}
-                            className="col-start-2 row-start-1 bg-[url('/arrow.png')] bg-contain bg-no-repeat"
+                            style = {{backgroundImage: `url(${import.meta.env.BASE_URL}arrow.png)`}}
+                            className="col-start-2 row-start-1 bg-contain bg-no-repeat"
                             onClick={() =>
                                 upClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX, NUM_OF_ROWS, setIsWinningModalVisible})}>
                 </motion.div>
                 <motion.div whileHover={{scale: 1.1}} // ARROW LEFT ←
                             whileTap={{scale: 0.95}}
-                            className="col-start-1 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-270"
+                            style = {{backgroundImage: `url(${import.meta.env.BASE_URL}arrow.png)`}}
+                            className="col-start-1 row-start-2 bg-contain bg-no-repeat rotate-270"
                             onClick={() =>
                                 leftClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, scrollerRef, coinsRefs, NUM_OF_ROWS})}>
                 </motion.div>
                 <motion.div whileHover={{scale: 1.1}} // ARROW DOWN ↓
                             whileTap={{scale: 0.95}}
-                            className="col-start-2 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-180 mb-1"
+                            style = {{backgroundImage: `url(${import.meta.env.BASE_URL}arrow.png)`}}
+                            className="col-start-2 row-start-2 bg-contain bg-no-repeat rotate-180 mb-1"
                             onClick={() =>
                                 downClickHandler({scrollerRef, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, coinsRefs, posX})}>
                 </motion.div>
                 <motion.div whileHover={{scale: 1.1}} // ARROW RIGHT →
                             whileTap={{scale: 0.95}}
-                            className="col-start-3 row-start-2 bg-[url('/arrow.png')] bg-contain bg-no-repeat rotate-90"
+                            style = {{backgroundImage: `url(${import.meta.env.BASE_URL}arrow.png)`}}
+                            className="col-start-3 row-start-2 bg-contain bg-no-repeat rotate-90"
                             onClick={() =>
                                 rightClickHandler({posX, setPosX, setRotate, setCollectedCoins, figureRef, coinsPositions, obstaclesPositions, scrollerRef, coinsRefs, NUM_OF_ROWS})}>
                 </motion.div>

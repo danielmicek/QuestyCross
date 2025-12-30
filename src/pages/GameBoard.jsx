@@ -54,9 +54,9 @@ function handleDragEnd(event, abilities, setAbilities, setCoin2x, setCoin3x, set
 
 function getBgImageBasedOnDifficulty(difficulty){
     switch(difficulty){
-        case "easy": return `url('/grass.jpg')`
-        case "medium": return `url('/sand_bg.jpg')`
-        case "hard": return `url('/moon_bg.jpg')`
+        case "easy": return `url('./grass.jpg')`
+        case "medium": return `url('./sand_bg.jpg')`
+        case "hard": return `url('./moon_bg.jpg')`
     }
 }
 
@@ -278,7 +278,7 @@ export default function GameBoard() {
 
                 <div id="WORLD_SCROLLER" ref={scrollerRef}
                      className="scroller h-full overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    <div id="WORLD" className="relative w-screen bg-[url('/grass.jpg')] grid" ref = {worldRef}
+                    <div id="WORLD" className="relative w-screen grid" ref = {worldRef}
                          style={{
                              height: `${NUM_OF_ROWS * SQUARE_SIZE}px`,
                              backgroundImage: getBgImageBasedOnDifficulty(CURRENT_LEVEL.difficulty),

@@ -7,11 +7,11 @@ const SPEED_PX_PER_SEC_LANE1 = 300;
 const SPEED_PX_PER_SEC_LANE2 = 220;
 
 const cars = [
-    '/red_car.png',
-    '/yellow_car.png',
-    '/blue_car.png',
-    '/green_car.png',
-]
+    `${import.meta.env.BASE_URL}red_car.png`,
+    `${import.meta.env.BASE_URL}yellow_car.png`,
+    `${import.meta.env.BASE_URL}blue_car.png`,
+    `${import.meta.env.BASE_URL}green_car.png`,
+];
 
 export default function Car({ car, carPositionRef, setCars, rowsFromTop, onCollisionCheck, firstLane = true, direction}) {
     const startX = -0.1 * window.innerWidth;

@@ -78,7 +78,7 @@ export default function RulesModal({ setIsRulesVisible, isRulesVisible }) {
                     </p>
                 </div>
                 <div className="flex justify-around mt-5">
-                    <Link to = "/" className="buttonLink" onClick={() => setIsRulesVisible(false)}>
+                    <Link to="/" className="buttonLink" onClick={() => setIsRulesVisible(false)}>
                         <CustomButton text="Exit to Menu"/>
                     </Link>
                     <div id = "PLAY_AGAIN_BUTTON" className= "rounded-full" onClick={reactToPrintFn}>

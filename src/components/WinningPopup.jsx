@@ -89,7 +89,7 @@ export default function WinningPopup({collectedCoins, CURRENT_LEVEL, time, coins
 
                 <div id = "line2" className="w-full border"></div>
                 <div className="flex justify-around mt-5">
-                    <Link to = "/" className="buttonLink">
+                    <Link to="/" className="buttonLink">
                         <CustomButton text="Exit to Menu"/>
                     </Link>
                     <div id = "PLAY_AGAIN_BUTTON" className= "rounded-full" onClick={() => window.location.reload()}>

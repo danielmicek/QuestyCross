@@ -47,7 +47,7 @@ export default function Shop(){
             </motion.div>
 
             <motion.div id = "EXIT_BUTTON" className= "absolute rounded-full top-2 left-2 z-999" initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}>
-                <Link to = "/" className="buttonLink">
+                <Link to="/" className="buttonLink">
                     <CustomButton text="Exit Shop"/>
                 </Link>
             </motion.div>

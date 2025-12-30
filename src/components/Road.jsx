@@ -45,8 +45,8 @@ export default function Road({rowsFromTop, carPositionRef,onCollisionCheck, spaw
 
     return (
         <>
-            <div className="road grid grid-rows-2 absolute w-full bg-[url('/road.png')] bg-center bg-size[100%] overflow-hidden"
-                 style={{gridRowStart: rowsFromTop, height: 2*SQUARE_SIZE}}> {/*`${ROW_HEIGHT*2}px`*/}
+            <div className="road grid grid-rows-2 absolute w-full bg-center bg-size[100%] overflow-hidden"
+                 style={{gridRowStart: rowsFromTop, height: 2*SQUARE_SIZE, backgroundImage: `url(${import.meta.env.BASE_URL}road.png)`}}>
                 <div className="relative h-full flex items-center">
                     {cars1.map(car => (<Car key ={car}
                                             car={car}
