@@ -14,6 +14,7 @@ function resetGame(levels){
     localStorage.setItem("levels", JSON.stringify(levels))
     localStorage.setItem("currentLevelIndex", "0")
     toast.success('Game reset successfully', {style: {fontWeight: "bold"}});
+    window.location.reload()
 }
 
 export default function ResetGamePopup({setIsPopupVisible, levels}) {
