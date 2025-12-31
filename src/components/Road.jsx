@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import {SQUARE_SIZE} from "./shared/constants.jsx";
+import {baseUrl, SQUARE_SIZE} from "./shared/constants.jsx";
 import Car from "./Car.jsx";
 
 function rand(min, max) {
@@ -46,7 +46,7 @@ export default function Road({rowsFromTop, carPositionRef,onCollisionCheck, spaw
     return (
         <>
             <div className="road grid grid-rows-2 absolute w-full bg-center bg-size[100%] overflow-hidden"
-                 style={{gridRowStart: rowsFromTop, height: 2*SQUARE_SIZE, backgroundImage: `url(${import.meta.env.BASE_URL}road.png)`}}>
+                 style={{gridRowStart: rowsFromTop, height: 2*SQUARE_SIZE, backgroundImage: `url(${baseUrl}road.png)`}}>
                 <div className="relative h-full flex items-center">
                     {cars1.map(car => (<Car key ={car}
                                             car={car}

@@ -8,24 +8,11 @@ import RulesModal from "../components/RulesModal.jsx";
 import CommonModal from "../components/CommonModal.jsx";
 import LevelsCarousel from "../components/LevelsCarousel.jsx";
 import {toast, Toaster} from "react-hot-toast";
-import {SQUARE_SIZE} from "../components/shared/constants.jsx";
+import {baseUrl, SQUARE_SIZE} from "../components/shared/constants.jsx";
 import ResetGamePopup from "../components/ResetGamePopup.jsx";
 import Road from "../components/Road.jsx";
+import {shuffleLevels} from "../components/shared/functions.jsx";
 
-function shuffleLevels(levelsData) {
-    const easy = shuffle(levelsData.filter(level => level.difficulty === "easy"));
-    const medium = shuffle(levelsData.filter(level => level.difficulty === "medium"));
-    const hard = shuffle(levelsData.filter(level => level.difficulty === "hard"));
-    return [...easy, ...medium, ...hard];
-}
-
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
 
 function getFirstUnfinishedLevelIndex(levels) {
     for(let i = 0; i < levels.length; i++) {
@@ -93,7 +80,7 @@ export default function Menu() {
                 </div>
 
                 <div className="flex relative flex-col flex-1 w-full items-center justify-center gap-5 md:gap-8"
-                     style={{ backgroundImage: `url(${import.meta.env.BASE_URL}grass.jpg)`}}>
+                     style={{ backgroundImage: `url(${baseUrl}grass.jpg)`}}>
                     <motion.h1 initial={{scale: 0}} animate={{scale: 1, transition: {duration: 0.3}}}
                                className="font-bold z-1000 relative md:text-8xl text-6xl text-shadow-lg text-[#2E2E2E]">QuestyCross
                     </motion.h1>
@@ -120,7 +107,7 @@ export default function Menu() {
                     </motion.div>
                     {isRulesVisible && <RulesModal setIsRulesVisible={setIsRulesVisible} isRulesVisible={isRulesVisible}/>}
                     {isLevelsVisible && <LevelsCarousel slides={LEVEL_IDS} options={OPTIONS} isLevelsVisible={isLevelsVisible} setIsLevelsVisible={setIsLevelsVisible} levels={levels}/>}
-                    {isGameResetVisible && <ResetGamePopup setIsPopupVisible = {setIsGameResetVisible} levels = {levels}/>}
+                    {isGameResetVisible && <ResetGamePopup setIsPopupVisible = {setIsGameResetVisible}/>}
                 </div>
             </div>
         </>

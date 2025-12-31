@@ -65,8 +65,7 @@ function CarouselItem({
             }}
             transition={transition}
         >
-            <div id="VIEW_FROM_TOP" className="w-[2.5cm] h-[2.5cm] border border-black absolute top-2 right-2 rounded-3xl bg-no-repeat bg-cover flex justify-center items-center">
-                style={{backgroundImage: `url(${import.meta.env.BASE_URL}grass.jpg)`}}
+            <div id="VIEW_FROM_TOP" className="w-[2.5cm] h-[2.5cm] border border-black absolute top-2 right-2 rounded-3xl bg-no-repeat bg-cover flex justify-center items-center" style={{backgroundImage: `url(${import.meta.env.BASE_URL}grass.jpg)`}}>
                 <div className="w-[2cm] h-[2cm] absolute bg-no-repeat bg-cover" style={{backgroundImage: `url(${item.imageFromTop})`}}></div>
             </div>
             <div id = "FIGURE_INFO_CONTAINER" className="p-5 absolute bottom-0 bg-linear-to-t from-[#EDDD53] to-transparent w-full select-none">
@@ -74,7 +73,7 @@ function CarouselItem({
 
 
                 {!item.owned ? (
-                    <div className="flex flex-row justify-between gap-2 items-center ">
+                    <div className="flex flex-row justify-between gap-2 items-center">
                         <p className="text-lg font-bold text-black">price: {item.price} coins</p>
                         <CustomButton
                             text="Buy"

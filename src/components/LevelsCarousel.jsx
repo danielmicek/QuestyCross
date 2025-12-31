@@ -4,7 +4,7 @@ import { Thumb } from './LevelsCarouselThumbsButton.jsx'
 import {Link} from "react-router-dom";
 import {toast, Toaster} from "react-hot-toast";
 import {calculateBestTime} from "./shared/functions.jsx";
-import {SQUARE_SIZE} from "./shared/constants.jsx";
+import {baseUrl, SQUARE_SIZE} from "./shared/constants.jsx";
 
 export default function LevelsCarousel({slides, options, isLevelsVisible, setIsLevelsVisible, levels}) {
     const carouselRef = useRef(null)
@@ -61,9 +61,9 @@ export default function LevelsCarousel({slides, options, isLevelsVisible, setIsL
                         {slides.map((levelId,index) => {
                             const level = levels.find(level => level.id === levelId);
                             const difficultyBgs = {
-                                easy: `${import.meta.env.BASE_URL}level-bg-easy.png`,
-                                medium: `${import.meta.env.BASE_URL}level-bg-medium.png`,
-                                hard: `${import.meta.env.BASE_URL}level-bg-hard.png`
+                                easy: `${baseUrl}level-bg-easy.png`,
+                                medium: `${baseUrl}level-bg-medium.png`,
+                                hard: `${baseUrl}level-bg-hard.png`
                             };
                             const bestTime = calculateBestTime(level.bestTime);
 

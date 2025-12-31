@@ -63,3 +63,18 @@ export function getCurrentLevelIndex(selectedLevelId){
     }
     return parseInt(localStorage.getItem("currentLevelIndex"))
 }
+
+export function shuffleLevels(levelsData) {
+    const easy = shuffle(levelsData.filter(level => level.difficulty === "easy"));
+    const medium = shuffle(levelsData.filter(level => level.difficulty === "medium"));
+    const hard = shuffle(levelsData.filter(level => level.difficulty === "hard"));
+    return [...easy, ...medium, ...hard];
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}

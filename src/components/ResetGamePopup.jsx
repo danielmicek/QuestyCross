@@ -1,23 +1,22 @@
 import { motion } from "framer-motion"
 import {ACTIVE_AREA, SQUARE_SIZE} from "./shared/constants.jsx";
+import levelsFromJsonFile from "../../data/levels.json"
 import CustomButton from "./CustomButton.jsx";
 import {toast} from "react-hot-toast";
 import React from "react";
+import {shuffleLevels} from "./shared/functions.jsx";
 
-// resetovanie hodnot v jsone, ktore sa menili
-function resetGame(levels){
-    for(let level of levels){
-        level.passed = false
-        level.bestTime = 0
-        level.numOfPlays = 0
-    }
-    localStorage.setItem("levels", JSON.stringify(levels))
+// resetovanie levels => nanovo sa nacitaju levely z jsonu a zamiesaju sa
+function resetGame(){
+    const levelsData = levelsFromJsonFile;
+
+    localStorage.setItem("levels", JSON.stringify(shuffleLevels(levelsData)))
     localStorage.setItem("currentLevelIndex", "0")
     toast.success('Game reset successfully', {style: {fontWeight: "bold"}});
     window.location.reload()
 }
 
-export default function ResetGamePopup({setIsPopupVisible, levels}) {
+export default function ResetGamePopup({setIsPopupVisible}) {
     return (
         <>
             <div className="fixed inset-0 backdrop-blur-md bg-black/30 pointer-events-auto z-1003"></div>
@@ -32,7 +31,7 @@ export default function ResetGamePopup({setIsPopupVisible, levels}) {
                     </div>
                     <div id = "RESET_BUTTON" className= "rounded-full" onClick={() => {
                         setIsPopupVisible(false)
-                        resetGame(levels)
+                        resetGame()
                     }}>
                         <CustomButton text="Reset"/>
                     </div>

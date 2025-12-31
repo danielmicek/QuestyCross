@@ -1,4 +1,4 @@
-import { SQUARE_SIZE } from "./shared/constants.jsx";
+import {baseUrl, SQUARE_SIZE} from "./shared/constants.jsx";
 import { motion } from "framer-motion";
 import {getRandomElement} from "./shared/functions.jsx";
 import {useMemo} from "react";
@@ -7,10 +7,10 @@ const SPEED_PX_PER_SEC_LANE1 = 300;
 const SPEED_PX_PER_SEC_LANE2 = 220;
 
 const cars = [
-    `${import.meta.env.BASE_URL}red_car.png`,
-    `${import.meta.env.BASE_URL}yellow_car.png`,
-    `${import.meta.env.BASE_URL}blue_car.png`,
-    `${import.meta.env.BASE_URL}green_car.png`,
+    `${baseUrl}red_car.png`,
+    `${baseUrl}yellow_car.png`,
+    `${baseUrl}blue_car.png`,
+    `${baseUrl}green_car.png`,
 ];
 
 export default function Car({ car, carPositionRef, setCars, rowsFromTop, onCollisionCheck, firstLane = true, direction}) {

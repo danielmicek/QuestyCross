@@ -35,6 +35,7 @@ function handleDragEnd(event, abilities, setAbilities, setCoin2x, setCoin3x, set
         let newAbilities = abilities.map(ability => ability.id === active.id ? {...ability, owned: --ability.owned} : ability)
         setAbilities(newAbilities)
         localStorage.setItem("abilities", JSON.stringify(newAbilities));
+        console.log(active.id)
 
         // apply the ability
         switch (active.id) {
@@ -156,8 +157,8 @@ export default function GameBoard() {
     const [isInitialInfoPopupVisible, setIsInitialInfoPopupVisible] = useState(true);
     const [abilities, setAbilities] = useState(JSON.parse(localStorage.getItem("abilities")))
     const [coins, setCoins] = useState(() => parseInt(localStorage.getItem("coins")))
-    const [setCoin2x] = useState(false);
-    const [setCoin3x] = useState(false);
+    const [coin2x,setCoin2x] = useState(false);
+    const [coin3x, setCoin3x] = useState(false);
     const [durability, setDurability] = useState(false);
     const [shield, setShield] = useState(false);
     const [currentLevelIndex, setCurrentLevelIndex] = useState(() => getCurrentLevelIndex(selectedLevelId))

@@ -47,7 +47,7 @@ export default function InitialInfoPopup({setIsPopupVisible, CURRENT_LEVEL, scro
 
                 <div id = "line2" className="w-full border mt-2"></div>
                 <div className="flex justify-around mt-5">
-                    <Link to=".." className="buttonLink">
+                    <Link to="/" className="buttonLink">
                         <CustomButton text="Exit to Menu"/>
                     </Link>
                     <div id = "PLAY_BUTTON" className= "rounded-full" onClick={() => {if(isAtBottom(scrollerRef) === true) setIsPopupVisible(false)}}>
